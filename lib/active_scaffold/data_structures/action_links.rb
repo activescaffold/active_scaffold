@@ -4,8 +4,16 @@ module ActiveScaffold::DataStructures
   class ActionLinks
     include Enumerable
 
-    COLLECTION_CLICK_MENU_LINK = ActionLink.new(:index, position: false, type: :member, toggle: false, parameters: {action_links: '--ACTION-LINKS--', id: nil}) # member so it's cached
-    MEMBER_CLICK_MENU_LINK = ActionLink.new(:index, position: false, type: :member, toggle: false, parameters: {action_links: '--ACTION-LINKS--'})
+    COLLECTION_CLICK_MENU_LINK = ActionLink.new(
+      :index,
+      position: false, type: :member, toggle: false,
+      parameters: {action_links: '--ACTION-LINKS--', id: nil}
+    ) # member so it's cached
+    MEMBER_CLICK_MENU_LINK = ActionLink.new(
+      :index,
+      position: false, type: :member, toggle: false,
+      parameters: {action_links: '--ACTION-LINKS--'}
+    )
 
     attr_accessor :default_type, :weight, :css_class
     attr_writer :click_menu, :label
@@ -92,7 +100,8 @@ module ActiveScaffold::DataStructures
         if item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
           collected = item.find_duplicate(link)
           links << collected unless collected.nil?
-        elsif item.action == link.action && item.static_controller? && item.controller == link.controller && item.parameters == link.parameters
+        elsif item.action == link.action && item.static_controller? && item.controller == link.controller &&
+              item.parameters == link.parameters
           links << item
         end
       end

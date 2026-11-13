@@ -39,7 +39,8 @@ module ActiveScaffold::Config
     # instead of just filtered you may show the user a humanized search condition statment
     cattr_accessor :human_conditions, instance_accessor: false, default: false
 
-    # whether footer should float when form is too long to fit in the screen, so footer is always available while scrolling
+    # whether footer should float when form is too long to fit in the screen, so footer is always available while
+    # scrolling
     class_attribute :floating_footer, instance_accessor: false, default: false
 
     cattr_accessor :reset_form, instance_accessor: false
@@ -90,7 +91,8 @@ module ActiveScaffold::Config
     # instead of just filtered you may show the user a humanized search condition statment
     attr_accessor :human_conditions
 
-    # whether footer should float when form is too long to fit in the screen, so footer is always available while scrolling
+    # whether footer should float when form is too long to fit in the screen, so footer is always available while
+    # scrolling
     attr_accessor :floating_footer
 
     attr_accessor :reset_form
@@ -99,7 +101,8 @@ module ActiveScaffold::Config
     attr_accessor :update_columns
 
     UserSettings.class_eval do
-      user_attr :optional_columns, :group_options, :grouped_columns, :human_conditions, :floating_footer, :update_columns
+      user_attr :optional_columns, :group_options, :grouped_columns, :human_conditions, :floating_footer,
+                :update_columns
     end
   end
 end

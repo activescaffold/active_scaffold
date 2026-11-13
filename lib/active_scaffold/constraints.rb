@@ -40,12 +40,14 @@ module ActiveScaffold
       constrained_fields |= active_scaffold_constraints.flat_map { |k, v| columns_from_constraint(k, v) }.compact
       exclude_actions = []
       %i[list update].each do |action_name|
-        if active_scaffold_config.actions.include?(action_name) && !active_scaffold_config.send(action_name).hide_nested_column
+        if active_scaffold_config.actions.include?(action_name) &&
+           !active_scaffold_config.send(action_name).hide_nested_column
           exclude_actions << action_name
         end
       end
 
-      # we actually want to do this whether constrained_fields exist or not, so that we can reset the array when they don't
+      # we actually want to do this whether constrained_fields exist or not, so that we can reset the array when they
+      # don't
       active_scaffold_config.actions.each do |action_name|
         next if exclude_actions.include?(action_name)
 
@@ -160,11 +162,13 @@ module ActiveScaffold
     end
 
     def polymorphic_constraint_error(association)
-      "Malformed constraint. You have added a constraint for #{association.name} polymorphic association but value is not an array of class name and id."
+      "Malformed constraint. You have added a constraint for #{association.name} polymorphic association " \
+        'but value is not an array of class name and id.'
     end
 
     def constraint_error(klass, column_name)
-      "Malformed constraint `#{klass}##{column_name}'. If it's a legitimate column, and you are using a nested scaffold, please specify or double-check the reverse association name."
+      "Malformed constraint `#{klass}##{column_name}'. If it's a legitimate column, and you are using a " \
+        'nested scaffold, please specify or double-check the reverse association name.'
     end
 
     def apply_constraint_on_association(record, association, value, allow_autosave: false)
@@ -218,7 +222,12 @@ module ActiveScaffold
     # For some operations ActiveRecord will automatically update the database. That's not always ok.
     # If it *is* ok (e.g. you're in a transaction), then set :allow_autosave to true.
     def apply_constraints_to_record(record, allow_autosave: false, constraints: active_scaffold_constraints)
-      config = record.is_a?(active_scaffold_config.model) ? active_scaffold_config : active_scaffold_config_for(record.class)
+      config =
+        if record.is_a?(active_scaffold_config.model)
+          active_scaffold_config
+        else
+          active_scaffold_config_for(record.class)
+        end
       constraints.each do |k, v|
         column = config.columns[k]
         if column&.association

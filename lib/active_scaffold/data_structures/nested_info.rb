@@ -12,7 +12,8 @@ module ActiveScaffold::DataStructures
       nil
     end
 
-    attr_accessor :association, :child_association, :parent_model, :parent_scaffold, :parent_id, :param_name, :constrained_fields, :scope
+    attr_accessor :association, :child_association, :parent_model, :parent_scaffold, :parent_id, :param_name,
+                  :constrained_fields, :scope
 
     def initialize(model, params)
       @parent_scaffold = "#{params[:parent_scaffold].to_s.camelize}Controller".constantize
@@ -86,7 +87,8 @@ module ActiveScaffold::DataStructures
       column = parent_scaffold.active_scaffold_config.columns[params[:association].to_sym]
       unless column&.association
         raise ActionController::BadRequest,
-              "Invalid nested association #{params[:association].inspect} for #{parent_scaffold.active_scaffold_config.model.name}"
+              "Invalid nested association #{params[:association].inspect} for " \
+              "#{parent_scaffold.active_scaffold_config.model.name}"
       end
 
       @param_name = column.model.name.foreign_key.to_sym
@@ -101,20 +103,26 @@ module ActiveScaffold::DataStructures
     # A through association with has_one or has_many as source association
     # create cannot be called in nested through associations, and not-nested through associations, unless:
     # 1. is through singular and source association has reverse, e.g.:
-    #    Employee belongs to vendor, Vendor has many rates, Rate belongs to vendor, Employee has many rates through vendor
-    #    Rates association through singular association vendor, source association in Vendor (rates) has reverse (vendor in Rate)
+    #    Employee belongs to vendor, Vendor has many rates, Rate belongs to vendor, Employee has many rates through
+    #    vendor
+    #    Rates association through singular association vendor, source association in Vendor (rates) has reverse (vendor
+    #    in Rate)
     #    AS will assign the vendor of the employee to the new Rate
     # 2. source association is singular, e.g.:
-    #    Customer has many networks, Network has one (or belongs to) firewall, Customer has many firewalls through networks
+    #    Customer has many networks, Network has one (or belongs to) firewall, Customer has many firewalls through
+    #    networks
     # 3. create columns include through association of reverse association, e.g.:
-    #    Vendor has many employees, Employee has many rates, Vendor has many rates through employees, Rate has one vendor through employee
-    #    RatesController has employee in create action columns (reverse is vendor, and through association employee is in create form).
+    #    Vendor has many employees, Employee has many rates, Vendor has many rates through employees, Rate has one
+    #    vendor through employee
+    #    RatesController has employee in create action columns (reverse is vendor, and through association employee is
+    #    in create form).
     def readonly_through_association?(columns)
       return false unless through_association?
       return true if association.through_reflection.through? # create not possible, too many levels
       return true if association.source_reflection.through? # create not possible, too many levels
       return false if create_through_singular? # create allowed, AS has code for this
-      return false unless association.source_reflection.collection? # create allowed if source is singular, rails creates joint model
+      # Create is allowed if the source is singular; Rails creates the joint model.
+      return false unless association.source_reflection.collection?
 
       # create allowed only if through reflection in record to be created is included in create columns
       !child_association || columns.exclude?(child_association.through_reflection.name)

@@ -2,7 +2,8 @@
 
 module ActiveScaffold::DataStructures
   class ProxyColumn
-    COPY_VARS = %i[@list_ui @list_ui_options @show_ui @show_ui_options @search_ui @search_ui_options @search_joins].freeze
+    COPY_VARS = %i[@list_ui @list_ui_options @show_ui @show_ui_options @search_ui @search_ui_options
+                   @search_joins].freeze
     def initialize(column)
       @column = column
       # without override_or_delegate, the methods won't use column's values if they are set

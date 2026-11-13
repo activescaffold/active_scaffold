@@ -44,8 +44,8 @@ module ActiveScaffold::Actions
       end
     end
 
-    # We need to give the ActiveRecord classes a handle to currently marked records. We don't want to just pass the object,
-    # because the object may change. So we give ActiveRecord a proc that ties to the marked_records_method on this ApplicationController.
+    # Expose currently marked records to ActiveRecord through a proc instead of passing the object. The object may
+    # change, and the proc keeps it tied to the marked_records_method on this ApplicationController.
     def assign_marked_records_to_model
       active_scaffold_config.model.marked_records = marked_records
     end

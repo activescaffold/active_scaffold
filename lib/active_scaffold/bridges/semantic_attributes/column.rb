@@ -4,7 +4,9 @@ class ActiveScaffold::Bridges::SemanticAttributes
   module Column
     def initialize(name, active_record_class)
       super
-      self.required = !active_record_class.semantic_attributes[self.name].predicates.find { |p| p.allow_empty? == false }.nil?
+      self.required = active_record_class.semantic_attributes[self.name].predicates.any? do |predicate|
+        !predicate.allow_empty?
+      end
       ignored_types = %i[required association]
       active_record_class.semantic_attributes[self.name].predicates.find do |p|
         sem_type = p.class.to_s.split('::')[1].underscore.to_sym

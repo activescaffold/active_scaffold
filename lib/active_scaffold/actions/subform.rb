@@ -29,7 +29,8 @@ module ActiveScaffold::Actions
                 build_associated(@column.association, @parent_record) do |blank_record|
                   if params[:tabbed_by] && params[:value]
                     @tab_id = params.delete(:value)
-                    assign_tabbed_by(blank_record, @column, params.delete(:tabbed_by), @tab_id, params.delete(:value_type))
+                    assign_tabbed_by(blank_record, @column, params.delete(:tabbed_by), @tab_id,
+                                     params.delete(:value_type))
                   end
                 end
     end

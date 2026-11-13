@@ -8,7 +8,9 @@ module ActiveScaffold
       NESTED_PARAMS = %i[eid embedded association parent_scaffold].freeze
 
       def skip_action_link?(link, *)
-        !link.ignore_method.nil? && controller.respond_to?(link.ignore_method, true) && controller.send(link.ignore_method, *)
+        return false if link.ignore_method.nil?
+
+        controller.respond_to?(link.ignore_method, true) && controller.send(link.ignore_method, *)
       end
 
       def action_link_authorized?(link, *args) # rubocop:disable Naming/PredicateMethod
@@ -69,7 +71,8 @@ module ActiveScaffold
           authorized, reason = action_link_authorized?(link, *Array(options[:for]))
           return if !authorized && options[:skip_unauthorized]
 
-          content = display_action_link(link, nil, record, options.merge(authorized: authorized, not_authorized_reason: reason))
+          content = display_action_link(link, nil, record,
+                                        options.merge(authorized: authorized, not_authorized_reason: reason))
           options[:first_action] = false
           content
         end
@@ -122,7 +125,9 @@ module ActiveScaffold
             )
           end
         end
-        content = content_tag(options[:level_0_tag], content, options[:options_level_0_tag]) if options[:level].zero? && options[:level_0_tag]
+        if options[:level].zero? && options[:level_0_tag]
+          content = content_tag(options[:level_0_tag], content, options[:options_level_0_tag])
+        end
         content
       end
 
@@ -145,7 +150,8 @@ module ActiveScaffold
 
         cache_link = cache_action_link?(link)
         label = options[:link]
-        result = optional_cache_helper(method, link.name_to_cache.to_s, cache_link, link, record, options, cache: cache_link)
+        result = optional_cache_helper(method, link.name_to_cache.to_s, cache_link, link, record, options,
+                                       cache: cache_link)
         cache_link ? replace_tags_for_action_link(result, method, link, label, record, options) : result
       end
 
@@ -178,7 +184,9 @@ module ActiveScaffold
           html = html.gsub('--REASON--', ERB::Util.unwrapped_html_escape(options[:not_authorized_reason]))
         when :render_authorized_action_link
           html = html.gsub('--URL--', ERB::Util.unwrapped_html_escape(action_link_url(link, record)))
-                   .gsub('--LINK_ID--', ERB::Util.unwrapped_html_escape(options[:link_id] || get_action_link_id(link, record)))
+                   .gsub('--LINK_ID--', ERB::Util.unwrapped_html_escape(
+                                          options[:link_id] || get_action_link_id(link, record)
+                                        ))
                    .gsub('--CONFIRM--') { ERB::Util.unwrapped_html_escape(link.confirm(h(record&.to_label))) }
                    .gsub('--PROMPT--') { ERB::Util.unwrapped_html_escape(link.prompt(h(record&.to_label))) }
                    .gsub('--ACTIVE--') { action_link_selected?(link, record) ? 'active' : '' }
@@ -286,7 +294,8 @@ module ActiveScaffold
       end
 
       def cache_action_link_url?(link, record)
-        active_scaffold_config.user.cache_action_link_urls && link.type == :member && !link.dynamic_parameters.is_a?(Proc) && !sti_record?(record)
+        active_scaffold_config.user.cache_action_link_urls && link.type == :member &&
+          !link.dynamic_parameters.is_a?(Proc) && !sti_record?(record)
       end
 
       def cache_action_link?(link)
@@ -366,7 +375,8 @@ module ActiveScaffold
 
         keep, query_string_options, non_nested_query_string_options = _as_action_link_query_options(link)
         if nested_singular_association? && action_name == 'index'
-          # pass the current path as return_to, for nested listing on singular association, so forms don't return to parent listing
+          # pass the current path as return_to, for nested listing on singular association, so forms don't return to
+          # parent listing
           @query_string_params << :return_to
           non_nested_query_string_options[:return_to] = request.fullpath
         end
@@ -402,11 +412,13 @@ module ActiveScaffold
       private :_as_action_link_query_options
 
       def cache_action_link_url_options?(link, record)
-        active_scaffold_config.user.cache_action_link_urls && (link.type == :collection || !link.dynamic_parameters.is_a?(Proc)) && !sti_record?(record)
+        active_scaffold_config.user.cache_action_link_urls &&
+          (link.type == :collection || !link.dynamic_parameters.is_a?(Proc)) && !sti_record?(record)
       end
 
       def cached_action_link_url_options(link, record)
-        optional_cache_helper(:action_link_url_options, link.name_to_cache.to_s, cache_action_link_url_options?(link, record), link, record)
+        optional_cache_helper(:action_link_url_options, link.name_to_cache.to_s,
+                              cache_action_link_url_options?(link, record), link, record)
       end
 
       def action_link_url_options(link, record)
@@ -416,7 +428,9 @@ module ActiveScaffold
         url_options.merge! link.parameters if link.parameters
         _as_add_dynamic_action_link_parameters(url_options, link, record)
         _as_add_nested_action_link_parameters(url_options, link, record)
-        url_options_for_sti_link(link.column, record, link, url_options) unless record.nil? || active_scaffold_config.sti_children.nil?
+        unless record.nil? || active_scaffold_config.sti_children.nil?
+          url_options_for_sti_link(link.column, record, link, url_options)
+        end
         url_options[:_method] = link.method if !link.confirm? && link.inline? && link.method != :get
         url_options
       end
@@ -424,7 +438,12 @@ module ActiveScaffold
       def _as_add_dynamic_action_link_parameters(url_options, link, record)
         return unless link.dynamic_parameters.is_a?(Proc)
 
-        dynamic_parameters = record.nil? ? instance_exec(&link.dynamic_parameters) : instance_exec(record, &link.dynamic_parameters)
+        dynamic_parameters =
+          if record.nil?
+            instance_exec(&link.dynamic_parameters)
+          else
+            instance_exec(record, &link.dynamic_parameters)
+          end
         url_options.merge! dynamic_parameters
       end
 
@@ -541,7 +560,8 @@ module ActiveScaffold
         html_options[:target] = '_blank'
         html_options[:rel] = [html_options[:rel], 'noopener noreferrer'].compact.join(' ')
       end
-      private :_as_add_action_link_method_and_data, :_as_add_inline_action_link_options, :_as_inline_action_link?, :_as_add_action_link_prompt,
+      private :_as_add_action_link_method_and_data, :_as_add_inline_action_link_options,
+              :_as_inline_action_link?, :_as_add_action_link_prompt,
               :_as_add_toggle_action_link_options, :_as_popup_action_link?, :_as_add_popup_action_link_options
 
       def get_action_link_id(link, record = nil)

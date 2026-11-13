@@ -6,7 +6,8 @@ module ActiveScaffold::DataStructures::Association
       klass.reflect_on_all_associations
     end
 
-    delegate :collection?, :polymorphic?, :association_primary_key, :foreign_type, :table_name, :nested?, :scope, :class_name, to: :@association
+    delegate :collection?, :polymorphic?, :association_primary_key, :foreign_type, :table_name, :nested?, :scope,
+             :class_name, to: :@association
 
     def through?
       @association.options[:through].present?

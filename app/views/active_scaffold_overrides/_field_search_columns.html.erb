@@ -23,7 +23,8 @@
         end
       %>
       <%= as_element :field_search_subsection do %>
-        <%= render_subsection(@hidden_section, @record, nil, :field_search, subsection_id: sub_section_id(sub_section: 'further_options')) do |further_options_id| %>
+        <%= render_subsection(@hidden_section, @record, nil, :field_search,
+                              subsection_id: sub_section_id(sub_section: 'further_options')) do |further_options_id| %>
           <%= as_element :field_search_fields_container, id: further_options_id, class: 'form', style: 'display:none;' do %>
             <% hiddens.each do |column| -%>
               <%= render_field_search_column(column, @record) %>

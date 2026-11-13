@@ -11,7 +11,10 @@ module ActiveScaffold::Config
     # global level configuration
     # --------------------------
     cattr_accessor :link, instance_accessor: false,
-                          default: ActiveScaffold::DataStructures::ActionLink.new('show', label: :show, type: :member, security_method: :show_authorized?, ignore_method: :show_ignore?)
+                          default: ActiveScaffold::DataStructures::ActionLink.new(
+                            'show', label: :show, type: :member,
+                                    security_method: :show_authorized?, ignore_method: :show_ignore?
+                          )
 
     cattr_accessor :inline_links, instance_accessor: false, default: false
 

@@ -18,9 +18,11 @@ class ActiveScaffold::Bridges::RecordSelect
         html =
           if column.association&.singular?
             multiple = ui_options.dig(:html_options, :multiple)
-            active_scaffold_record_select(record, column, options, record.send(column.name), multiple, ui_options: ui_options.except(:add_new))
+            active_scaffold_record_select(record, column, options, record.send(column.name), multiple,
+                                          ui_options: ui_options.except(:add_new))
           elsif column.association&.collection?
-            active_scaffold_record_select(record, column, options, record.send(column.name), true, ui_options: ui_options.except(:add_new))
+            active_scaffold_record_select(record, column, options, record.send(column.name), true,
+                                          ui_options: ui_options.except(:add_new))
           else
             active_scaffold_record_select_autocomplete(record, column, options, ui_options: ui_options)
           end
@@ -34,7 +36,8 @@ class ActiveScaffold::Bridges::RecordSelect
       def active_scaffold_record_select(record, column, options, value, multiple, ui_options: column.options)
         unless column.association
           raise ArgumentError, "record_select can only work against associations (and #{column.name} is not). " \
-                               'A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user).'
+                               'A common mistake is to specify the foreign key field (like :user_id), ' \
+                               'instead of the association (:user).'
         end
         klass = column.association.klass(record)
         return content_tag :span, '', class: options[:class] unless klass
@@ -76,7 +79,8 @@ class ActiveScaffold::Bridges::RecordSelect
     module SearchColumnHelpers
       def active_scaffold_search_record_select(column, options, ui_options: column.options)
         value = field_search_record_select_value(column, options[:value], ui_options: ui_options)
-        active_scaffold_record_select(options[:object], column, options.except(:value), value, ui_options[:multiple], ui_options: ui_options)
+        active_scaffold_record_select(options[:object], column, options.except(:value), value, ui_options[:multiple],
+                                      ui_options: ui_options)
       end
 
       def field_search_record_select_value(column, value, ui_options: column.options)
@@ -88,7 +92,8 @@ class ActiveScaffold::Bridges::RecordSelect
           column.association.klass.find(value.to_i)
         end
       rescue StandardError => e
-        message = "Sorry, we are not that smart yet. Attempted to restore search values to search fields :#{column.name} in #{controller.class}"
+        message = 'Sorry, we are not that smart yet. Attempted to restore search values ' \
+                  "to search fields :#{column.name} in #{controller.class}"
         Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
         raise e, "#{e.message} -- #{message}", e.backtrace
       end

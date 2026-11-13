@@ -48,9 +48,12 @@ module ActiveScaffold::Config
 
     # provides access to the list of columns specifically meant for the Search to use
     def columns
-      # we want to delay initializing to the @core.columns set for as long as possible. Too soon and .search_sql will not be available to .searchable?
+      # we want to delay initializing to the @core.columns set for as long as possible. Too soon and .search_sql will
+      # not be available to .searchable?
       unless defined? @columns
-        self.columns = @core.columns.filter_map { |c| c.name if @core.columns._inheritable.include?(c.name) && c.searchable? && c.association.nil? && c.text? }
+        self.columns = @core.columns.filter_map do |c|
+          c.name if @core.columns._inheritable.include?(c.name) && c.searchable? && c.association.nil? && c.text?
+        end
       end
       @columns
     end

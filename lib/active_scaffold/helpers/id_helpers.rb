@@ -20,8 +20,11 @@ module ActiveScaffold
         clean_id nested_parent_record.id.to_s
       end
 
-      def nested_id(controller = nil)
-        "#{nested.parent_scaffold.controller_path}-#{nested_parent_id}-#{controller || params[:parent_controller] || params[:controller]}" if nested?
+      def nested_id(parent_controller = nil)
+        return unless nested?
+
+        parent_controller ||= params[:parent_controller] || params[:controller]
+        "#{nested.parent_scaffold.controller_path}-#{nested_parent_id}-#{parent_controller}"
       end
 
       def active_scaffold_id
@@ -108,13 +111,13 @@ module ActiveScaffold
       def sub_form_id(options = {})
         options[:id] ||= params[:id]
         options[:id] ||= nested_parent_id if nested?
-        clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}#{'-' if options[:tab_id]}#{options[:tab_id]}-subform"
+        clean_id build_subform_id(controller_id, options, 'subform')
       end
 
       def sub_form_list_id(options = {})
         options[:id] ||= params[:id]
         options[:id] ||= nested_parent_id if nested?
-        clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}#{'-' if options[:tab_id]}#{options[:tab_id]}-subform-list"
+        clean_id build_subform_id(controller_id, options, 'subform-list')
       end
 
       def element_messages_id(options = {})
@@ -133,6 +136,11 @@ module ActiveScaffold
       end
 
       private
+
+      def build_subform_id(controller_id, options, suffix)
+        tab = "#{'-' if options[:tab_id]}#{options[:tab_id]}"
+        "#{controller_id}-#{options[:id]}-#{options[:association]}#{tab}-#{suffix}"
+      end
 
       # whitelists id-safe characters
       def clean_id(val)

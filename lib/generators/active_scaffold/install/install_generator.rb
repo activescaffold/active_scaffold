@@ -195,7 +195,8 @@ module ActiveScaffold
       def add_to_scss_asset
         dependency = scss_dependency
         unless dependency
-          say_status('missing', "could not detect dartsass-rails or dartsass-sprockets; update #{SCSS_ASSET} manually", :red)
+          say_status('missing', "could not detect dartsass-rails or dartsass-sprockets; update #{SCSS_ASSET} manually",
+                     :red)
           return
         end
 

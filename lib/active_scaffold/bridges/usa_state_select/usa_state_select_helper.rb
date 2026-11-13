@@ -4,7 +4,9 @@ module ActiveScaffold::Bridges
   class UsaStateSelect
     module UsaStateSelectHelpers
       def usa_state_select(object, method, priority_states = nil, options = {}, html_options = {})
-        ActionView::Helpers::Tags::UsaStateSelect.new(object, method, self, options).to_usa_state_select_tag(priority_states, options, html_options)
+        ActionView::Helpers::Tags::UsaStateSelect.new(object, method, self, options).to_usa_state_select_tag(
+          priority_states, options, html_options
+        )
       end
     end
 
@@ -14,17 +16,20 @@ module ActiveScaffold::Bridges
       # in case you want to highligh a local area
       # NOTE: Only the option tags are returned from this method, wrap it in a <select>
       def usa_state_options_for_select(selected = nil, priority_states = nil)
-        state_options = if priority_states
-                          options_for_select(priority_states + [['-------------', '']], selected: selected, disabled: '')
-                        else
-                          options_for_select([])
-                        end
+        state_options =
+          if priority_states
+            priority_options = priority_states + [['-------------', '']]
+            options_for_select(priority_options, selected: selected, disabled: '')
+          else
+            options_for_select([])
+          end
 
-        state_options += if priority_states&.include?(selected)
-                           options_for_select(USASTATES - priority_states, selected: selected)
-                         else
-                           options_for_select(USASTATES, selected: selected)
-                         end
+        state_options +=
+          if priority_states&.include?(selected)
+            options_for_select(USASTATES - priority_states, selected: selected)
+          else
+            options_for_select(USASTATES, selected: selected)
+          end
 
         state_options
       end
@@ -55,7 +60,8 @@ module ActiveScaffold::Bridges
           else
             method(:value).parameters.any? ? value(object) : value
           end
-        content_tag('select', add_options(usa_state_options_for_select(selected_value, priority_states), options, selected_value), html_options)
+        state_options = usa_state_options_for_select(selected_value, priority_states)
+        content_tag('select', add_options(state_options, options, selected_value), html_options)
       end
     end
 
@@ -71,7 +77,8 @@ module ActiveScaffold::Bridges
 
     module SearchColumnHelpers
       def active_scaffold_search_usa_state(column, options, ui_options: column.options)
-        active_scaffold_input_usa_state(column, options.merge!(selected: options.delete(:value)), ui_options: ui_options)
+        active_scaffold_input_usa_state(column, options.merge!(selected: options.delete(:value)),
+                                        ui_options: ui_options)
       end
     end
   end

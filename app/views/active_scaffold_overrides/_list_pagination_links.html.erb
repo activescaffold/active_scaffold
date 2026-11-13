@@ -4,8 +4,15 @@
 
   <%= loading_indicator_tag action: :pagination %>
   <%= pagination_html do %>
-    <%= pagination_ajax_link current_page.number - 1, url_options, options.merge(class: 'previous'), text: :previous if current_page.prev? %>
-    <%= pagination_ajax_links current_page, url_options, options, active_scaffold_config.list.page_links_inner_window, active_scaffold_config.list.page_links_outer_window %>
-    <%= pagination_ajax_link current_page.number + 1, url_options, options.merge(class: 'next'), text: :next if current_page.next? %>
+    <% if current_page.prev? %>
+      <%= pagination_ajax_link current_page.number - 1, url_options, options.merge(class: 'previous'),
+                               text: :previous %>
+    <% end %>
+    <%= pagination_ajax_links current_page, url_options, options, active_scaffold_config.list.page_links_inner_window,
+                              active_scaffold_config.list.page_links_outer_window %>
+    <% if current_page.next? %>
+      <%= pagination_ajax_link current_page.number + 1, url_options, options.merge(class: 'next'),
+                               text: :next %>
+    <% end %>
   <% end %>
 <% end -%>

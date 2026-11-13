@@ -62,13 +62,17 @@ module ActiveScaffold
       private :_as_configured_form_input_method, :_as_render_configured_form_input, :_as_render_association_form_input,
               :_as_render_virtual_form_input, :_as_render_default_form_input
 
-      def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class: false, record: nil, form_columns: nil)
+      def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class: false, record: nil,
+                                                form_columns: nil)
         col_class = _as_subform_column_class(column, record) if add_class
         if (readonly && !record.new_record?) || !record.authorized_for?(crud_type: crud_type, column: column.name)
           form_attribute(column, record, scope, only_value: true, col_class: col_class)
         else
           renders_as = column_renders_as(column)
-          html = render_column(column, record, renders_as, scope, only_value: false, col_class: col_class, form_columns: form_columns)
+          html = render_column(
+            column, record, renders_as, scope,
+            only_value: false, col_class: col_class, form_columns: form_columns
+          )
           html = content_tag(:div, html, active_scaffold_subform_attributes(column)) if renders_as == :subform
           html
         end
@@ -84,9 +88,11 @@ module ActiveScaffold
       end
       private :_as_subform_column_class
 
-      def active_scaffold_subform_attributes(column, column_css_class = nil, klass = nil, tab_id: nil, ui_options: column.options)
+      def active_scaffold_subform_attributes(column, column_css_class = nil, klass = nil, tab_id: nil,
+                                             ui_options: column.options)
+        layout = subform_layout(column, klass, ui_options)
         {
-          class: "sub-form #{ui_options[:layout] || active_scaffold_config_for(klass || column.association.klass).subform.layout}-sub-form #{column_css_class} #{column.name}-sub-form",
+          class: "sub-form #{layout}-sub-form #{column_css_class} #{column.name}-sub-form",
           id: sub_form_id(association: column.name, tab_id: tab_id)
         }
       end
@@ -132,7 +138,8 @@ module ActiveScaffold
       end
 
       def _as_required_form_input?(column, record, scope)
-        column.required?(action_for_validation(record)) && (!@disable_required_for_new || scope.nil? || record&.persisted?)
+        column.required?(action_for_validation(record)) &&
+          (!@disable_required_for_new || scope.nil? || record&.persisted?)
       end
 
       def _as_form_input_id(column, scope)
@@ -188,7 +195,9 @@ module ActiveScaffold
         options[:class] = "#{options[:class]} update_form".strip
         options['data-update_url'] = url_for(url_params)
         options['data-update_send_form'] = column.update_columns&.any?(Hash) || column.send_form_on_update_column
-        options['data-update_send_form_selector'] = column.options[:send_form_selector] if column.options[:send_form_selector]
+        if column.options[:send_form_selector]
+          options['data-update_send_form_selector'] = column.options[:send_form_selector]
+        end
         options['data-skip-disable-form'] = !column.disable_on_update_column
       end
 
@@ -212,7 +221,9 @@ module ActiveScaffold
           locals[:tabbed_by] = column.tabbed_by
           header << content_tag(:div, id: subsection_id) do
             active_scaffold_tabbed_by(column, record, scope, subsection_id) do |tab_value, tab_id|
-              render partial, locals.merge(subsection_id: "#{subsection_id}-#{tab_id}", tab_id: tab_id, tab_value: tab_value)
+              render partial, locals.merge(
+                subsection_id: "#{subsection_id}-#{tab_id}", tab_id: tab_id, tab_value: tab_value
+              )
             end
           end
         elsif block_given?
@@ -222,7 +233,8 @@ module ActiveScaffold
         end
       end
 
-      def render_column(column, record, renders_as, scope = nil, only_value: false, col_class: nil, form_columns: nil, **subform_locals)
+      def render_column(column, record, renders_as, scope = nil, only_value: false, col_class: nil, form_columns: nil,
+                        **subform_locals)
         hide_column, clear = form_column_is_hidden?(column, record, scope)
         if hide_column
           if clear
@@ -236,11 +248,15 @@ module ActiveScaffold
             end
           end
         elsif (partial = override_form_field_partial(column))
-          render partial, column: column, only_value: only_value, scope: scope, col_class: col_class, record: record, form_columns: form_columns
+          field_options = {only_value: only_value, col_class: col_class, form_columns: form_columns}
+          render partial, field_options.merge(column: column, scope: scope, record: record)
         elsif renders_as == :field || override_form_field?(column)
-          form_attribute(column, record, scope, only_value: only_value, col_class: col_class, form_columns: form_columns)
+          field_options = {only_value: only_value, col_class: col_class, form_columns: form_columns}
+          form_attribute(column, record, scope, **field_options)
         elsif renders_as == :subform
-          render 'form_association', subform_locals.slice(:tabbed_by, :tab_value, :tab_id).merge(column: column, scope: scope, parent_record: record)
+          render 'form_association', subform_locals.slice(:tabbed_by, :tab_value, :tab_id).merge(
+            column: column, scope: scope, parent_record: record
+          )
         else
           form_hidden_attribute(column, record, scope)
         end
@@ -283,7 +299,9 @@ module ActiveScaffold
           else
             active_scaffold_input_for column, scope, column_options, form_columns: form_columns
           end
-        field = safe_join([field, loading_indicator_tag(action: :render_field, id: params[:id])]) if field && column.update_columns
+        if field && column.update_columns
+          field = safe_join([field, loading_indicator_tag(action: :render_field, id: params[:id])])
+        end
         description = column_description(column, record, scope)
 
         label = label_tag(label_for(column, column_options), form_column_label(column, record, scope))
@@ -431,8 +449,12 @@ module ActiveScaffold
       alias override_input? override_input
 
       def subform_partial_for_column(column, klass = nil, ui_options: column.options)
-        subform_partial = "#{ui_options[:layout] || active_scaffold_config_for(klass || column.association.klass).subform.layout}_subform"
+        subform_partial = "#{subform_layout(column, klass, ui_options)}_subform"
         override_subform_partial(column, subform_partial) || subform_partial
+      end
+
+      def subform_layout(column, klass, ui_options)
+        ui_options[:layout] || active_scaffold_config_for(klass || column.association.klass).subform.layout
       end
 
       ##
@@ -444,7 +466,9 @@ module ActiveScaffold
           :subsection
         elsif column.active_record_class.locking_column.to_s == column.name.to_s || column.form_ui == :hidden
           :hidden
-        elsif column.association.nil? || column.form_ui || active_scaffold_config_for(column.association.klass).actions.exclude?(:subform) || override_form_field?(column)
+        elsif column.association.nil? || column.form_ui ||
+              active_scaffold_config_for(column.association.klass).actions.exclude?(:subform) ||
+              override_form_field?(column)
           :field
         else
           :subform
@@ -471,7 +495,9 @@ module ActiveScaffold
           select_options = send(helper_method, nested.association, nil, record)
           select_options ||= active_scaffold_config.model.all
           select_options = options_from_collection_for_select(select_options, :id, :to_label)
-          select_tag 'associated_id', (content_tag(:option, as_(:_select_), value: '') + select_options) unless select_options.empty?
+          unless select_options.empty?
+            select_tag 'associated_id', (content_tag(:option, as_(:_select_), value: '') + select_options)
+          end
         end
       end
 
@@ -496,7 +522,9 @@ module ActiveScaffold
         only_integer = _as_integer_constraints?(column, validators)
         margin = only_integer ? 1 : 0
         numerical_constraints = _as_numerical_constraint_bounds(validators, options, margin)
-        _as_add_numerical_step_constraint(numerical_constraints, column, validators, options, only_integer) unless options[:step]
+        unless options[:step]
+          _as_add_numerical_step_constraint(numerical_constraints, column, validators, options, only_integer)
+        end
         numerical_constraints
       end
 
@@ -508,7 +536,9 @@ module ActiveScaffold
       end
 
       def _as_integer_constraints?(column, validators)
-        (column.column && column.column_type == :integer) || validators.any? { |validator| validator.options[:only_integer] }
+        (column.column && column.column_type == :integer) || validators.any? do |validator|
+          validator.options[:only_integer]
+        end
       end
 
       def _as_numerical_constraint_bounds(validators, options, margin)

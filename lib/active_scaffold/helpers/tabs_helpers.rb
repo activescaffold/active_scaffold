@@ -5,14 +5,18 @@ module ActiveScaffold
     # Helpers that assist with rendering of tabs in forms
     module TabsHelpers
       def active_scaffold_tabbed_by(column, record, scope, subsection_id, &)
-        add_tab_url = params_for(action: 'render_field', tabbed_by: column.tabbed_by, id: record.to_param, column: column.label)
-        refresh_opts = {field_selector: "##{subsection_id}_input", refresh_link: {text: 'Add tab', class: 'refresh-link add-tab'}}
+        add_tab_url = params_for(action: 'render_field', tabbed_by: column.tabbed_by, id: record.to_param,
+                                 column: column.label)
+        refresh_opts = {field_selector: "##{subsection_id}_input",
+                        refresh_link: {text: 'Add tab', class: 'refresh-link add-tab'}}
         tab_options = send(override_helper_per_model(:active_scaffold_tab_options, record.class), column, record)
-        used_tabs = send(override_helper_per_model(:active_scaffold_current_tabs, record.class), column, record, tab_options)
+        used_tabs = send(override_helper_per_model(:active_scaffold_current_tabs, record.class), column, record,
+                         tab_options)
         input_helper = override_helper_per_model(:active_scaffold_input_for_tabbed, record.class)
         safe_join([
                     send(input_helper, column, record, subsection_id, tab_options, used_tabs.map { |v, _| v }),
-                    active_scaffold_refresh_link(nil, {'data-update_url' => url_for(add_tab_url)}, record, refresh_opts),
+                    active_scaffold_refresh_link(nil, {'data-update_url' => url_for(add_tab_url)}, record,
+                                                 refresh_opts),
                     active_scaffold_tabs_for(column, record, subsection_id, tab_options, used_tabs, &)
                   ])
       end
@@ -75,7 +79,8 @@ module ActiveScaffold
         content_tag(:div, class: 'tabbed') do
           content_tag(:ul, class: 'nav nav-tabs') do
             tabs = used_tabs.map.with_index do |(tab_value, id), i|
-              active_scaffold_tab tab_options.find { |_, value, tab_record| tab_value == (tab_record || value) }&.first, "#{subsection_id}-#{id}-tab", i.zero?
+              tab_label = tab_options.find { |_, value, tab_record| tab_value == (tab_record || value) }&.first
+              active_scaffold_tab tab_label, "#{subsection_id}-#{id}-tab", i.zero?
             end
             safe_join tabs
           end << content_tag(:div, class: 'tab-content') do

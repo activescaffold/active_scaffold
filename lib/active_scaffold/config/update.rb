@@ -13,7 +13,10 @@ module ActiveScaffold::Config
     # --------------------------
     # the ActionLink for this action
     cattr_accessor :link, instance_accessor: false,
-                          default: ActiveScaffold::DataStructures::ActionLink.new('edit', label: :edit, type: :member, security_method: :update_authorized?, ignore_method: :update_ignore?)
+                          default: ActiveScaffold::DataStructures::ActionLink.new(
+                            'edit', label: :edit, type: :member,
+                                    security_method: :update_authorized?, ignore_method: :update_ignore?
+                          )
 
     cattr_accessor :nested_links, instance_accessor: false, default: false
 

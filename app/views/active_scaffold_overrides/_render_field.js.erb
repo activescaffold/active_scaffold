@@ -26,7 +26,9 @@
         step = traverse_by_record ? "#{sub_form}:has([id$=\"#{assoc_name}_#{r.id || temp_id}\"])" : sub_form
         next_scope = column_scope(assoc_column, scope, r, temp_id) unless assoc_name == :__root__
 %>
-<%= render(partial: 'render_field', collection: columns, as: :column, locals: {source_id: source_id, scope: next_scope, record: r, active_scaffold_config: config, traverse: traverse + [step]}) %>
+<%= render(partial: 'render_field', collection: columns, as: :column,
+           locals: {source_id: source_id, scope: next_scope, record: r,
+                    active_scaffold_config: config, traverse: traverse + [step]}) %>
 <%
       end
     end
@@ -68,5 +70,7 @@
 -%>
 
 ActiveScaffold.render_form_field('<%= source_id %>','<%= escape_javascript(html) %>', <%= javascript_literal(options) %>);
-<%= render(partial: 'render_field', collection: column.update_columns, as: :column, locals: local_assigns) if column.update_columns.present? %>
+<% if column.update_columns.present? %>
+  <%= render partial: 'render_field', collection: column.update_columns, as: :column, locals: local_assigns %>
+<% end %>
 <% end %>

@@ -8,7 +8,8 @@ module ActiveScaffold::Actions
         config = active_scaffold_config
         if config.actions.include?(:nested) && config.deleted_records.nested_link_group
           config.configure do
-            nested.add_link :versions, label: config.deleted_records.nested_link_label, action_group: config.deleted_records.nested_link_group
+            nested.add_link :versions, label: config.deleted_records.nested_link_label,
+                                       action_group: config.deleted_records.nested_link_group
           end
         end
       end

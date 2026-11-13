@@ -26,7 +26,8 @@ module ActiveScaffold
           columns << field
           columns.exclude :"#{field}_attachment#{'s' if field_type == :has_many}"
           columns.exclude :"#{field}_blob#{'s' if field_type == :has_many}"
-          columns[field].includes ||= [:"#{field}_attachment#{'s' if field_type == :has_many}", :"#{field}_blob#{'s' if field_type == :has_many}"]
+          columns[field].includes ||= [:"#{field}_attachment#{'s' if field_type == :has_many}",
+                                       :"#{field}_blob#{'s' if field_type == :has_many}"]
           columns[field].form_ui ||= :"active_storage_#{field_type}"
           columns[field].params.add "delete_#{field}"
         end

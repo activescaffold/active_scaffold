@@ -40,7 +40,9 @@ module ActiveScaffold
       def active_scaffold_show_vertical(record, column, ui_options: column.options)
         raise ArgumentError, ':vertical show_ui must be used on association column' unless column.association
 
-        render partial: 'show_association', locals: {column: column, parent_record: record, show_partial: :vertical, columns: ui_options[:subform_columns]}
+        render partial: 'show_association',
+               locals: {column: column, parent_record: record, show_partial: :vertical,
+                        columns: ui_options[:subform_columns]}
       end
 
       def show_columns_for(record, parent_column = nil, hash = {})

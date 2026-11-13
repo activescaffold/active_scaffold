@@ -3,7 +3,13 @@ var field = jQuery('#<%= params[:from_field] %>');
   label, id = new_option_from_record(@record)
   config = active_scaffold_config_for(params[:parent_model])
   column = config.columns[params[:parent_column]] if config
-  field_options = active_scaffold_input_options(column, params[:parent_scope], {object: @record}.merge(params[:radio_data]&.to_unsafe_h || {})) if column
+  if column
+    field_options = active_scaffold_input_options(
+      column,
+      params[:parent_scope],
+      {object: @record}.merge(params[:radio_data]&.to_unsafe_h || {})
+    )
+  end
   field_options[:class] = "#{field_options[:class]} update_form" if field_options&.dig('data-update_url')
 %>
 if (field.is('select')) {
@@ -26,9 +32,13 @@ if (field.is('select')) {
     field.next().val(<%= id %>);
   }
 } else if (field.is('.new-radio-container')) {
-  if (!field.parent().find('input[type=radio][value="<%= id %>"]').length) {
-    field.append('<%= j active_scaffold_radio_option(@record, id, column, field_options, ui_options: column.form_ui_options || column.options) if column %>');
-  } else field = field.parent().find('input[type=radio][value="<%= id %>"]').prop('checked', true);
+  var radio = field.parent().find('input[type=radio][value="<%= id %>"]');
+  if (!radio.length) {
+    <% if column %>
+      field.append('<%= j active_scaffold_radio_option(@record, id, column, field_options,
+                                                       ui_options: column.form_ui_options || column.options) %>');
+    <% end %>
+  } else field = radio.prop('checked', true);
 } else if (field.is('.checkbox-list')) {
   var list = field;
   if (list.is('.draggable-list')) {
@@ -40,7 +50,9 @@ if (field.is('select')) {
       ui_options = column&.form_ui_options || column&.options
       label_method = ui_options&.dig(:label_method) || :to_label
       cb_id = "#{field_options[:id]}_INDEX_id"
-      html = active_scaffold_checkbox_option(@record, label_method, [id], {name: "#{field_options[:name]}[]", id: cb_id}, ui_options&.dig(:item_options) || {})
+      html = active_scaffold_checkbox_option(@record, label_method, [id],
+                                             {name: "#{field_options[:name]}[]", id: cb_id},
+                                             ui_options&.dig(:item_options) || {})
     %>
     var cb_id = '<%= cb_id %>'.replace('INDEX', field.find('input[type=checkbox]').length);
     list.append('<%= j html %>')

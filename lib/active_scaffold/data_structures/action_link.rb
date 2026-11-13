@@ -114,7 +114,8 @@ module ActiveScaffold::DataStructures
 
     # what method to call on the controller to see if this action_link should be visible
     # if method return false, link will be disabled
-    # note that this is only the UI part of the security. to prevent URL hax0rz, you also need security on requests (e.g. don't execute update method unless authorized).
+    # note that this is only the UI part of the security. to prevent URL hax0rz, you also need security on requests
+    # (e.g. don't execute update method unless authorized).
     attr_writer :security_method
 
     def security_method

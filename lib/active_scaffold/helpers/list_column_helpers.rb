@@ -21,7 +21,6 @@ module ActiveScaffold
         else
           value = nil
         end
-        value = '&nbsp;'.html_safe if value.nil? || value.blank? # fix for IE 6
         value
       rescue StandardError => e
         handle_exception_on_column(e, column, record)
@@ -97,7 +96,12 @@ module ActiveScaffold
 
       def active_scaffold_column_marked(record, column, ui_options: column.options)
         options = {id: nil, object: record}
-        content_tag(:span, check_box(:record, column.name, options), class: 'in_place_editor_field', data: {ie_id: record.to_param})
+        content_tag(
+          :span,
+          check_box(:record, column.name, options),
+          class: 'in_place_editor_field',
+          data: {ie_id: record.to_param}
+        )
       end
 
       def active_scaffold_column_checkbox(record, column, ui_options: column.options)
@@ -232,7 +236,8 @@ module ActiveScaffold
       end
 
       def _as_prepare_collection_association(record, column, value)
-        associated_size = column_association_size(record, column, value) if column.associated_number? # get count before cache association
+        # Get count before caching the association.
+        associated_size = column_association_size(record, column, value) if column.associated_number?
         if column.association.respond_to_target? && !value.loaded?
           cache_association(record.association(column.name), column, associated_size)
         end
@@ -282,7 +287,8 @@ module ActiveScaffold
         when 'quarter'
           I18n.t(options[:group_format] || search_group_function, scope: 'date.formats', num: value)
         when 'month'
-          I18n.l(Date.new(Time.zone.today.year, value, 1), format: options[:group_format] || search_group_function.to_sym)
+          I18n.l(Date.new(Time.zone.today.year, value, 1),
+                 format: options[:group_format] || search_group_function.to_sym)
         when 'year'
           value.to_i
         else
@@ -350,14 +356,17 @@ module ActiveScaffold
 
       def cache_association(association, column, size)
         associated_limit = column.associated_limit
-        # we are not using eager loading, cache firsts records in order not to query the database for whole association in a future
+        # we are not using eager loading, cache firsts records in order not to query the database for whole association
+        # in a future
         if associated_limit.nil?
           logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
         elsif associated_limit.positive?
           # load at least one record more, is needed to display '...'
-          association.target = association.reader.limit(associated_limit + 1).select(column.select_associated_columns || "#{association.klass.quoted_table_name}.*").to_a
+          selected_columns = column.select_associated_columns || "#{association.klass.quoted_table_name}.*"
+          association.target = association.reader.limit(associated_limit + 1).select(selected_columns).to_a
         elsif @cache_associations
-          # set array with at least one element if size > 0, so blank? or present? works, saving [nil] may cause exceptions
+          # set array with at least one element if size > 0, so blank? or present? works, saving [nil] may cause
+          # exceptions
           association.target =
             if size.to_i.zero?
               []
@@ -381,7 +390,9 @@ module ActiveScaffold
       end
 
       def inplace_edit_cloning?(column)
-        column.inplace_edit != :ajax && (override_form_field?(column) || column.form_ui || (column.column && override_input?(column.column_type)))
+        column.inplace_edit != :ajax &&
+          (override_form_field?(column) || column.form_ui ||
+            (column.column && override_input?(column.column_type)))
       end
 
       def active_scaffold_inplace_edit_tag_options(record, column)
@@ -410,7 +421,11 @@ module ActiveScaffold
         options[:class] = "#{options[:class]} inplace_field"
         options[:'data-id'] = options[:id]
         options[:id] = nil
-        content_tag(:div, active_scaffold_input_for(column, nil, options), style: 'display:none;', class: inplace_edit_control_css_class)
+        content_tag(
+          :div,
+          active_scaffold_input_for(column, nil, options),
+          style: 'display:none;', class: inplace_edit_control_css_class
+        )
       end
 
       def inplace_edit_control_css_class
@@ -448,8 +463,10 @@ module ActiveScaffold
         elsif inplace_edit_cloning?(column)
           data[:ie_mode] = :clone
         elsif column.inplace_edit == :ajax
-          url = url_for(params_for(controller: params_for[:controller], action: 'render_field', id: '__id__', update_column: column.name))
-          plural = column.association&.collection? && !override_form_field?(column) && INPLACE_EDIT_PLURAL_FORM_UI.include?(column.form_ui)
+          url = url_for(params_for(controller: params_for[:controller], action: 'render_field', id: '__id__',
+                                   update_column: column.name))
+          plural = column.association&.collection? && !override_form_field?(column) &&
+                   INPLACE_EDIT_PLURAL_FORM_UI.include?(column.form_ui)
           data[:ie_render_url] = url
           data[:ie_mode] = :ajax
           data[:ie_plural] = plural
@@ -496,7 +513,8 @@ module ActiveScaffold
       # COLUMN HEADINGS
 
       def column_heading_attributes(column, sorting, sort_direction)
-        {id: active_scaffold_column_header_id(column), class: column_heading_class(column, sorting), title: strip_tags(column.description).presence}
+        {id: active_scaffold_column_header_id(column), class: column_heading_class(column, sorting),
+         title: strip_tags(column.description).presence}
       end
 
       def render_column_heading(column, sorting, sort_direction)
@@ -510,7 +528,8 @@ module ActiveScaffold
           tag_options[:data] = inplace_edit_data(column)
         end
 
-        content_tag(:th, column_heading_value(column, sorting, sort_direction) + inplace_edit_control(column), tag_options)
+        content_tag(:th, column_heading_value(column, sorting, sort_direction) + inplace_edit_control(column),
+                    tag_options)
       end
 
       def column_heading_value(column, sorting, sort_direction)
@@ -555,7 +574,8 @@ module ActiveScaffold
       end
 
       def format_column_calculation(column, calculation)
-        "#{"#{as_(column.calculate)}: " unless column.calculate.is_a? Proc}#{format_column_value nil, column, calculation}"
+        label = "#{as_(column.calculate)}: " unless column.calculate.is_a? Proc
+        "#{label}#{format_column_value(nil, column, calculation)}"
       end
     end
   end

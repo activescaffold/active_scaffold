@@ -88,7 +88,9 @@ module ActiveScaffold::Actions
     def set_includes_for_columns(action = :list, sorting = active_scaffold_config.list.user.sorting)
       @cache_associations = true
       columns = columns_for_action(action)
-      joins_cols = columns.select { |col| col.sort_joins.present? && includes_need_join?(col, sorting) && !grouped_search? }
+      joins_cols = columns.select do |col|
+        col.sort_joins.present? && includes_need_join?(col, sorting) && !grouped_search?
+      end
       active_scaffold_references.concat joins_cols.map(&:sort_joins).flatten.uniq
       active_scaffold_preload.concat columns.filter_map { |c| c.includes.presence }.flatten.uniq
       set_includes_for_sorting(columns, sorting) if sorting.sorts_by_sql?
@@ -241,7 +243,9 @@ module ActiveScaffold::Actions
       return unless active_scaffold_config.list.auto_select_columns
 
       auto_select_columns = list_columns + [active_scaffold_config.columns[active_scaffold_config.model.primary_key]]
-      options[:select] = auto_select_columns.filter_map { |column| quoted_select_columns(column.select_columns) }.flatten
+      options[:select] = auto_select_columns.filter_map do |column|
+        quoted_select_columns(column.select_columns)
+      end.flatten
     end
 
     def quoted_select_columns(columns)

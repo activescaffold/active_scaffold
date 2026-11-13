@@ -2,7 +2,8 @@
 
 namespace :active_scaffold do
   namespace :assets do
-    desc 'Generate jQuery UI theme css from jquery-ui-rails (if using the gem), and deps.css for Propshaft compatibility'
+    desc 'Generate jQuery UI theme css from jquery-ui-rails (if using the gem), ' \
+         'and deps.css for Propshaft compatibility'
     task generate: :environment do
       if ActiveScaffold::Assets::JqueryUiThemeGenerator.generate!
         puts '✅ jQuery UI theme generated'

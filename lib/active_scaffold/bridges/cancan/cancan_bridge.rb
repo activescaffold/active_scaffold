@@ -64,9 +64,8 @@ module ActiveScaffold::Bridges
           prepend_before_action :assign_current_ability_to_models
         end
 
-        # We need to give the ActiveRecord classes a handle to the current ability. We don't want to just pass the object,
-        # because the object may change (someone may log in or out). So we give ActiveRecord a proc that ties to the
-        # current_ability_method on this ApplicationController.
+        # Expose the current ability to ActiveRecord through a proc instead of passing the object. The object may
+        # change when someone logs in or out, and the proc keeps it tied to current_ability_method.
         def assign_current_ability_to_models
           ::ActiveScaffold::Registry.current_ability_proc = proc { send(:current_ability) }
         end
@@ -117,7 +116,7 @@ module ActiveScaffold::Bridges
             crud_type_result = action_result = false
           end
           result = (crud_type_result && action_result) || super(options.merge(reason: nil))
-          # return array with nil reason if requested with options[:reason], we don't have reason but caller expects array
+          # The caller expects an array when options[:reason] is set, but CanCan does not provide a reason.
           options[:reason] ? [result, nil] : result
         end
       end

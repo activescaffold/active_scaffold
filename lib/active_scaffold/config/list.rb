@@ -22,7 +22,9 @@ module ActiveScaffold::Config
       @pagination = self.class.pagination
       @api_pagination = self.class.api_pagination
       if @api_pagination.nil?
-        ActiveScaffold.deprecator.warn 'Set api_pagination globally to false or true. It will default to true in the next version.'
+        ActiveScaffold.deprecator.warn(
+          'Set api_pagination globally to false or true. It will default to true in the next version.'
+        )
         @api_pagination = false
       end
       @auto_pagination = self.class.auto_pagination
@@ -53,7 +55,8 @@ module ActiveScaffold::Config
       @local_sorting = self.class.local_sorting
       @calculate_etag = self.class.calculate_etag
     end
-    private :initialize_pagination_settings, :initialize_sorting, :initialize_display_settings, :initialize_behavior_settings
+    private :initialize_pagination_settings, :initialize_sorting, :initialize_display_settings,
+            :initialize_behavior_settings
 
     # global level configuration
     # --------------------------
@@ -83,7 +86,8 @@ module ActiveScaffold::Config
 
     # What kind of pagination to use:
     # * true: The usual pagination
-    # * :infinite: Treat the source as having an infinite number of pages (i.e. don't count the records; useful for large tables where counting is slow and we don't really care anyway)
+    # * :infinite: Treat the source as having an infinite number of pages (i.e. don't count the records; useful for
+    # large tables where counting is slow and we don't really care anyway)
     # * false: Disable pagination
     cattr_accessor :pagination, instance_accessor: false, default: true
 
@@ -91,7 +95,8 @@ module ActiveScaffold::Config
     cattr_accessor :api_pagination, instance_accessor: false, default: nil
 
     # Auto paginate, only can be used with pagination enabled
-    # * true: First page will be loaded on first request, next pages will be requested by AJAX until all items are loaded
+    # * true: First page will be loaded on first request, next pages will be requested by AJAX until all items are
+    # loaded
     # * false: Disable auto pagination
     cattr_accessor :auto_pagination, instance_accessor: false, default: false
 
@@ -107,7 +112,10 @@ module ActiveScaffold::Config
 
     # the ActionLink to reset search
     cattr_reader :reset_link, instance_reader: false,
-                              default: ActiveScaffold::DataStructures::ActionLink.new('index', label: :click_to_reset, type: :collection, position: false, parameters: {search: ''})
+                              default: ActiveScaffold::DataStructures::ActionLink.new(
+                                'index', label: :click_to_reset, type: :collection, position: false,
+                                         parameters: {search: ''}
+                              )
 
     # the ActionLink to reset the filters
     cattr_reader :reset_filter_link,
@@ -133,7 +141,8 @@ module ActiveScaffold::Config
     # Enable auto select columns on list, so only columns needed for list columns are selected
     cattr_accessor :auto_select_columns, instance_accessor: false, default: false
 
-    # Enable ETag calculation (when conditional_get_support is enabled), it requires to load records for page, when is disabled query can be avoided when page is cached in browser
+    # Enable ETag calculation (when conditional_get_support is enabled), it requires to load records for page, when is
+    # disabled query can be avoided when page is cached in browser
     # order clause will be used for ETag when calculate_etag is disabled, so query for records can be avoided
     cattr_accessor :calculate_etag, instance_accessor: false, default: false
 
@@ -163,7 +172,8 @@ module ActiveScaffold::Config
 
     # What kind of pagination to use:
     # * true: The usual pagination
-    # * :infinite: Treat the source as having an infinite number of pages (i.e. don't count the records; useful for large tables where counting is slow and we don't really care anyway)
+    # * :infinite: Treat the source as having an infinite number of pages (i.e. don't count the records; useful for
+    # large tables where counting is slow and we don't really care anyway)
     # * false: Disable pagination
     attr_accessor :pagination
 
@@ -171,7 +181,8 @@ module ActiveScaffold::Config
     attr_accessor :api_pagination
 
     # Auto paginate, only can be used with pagination enabled
-    # * true: First page will be loaded on first request, next pages will be requested by AJAX until all items are loaded
+    # * true: First page will be loaded on first request, next pages will be requested by AJAX until all items are
+    # loaded
     # * false: Disable auto pagination
     attr_accessor :auto_pagination
 
@@ -205,7 +216,7 @@ module ActiveScaffold::Config
 
     # the default sorting.
     # should be a hash of {column_name => direction}, e.g. {a: 'desc', b: 'asc'}.
-    # for backwards compatibility, it may be an array of hashes of {column_name => direction}, e.g. [{a: 'desc'}, {b: 'asc'}].
+    # For backwards compatibility, it may be an array of hashes, for example: [{a: 'desc'}, {b: 'asc'}].
     # to just sort on one column, you can simply provide a hash, e.g. {a: 'desc'}.
     def sorting=(val)
       val = [val] if val.is_a? Hash
@@ -277,7 +288,8 @@ module ActiveScaffold::Config
     # Enable auto select columns on list, so only columns needed for list columns are selected
     attr_accessor :auto_select_columns
 
-    # Enable ETag calculation (when conditional_get_support is enabled), it requires to load records for page, when is disabled query can be avoided when page is cached in browser
+    # Enable ETag calculation (when conditional_get_support is enabled), it requires to load records for page, when is
+    # disabled query can be avoided when page is cached in browser
     # order clause will be used for ETag when calculate_etag is disabled, so query for records can be avoided
     attr_accessor :calculate_etag
 
@@ -347,7 +359,8 @@ module ActiveScaffold::Config
       def sorting
         return @_sorting unless @_sorting.nil?
 
-        # we want to store as little as possible in the session, but we want to return a Sorting data structure. so we recreate it each page load based on session data.
+        # we want to store as little as possible in the session, but we want to return a Sorting data structure. so we
+        # recreate it each page load based on session data.
         self['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] && @params['sort_direction']
         self['sort'] = nil if @params['sort_direction'] == 'reset'
 

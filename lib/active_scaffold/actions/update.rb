@@ -83,7 +83,11 @@ module ActiveScaffold::Actions
     def update_respond_to_js
       if successful?
         record_to_refresh_on_update if !render_parent? && active_scaffold_config.actions.include?(:list)
-        flash.now[:info] = as_(:updated_model, model: ERB::Util.h((@updated_record || @record).to_label)) if active_scaffold_config.update.persistent
+        if active_scaffold_config.update.persistent
+          flash.now[:info] =
+            as_(:updated_model,
+                model: ERB::Util.h((@updated_record || @record).to_label))
+        end
       end
       render action: 'on_update'
     end
@@ -204,7 +208,8 @@ module ActiveScaffold::Actions
       if @column.delegated_association
         value_record = @record.send(@column.delegated_association.name)
         value_record ||= @record.association(@column.delegated_association.name).build
-        raise ActiveScaffold::ActionNotAllowed unless value_record.authorized_for?(crud_type: :update, column: @column.name)
+        authorized = value_record.authorized_for?(crud_type: :update, column: @column.name)
+        raise ActiveScaffold::ActionNotAllowed unless authorized
 
         value_record
       else
@@ -239,7 +244,9 @@ module ActiveScaffold::Actions
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def update_authorized?(record = nil, column = nil)
-      (!nested? || !nested.readonly?) && (record || self).authorized_for?(crud_type: :update, column: column, reason: true)
+      (!nested? || !nested.readonly?) && (record || self).authorized_for?(
+        crud_type: :update, column: column, reason: true
+      )
     end
 
     def update_ignore?(record = nil)

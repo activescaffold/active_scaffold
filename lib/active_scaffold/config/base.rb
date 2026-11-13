@@ -34,7 +34,8 @@ module ActiveScaffold::Config
       (core || self).model_id
     end
 
-    # the user property gets set to the instantiation of the local UserSettings class during the automatic instantiation of this class.
+    # the user property gets set to the instantiation of the local UserSettings class during the automatic instantiation
+    # of this class.
     def user
       ActiveScaffold::Registry.user_settings[user_settings_key]
     end

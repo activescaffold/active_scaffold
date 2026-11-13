@@ -9,7 +9,8 @@ module ActiveScaffold::DataStructures
     # the immediate need here is to get the crud_type so we can dynamically filter columns from the set.
     attr_accessor :action
 
-    # labels are useful for the Create/Update forms, when we display columns in a grouped fashion and want to name them separately
+    # labels are useful for the Create/Update forms, when we display columns in a grouped fashion and want to name them
+    # separately
     attr_writer :label
 
     # a common column in the association columns included in the group, used to group the records from the
@@ -166,7 +167,8 @@ module ActiveScaffold::DataStructures
       return true if constraint_columns.include?(column_name.to_sym)
 
       # skip this field if it's not authorized
-      unless options[:for].authorized_for?(action: options[:action], crud_type: options[:crud_type] || action&.crud_type || :read, column: column_name)
+      crud_type = options[:crud_type] || action&.crud_type || :read
+      unless options[:for].authorized_for?(action: options[:action], crud_type: crud_type, column: column_name)
         unauthorized_columns << column_name.to_sym
         return true
       end

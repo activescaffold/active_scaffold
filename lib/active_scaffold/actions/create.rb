@@ -90,7 +90,8 @@ module ActiveScaffold::Actions
       @record
     end
 
-    # A somewhat complex method to actually create a new record. The complexity is from support for subforms and associated records.
+    # A somewhat complex method to actually create a new record. The complexity is from support for subforms and
+    # associated records.
     # If you want to customize this behavior, consider using the +before_create_save+ and +after_create_save+ callbacks.
     def do_create(options = {})
       attributes = options[:attributes] || params[:record]
@@ -101,8 +102,12 @@ module ActiveScaffold::Actions
         @record = update_record_from_params(@record, active_scaffold_config.create.columns, attributes)
         create_association_with_parent(@record) if nested?
         before_create_save(@record)
-        # errors to @record can be added by update_record_from_params when association fails to set and ActiveRecord::RecordNotSaved is raised
-        self.successful = [@record.keeping_errors { @record.valid? }, @record.associated_valid?].all? # this syntax avoids a short-circuit
+        # errors to @record can be added by update_record_from_params when association fails to set and
+        # ActiveRecord::RecordNotSaved is raised
+        self.successful = [ # this syntax avoids a short-circuit
+          @record.keeping_errors { @record.valid? },
+          @record.associated_valid?
+        ].all?
         create_save(@record) unless options[:skip_save]
       end
     rescue ActiveRecord::ActiveRecordError => e

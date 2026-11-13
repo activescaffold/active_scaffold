@@ -62,14 +62,18 @@ module ActiveScaffold
       return parent_record unless parent_record.authorized_for?(crud_type: crud_type)
 
       assign_locking_column(parent_record, attributes)
-      update_columns_from_params(parent_record, columns, attributes, crud_type, avoid_changes: avoid_changes, search_attributes: search_attributes)
+      update_columns_from_params(
+        parent_record, columns, attributes, crud_type,
+        avoid_changes: avoid_changes, search_attributes: search_attributes
+      )
       parent_record
     end
 
-    def update_columns_from_params(parent_record, columns, attributes, crud_type, avoid_changes: false, search_attributes: false)
+    def update_columns_from_params(parent_record, columns, attributes, crud_type, avoid_changes: false,
+                                   search_attributes: false)
       multi_parameter_attrs = multi_parameter_attributes(attributes)
       columns.each_column(for: parent_record, crud_type: crud_type, flatten: true) do |column|
-        # Set any passthrough parameters that may be associated with this column (ie, file column "keep" and "temp" attributes)
+        # Set passthrough parameters associated with this column, such as file-column keep and temp attributes.
         assign_column_params(parent_record, column, attributes)
 
         if multi_parameter_attrs.key? column.name.to_s
@@ -147,7 +151,9 @@ module ActiveScaffold
     end
 
     def column_value_for_datetime_type(parent_record, column, value)
-      new_value = self.class.condition_value_for_datetime(column, value, datetime_conversion_for_value(column), ui_method: :form_ui)
+      new_value = self.class.condition_value_for_datetime(
+        column, value, datetime_conversion_for_value(column), ui_method: :form_ui
+      )
       parent_record.errors.add column.name, :invalid if new_value.nil? && value.present?
       new_value
     end
@@ -211,7 +217,8 @@ module ActiveScaffold
       elsif column.association&.collection?
         # HACK: to be able to delete all associated records, hash will include "0" => ""
         value.compact_blank.filter_map do |id, attributes|
-          manage_nested_record_from_params(parent_record, column, attributes, avoid_changes: avoid_changes).tap do |record|
+          manage_nested_record_from_params(parent_record, column, attributes,
+                                           avoid_changes: avoid_changes).tap do |record|
             track_new_record(record, id)
           end
         end

@@ -9,11 +9,14 @@ module ActiveScaffold
 
         content =
           if attachment.image?
-            image_tag(attachment.thumb(ui_options[:thumb] || ActiveScaffold::Bridges::Dragonfly::DragonflyBridgeHelpers.thumbnail_style).url, border: 0)
+            thumbnail_style = ui_options[:thumb] ||
+                              ActiveScaffold::Bridges::Dragonfly::DragonflyBridgeHelpers.thumbnail_style
+            image_tag(attachment.thumb(thumbnail_style).url, border: 0)
           else
             attachment.name
           end
-        link_to(content, dragonfly_url_for_attachment(attachment, record, column, ui_options: ui_options), target: '_blank', rel: 'noopener noreferrer')
+        link_to(content, dragonfly_url_for_attachment(attachment, record, column, ui_options: ui_options),
+                target: '_blank', rel: 'noopener noreferrer')
       end
 
       def dragonfly_url_for_attachment(attachment, record, column, ui_options: column.options)

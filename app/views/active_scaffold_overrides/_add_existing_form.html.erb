@@ -19,7 +19,8 @@ options = {id: element_form_id(action: :add_existing),
   <%= form_attribute_html(
         nil,
         label_tag("record_#{active_scaffold_config.model}", active_scaffold_add_existing_label),
-        active_scaffold_add_existing_input(name: 'associated_id', url_options: url_options, object: nested_parent_record),
+        active_scaffold_add_existing_input(name: 'associated_id', url_options: url_options,
+                                           object: nested_parent_record),
         nil,
         {}
       ) %>

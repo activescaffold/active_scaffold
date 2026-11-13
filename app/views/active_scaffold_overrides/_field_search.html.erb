@@ -10,7 +10,7 @@
     data: {loading: true},
     method: :get
   )
-  
+
   hidden_params = url_options.except(:controller, :action, :id, :search).to_query.split(Rack::Utils::DEFAULT_SEP)
 -%>
 
@@ -33,7 +33,10 @@
       end
     %>
     <%= submit_tag as_(submit_text), as_element_attributes(:field_search_submit) %>
-    <%= link_to as_(:reset), url_for(url_options.merge(search: '')), as_element_attributes(:field_search_reset, **reset_attrs) unless local_assigns[:skip_reset] %>
+    <% unless local_assigns[:skip_reset] %>
+      <%= link_to as_(:reset), url_for(url_options.merge(search: '')),
+                  as_element_attributes(:field_search_reset, **reset_attrs) %>
+    <% end %>
     <%= loading_indicator_tag(action: :search) %>
   <% end %>
 </form>

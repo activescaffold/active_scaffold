@@ -5,7 +5,8 @@ module ActiveScaffold::Actions
     def self.included(base)
       conf = base.active_scaffold_config
       if conf.model.primary_key.nil? && conf.field_search.columns.any? { |col| conf.columns[col]&.association }
-        raise "#{base.active_scaffold_config.model.name} has no primary key, field_search with association columns won't work"
+        raise "#{base.active_scaffold_config.model.name} has no primary key, " \
+              "field_search with association columns won't work"
       end
 
       base.class_eval do
@@ -16,7 +17,8 @@ module ActiveScaffold::Actions
     end
 
     module InstanceMethods
-      # FieldSearch uses params[:search] and not @record because search conditions do not always pass the Model's validations.
+      # FieldSearch uses params[:search] and not @record because search conditions do not always pass the Model's
+      # validations.
       # This facilitates for example, textual searches against associations via .search_sql
       def show_search
         @record = empty_model
@@ -30,7 +32,9 @@ module ActiveScaffold::Actions
       end
 
       def store_search_params_into_session
-        init_field_search_params(active_scaffold_config.field_search.default_params) unless active_scaffold_config.field_search.default_params.nil?
+        unless default_params.nil?
+          init_field_search_params(active_scaffold_config.field_search.default_params)
+        end
         super
       end
 
@@ -80,7 +84,9 @@ module ActiveScaffold::Actions
           order = grouped_sorting(group_by)
         else
           if search_group_column&.group_by
-            sql_with_names = search_group_column.group_by.map.with_index { |part, i| [part, "#{search_group_name}_#{i}"] }
+            sql_with_names = search_group_column.group_by.map.with_index do |part, i|
+              [part, "#{search_group_name}_#{i}"]
+            end
             select_query += quoted_select_columns(sql_with_names)
           else
             select_query += group_by
@@ -127,9 +133,11 @@ module ActiveScaffold::Actions
         when 'year', 'month', 'quarter'
           extract_sql_fn(group_function, group_sql)
         when 'year_month'
-          sql_operator(sql_operator(extract_sql_fn('year', group_sql), '*', 100), '+', extract_sql_fn('month', group_sql))
+          sql_operator(sql_operator(extract_sql_fn('year', group_sql), '*', 100), '+',
+                       extract_sql_fn('month', group_sql))
         when 'year_quarter'
-          sql_operator(sql_operator(extract_sql_fn('year', group_sql), '*', 10), '+', extract_sql_fn('quarter', group_sql))
+          sql_operator(sql_operator(extract_sql_fn('year', group_sql), '*', 10), '+',
+                       extract_sql_fn('quarter', group_sql))
         else
           raise ArgumentError, "#{group_function} unsupported, override calculation_for_group_by in #{self.class.name}"
         end

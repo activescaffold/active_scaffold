@@ -68,7 +68,8 @@ module ActiveScaffold
         options[:class] = "#{options[:class]} as_remote_upload".strip
         output = []
         output << form_tag(url_for_options, options)
-        output << content_tag(:iframe, '', id: action_iframe_id(url_for_options), name: action_iframe_id(url_for_options), style: 'display:none')
+        output << content_tag(:iframe, '', id: action_iframe_id(url_for_options),
+                                           name: action_iframe_id(url_for_options), style: 'display:none')
         safe_join output
       end
 
@@ -77,16 +78,23 @@ module ActiveScaffold
         # it's call many times and we can cache same result
         @_loading_indicator_path ||= image_path('active_scaffold/indicator.gif')
         # it's call many times in long lists, image_tag is a bit slower
-        tag.img(src: @_loading_indicator_path, style: 'visibility:hidden;', id: loading_indicator_id(options), alt: 'loading indicator', class: 'loading-indicator')
+        tag.img(src: @_loading_indicator_path, style: 'visibility:hidden;', id: loading_indicator_id(options),
+                alt: 'loading indicator', class: 'loading-indicator')
       end
 
       # Creates a javascript-based link that toggles the visibility of some element on the page.
       # By default, it toggles the visibility of the sibling after the one it's nested in.
-      # You may also flag whether the other element is visible by default or not, and the initial text will adjust accordingly.
+      # You may also flag whether the other element is visible by default or not, and the initial text will adjust
+      # accordingly.
       def link_to_visibility_toggle(id, options = {})
         options[:hide_label] ||= as_(:hide)
         options[:show_label] ||= as_(:show_block)
-        label = options[:default_visible].nil? || options[:default_visible] ? options[:hide_label] : options[:show_label]
+        label =
+          if options[:default_visible].nil? || options[:default_visible]
+            options[:hide_label]
+          else
+            options[:show_label]
+          end
         data = {show: options[:show_label], hide: options[:hide_label], toggable: id}
         link_to label, '#', data: data, style: 'display: none;', class: 'as-js-button visibility-toggle'
       end
@@ -121,7 +129,10 @@ module ActiveScaffold
       def _as_cached_column_class(column)
         ActiveScaffold::Registry.cache :column_classes, column.cache_key do
           classes = "#{column.name}-column "
-          classes << 'sorted ' if active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.user.sorting.sorts_on?(column)
+          if active_scaffold_config.actions.include?(:list) &&
+             active_scaffold_config.list.user.sorting.sorts_on?(column)
+            classes << 'sorted '
+          end
           classes << 'numeric ' if column.number?
           classes << column.css_class << ' ' unless column.css_class.nil? || column.css_class.is_a?(Proc)
           classes
@@ -138,7 +149,8 @@ module ActiveScaffold
       end
 
       def as_main_div_class
-        classes = "active-scaffold active-scaffold-#{controller_id}  #{id_from_controller params[:controller]}-view #{active_scaffold_config.theme}-theme"
+        classes = "active-scaffold active-scaffold-#{controller_id} " \
+                  "#{id_from_controller params[:controller]}-view #{active_scaffold_config.theme}-theme"
         classes << ' as_touch' if touch_device?
         classes
       end
@@ -165,7 +177,9 @@ module ActiveScaffold
         return column.empty_field_text if column&.empty_field_text
         return @_empty_field_text if defined? @_empty_field_text
 
-        @_empty_field_text = (active_scaffold_config.list.empty_field_text if active_scaffold_config.actions.include?(:list))
+        if active_scaffold_config.actions.include?(:list)
+          @_empty_field_text = active_scaffold_config.list.empty_field_text
+        end
       end
 
       def as_slider(options)

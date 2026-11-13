@@ -18,13 +18,16 @@
     </tr>
   </thead>
   <%= render 'list_messages', columns: columns %>
-  <tbody <%= as_element_attributes :list_records, class: 'records', id: active_scaffold_tbody_id, data: {refresh_record: url_for(params_for(action: :index, id: '--ID--'))} %>>
+  <tbody <%= as_element_attributes :list_records, class: 'records', id: active_scaffold_tbody_id,
+                                    data: {refresh_record: url_for(params_for(action: :index, id: '--ID--'))} %>>
     <% if !@page.empty? -%>
-      <%= render partial: list_record_view, collection: @page.items, locals: {hidden: false, columns: columns, action_links: active_scaffold_config.action_links.member} %>
+      <%= render partial: list_record_view, collection: @page.items,
+                 locals: {hidden: false, columns: columns,
+                          action_links: active_scaffold_config.action_links.member} %>
     <% end -%>
   </tbody>
   <% if columns.any?(&:calculation?) -%>
-  <tfoot>  
+  <tfoot>
     <%= render 'list_calculations', columns: columns %>
   </tfoot>
   <% end -%>

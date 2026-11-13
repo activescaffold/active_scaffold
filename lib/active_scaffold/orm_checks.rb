@@ -110,7 +110,8 @@ module ActiveScaffold
       end
     end
 
-    %i[_table_name _quoted_table_name _columns _columns_hash _reflect_on_all_associations _content_columns].each do |method|
+    %i[_table_name _quoted_table_name _columns _columns_hash _reflect_on_all_associations
+       _content_columns].each do |method|
       define_method method do
         ActiveScaffold::OrmChecks.send method.to_s[1..], active_record_class
       end

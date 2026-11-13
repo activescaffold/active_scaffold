@@ -27,10 +27,15 @@ class ActiveScaffold::Bridges::FileColumn
 
     def configure_file_column_field(field)
       # set list_ui first because it gets its default value from form_ui
-      columns[field].list_ui ||= model.field_has_image_version?(field, 'thumb') ? :thumbnail : :download_link_with_filename
+      columns[field].list_ui ||=
+        if model.field_has_image_version?(field, 'thumb')
+          :thumbnail
+        else
+          :download_link_with_filename
+        end
       columns[field].form_ui ||= :file_column
 
-      # these 2 parameters are necessary helper attributes for the file column that must be allowed to be set to the model by active scaffold.
+      # Allow the two helper attributes that file-column needs Active Scaffold to assign to the model.
       columns[field].params.add "#{field}_temp", "delete_#{field}"
 
       # set null to false so active_scaffold wont set it to null

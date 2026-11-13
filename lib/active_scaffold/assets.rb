@@ -8,7 +8,8 @@ module ActiveScaffold
 
     CORE_STYLESHEETS = ['active_scaffold/core'].freeze
     CALLBACK_REGISTRY_JAVASCRIPT = 'active_scaffold/callback_registry'
-    CORE_JAVASCRIPTS = ['jquery.ba-throttle-debounce', 'jquery.visible.min', 'active_scaffold/jquery.editinplace', 'active_scaffold/active_scaffold'].freeze
+    CORE_JAVASCRIPTS = ['jquery.ba-throttle-debounce', 'jquery.visible.min', 'active_scaffold/jquery.editinplace',
+                        'active_scaffold/active_scaffold'].freeze
 
     class << self
       # Returns array of stylesheet paths based on load mode
@@ -35,7 +36,8 @@ module ActiveScaffold
       def active_scaffold_javascripts(load = :all)
         case load
         when :all
-          [CALLBACK_REGISTRY_JAVASCRIPT] + jquery_ui_javascripts + CORE_JAVASCRIPTS + ActiveScaffold.javascripts + bridge_javascripts
+          [CALLBACK_REGISTRY_JAVASCRIPT] + jquery_ui_javascripts + CORE_JAVASCRIPTS +
+            ActiveScaffold.javascripts + bridge_javascripts
         when :deps
           [CALLBACK_REGISTRY_JAVASCRIPT] + jquery_ui_javascripts + ActiveScaffold.javascripts + bridge_javascripts
         when :core

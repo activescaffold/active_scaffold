@@ -25,7 +25,8 @@ module ActiveScaffold::Config
     # whether we should refresh list after update or not
     class_attribute :refresh_list, instance_accessor: false, default: false
 
-    # whether footer should float when form is too long to fit in the screen, so footer is always available while scrolling
+    # whether footer should float when form is too long to fit in the screen, so footer is always available while
+    # scrolling
     class_attribute :floating_footer, instance_accessor: false, default: false
 
     # whether field descriptions are visible always, on hover or click (:show, :hover, :click, default to :show)
@@ -49,7 +50,8 @@ module ActiveScaffold::Config
     # whether we should refresh list after create or not
     attr_accessor :refresh_list
 
-    # whether footer should float when form is too long to fit in the screen, so footer is always available while scrolling
+    # whether footer should float when form is too long to fit in the screen, so footer is always available while
+    # scrolling
     attr_accessor :floating_footer
 
     # whether field descriptions are visible always, on hover or click (:show, :hover, :click, default to :show)

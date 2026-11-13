@@ -95,7 +95,9 @@ module ActiveScaffold
           new_sti_link = new_action_link.deep_dup
           new_sti_link.label = as_(:create_model, model: child.to_s.camelize.constantize.model_name.human)
           new_sti_link.parameters = {parent_sti: controller_path}
-          new_sti_link.controller = proc { active_scaffold_controller_for(child.to_s.camelize.constantize).controller_path }
+          new_sti_link.controller = proc {
+            active_scaffold_controller_for(child.to_s.camelize.constantize).controller_path
+          }
           active_scaffold_config.action_links.collection.create.add(new_sti_link)
         end
       end
@@ -119,7 +121,7 @@ module ActiveScaffold
             # sneak the action links from the actions into the main set
             if link.is_a? Array
               link.each do |current_link|
-                active_scaffold_config.action_links.add_to_group(current_link, active_scaffold_config.send(mod).action_group)
+                active_scaffold_config.action_links.add_to_group(current_link, mod_conf.action_group)
               end
             elsif link.is_a? ActiveScaffold::DataStructures::ActionLink
               active_scaffold_config.action_links.add_to_group(link, active_scaffold_config.send(mod).action_group)
@@ -255,11 +257,12 @@ module ActiveScaffold
     end
 
     # Tries to find a controller for the given ActiveRecord model.
-    # Searches in the namespace of the current controller for singular and plural versions of the conventional "#{model}Controller" syntax.
+    # Searches in the namespace of the current controller for singular and plural versions of the conventional
+    # "#{model}Controller" syntax.
     # You may override this method to customize the search routine.
     def self.active_scaffold_controller_for(klass, controller_namespace = '::')
       error_message = []
-      class_names = [klass.to_s, klass.to_s.demodulize].map { |k| k.underscore.pluralize }.map { |k| [k, k.singularize] }.flatten
+      class_names = active_scaffold_controller_names(klass)
       [controller_namespace, ''].each do |namespace|
         class_names.each do |controller_name|
           begin
@@ -271,16 +274,30 @@ module ActiveScaffold
             error_message << "#{namespace}#{controller_name.camelize}Controller"
             next
           end
-          raise ActiveScaffold::ControllerNotFound, "#{controller} missing ActiveScaffold", caller unless controller.uses_active_scaffold?
-          unless controller.active_scaffold_config.model.to_s == klass.to_s
-            raise ActiveScaffold::ControllerNotFound, "ActiveScaffold on #{controller} is not for #{klass} model.", caller
-          end
+          validate_active_scaffold_controller!(controller, klass)
 
           return controller
         end
       end
       raise ActiveScaffold::ControllerNotFound, "Could not find #{error_message.join(' or ')}", caller
     end
+
+    def self.active_scaffold_controller_names(klass)
+      [klass.to_s, klass.to_s.demodulize].flat_map do |name|
+        plural_name = name.underscore.pluralize
+        [plural_name, plural_name.singularize]
+      end
+    end
+
+    def self.validate_active_scaffold_controller!(controller, klass)
+      unless controller.uses_active_scaffold?
+        raise ActiveScaffold::ControllerNotFound, "#{controller} missing ActiveScaffold", caller(2)
+      end
+      return if controller.active_scaffold_config.model.to_s == klass.to_s
+
+      raise ActiveScaffold::ControllerNotFound, "ActiveScaffold on #{controller} is not for #{klass} model.", caller(2)
+    end
+    private_class_method :active_scaffold_controller_names, :validate_active_scaffold_controller!
 
     def self.column_type_cast(value, column, model)
       if defined?(ActiveRecord) && column.is_a?(ActiveRecord::ConnectionAdapters::Column)
@@ -301,7 +318,9 @@ module ActiveScaffold
     end
 
     def self.active_record_column_type_cast(value, column_or_type, model)
-      return Time.zone.at(value.to_i) if %i[time datetime timestamp timestamptz].include?(column_or_type.type) && value =~ /\A\d+\z/
+      if %i[time datetime timestamp timestamptz].include?(column_or_type.type) && value =~ /\A\d+\z/
+        return Time.zone.at(value.to_i)
+      end
 
       cast_type = column_or_type
       if cast_type.is_a?(ActiveRecord::ConnectionAdapters::Column)

@@ -10,7 +10,9 @@ module ActiveScaffold::Actions
       base.module_eval do
         before_action :set_nested
         before_action :configure_nested
-        include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.columns.filter_map(&:association).any?(&:habtm?)
+        if active_scaffold_config.columns.filter_map(&:association).any?(&:habtm?)
+          include ActiveScaffold::Actions::Nested::ChildMethods
+        end
       end
       base.helper_method :nested
       base.helper_method :nested_parent_record
@@ -78,7 +80,8 @@ module ActiveScaffold::Actions
       if nested.association.collection?
         nested_parent_record.send(nested.association.name)
       elsif nested.association.through? # has_one :through
-        active_scaffold_config.model.where(active_scaffold_config.model.primary_key => nested_parent_record.send(nested.association.name)&.id)
+        parent_id = nested_parent_record.send(nested.association.name)&.id
+        active_scaffold_config.model.where(active_scaffold_config.model.primary_key => parent_id)
       elsif nested.association.has_one?
         active_scaffold_config.model.where(nested.child_association.name => nested_parent_record)
       elsif nested.association.belongs_to?
@@ -194,11 +197,13 @@ module ActiveScaffold::Actions
       end
 
       def add_existing_respond_to_xml
-        render xml: response_object, only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
+        render xml: response_object, only: active_scaffold_config.list.columns.visible_columns_names,
+               status: response_status
       end
 
       def add_existing_respond_to_json
-        render json: response_object, only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
+        render json: response_object, only: active_scaffold_config.list.columns.visible_columns_names,
+               status: response_status
       end
 
       def destroy_existing_respond_to_html
@@ -211,11 +216,13 @@ module ActiveScaffold::Actions
       end
 
       def destroy_existing_respond_to_xml
-        render xml: successful? ? '' : response_object, only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
+        render xml: successful? ? '' : response_object,
+               only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
       end
 
       def destroy_existing_respond_to_json
-        render json: successful? ? '' : response_object, only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
+        render json: successful? ? '' : response_object,
+               only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
       end
 
       def add_existing_authorized?(record = nil)

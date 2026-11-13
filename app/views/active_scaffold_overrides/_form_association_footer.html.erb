@@ -47,16 +47,25 @@ end
 
     <% if show_add_existing -%>
       <% if remote_controller.respond_to?(:uses_record_select?) && remote_controller.uses_record_select? -%>
-        <%= link_to_record_select as_(:add_existing), remote_controller.controller_path, record_select_params_for_add_existing(column.association, edit_associated_url, parent_record) -%>
+        <%= link_to_record_select as_(:add_existing), remote_controller.controller_path,
+                                  record_select_params_for_add_existing(
+                                    column.association, edit_associated_url, parent_record
+                                  ) -%>
       <% else -%>
         <%
           helper_method = association_helper_method(column.association, :sorted_association_options_find)
-          select_options = options_from_collection_for_select(send(helper_method, column.association, nil, parent_record), :to_param, :to_label)
+          select_options = options_from_collection_for_select(
+            send(helper_method, column.association, nil, parent_record), :to_param, :to_label
+          )
           add_existing_label = column.association.collection? ? :add_existing : :replace_existing
-          add_existing_attrs = {id: "#{subform_div_id}-add-existing", remote: true, class: "as-js-button as_#{add_existing_label}", style: 'display: none;'}
+          add_existing_attrs = {
+            id: "#{subform_div_id}-add-existing", remote: true,
+            class: "as-js-button as_#{add_existing_label}", style: 'display: none;'
+          }
         %>
         <%= select_tag 'associated_id', content_tag(:option, as_(:_select_), value: '') + select_options %>
-        <%= link_to as_(add_existing_label), edit_associated_url, as_element_attributes(:subform_add_existing, **add_existing_attrs) %>
+        <%= link_to as_(add_existing_label), edit_associated_url,
+                    as_element_attributes(:subform_add_existing, **add_existing_attrs) %>
       <% end -%>
     <% end -%>
   <% end %>

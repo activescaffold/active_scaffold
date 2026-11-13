@@ -41,7 +41,10 @@ options = as_element_attributes(
   :form,
   id: form_id,
   multipart: multipart,
-  class: "as_form #{form_action} #{'floating-footer' if floating_footer} #{"descriptions-#{field_descriptions}" if field_descriptions != :show}",
+  class: [
+    'as_form', form_action, ('floating-footer' if floating_footer),
+    ("descriptions-#{field_descriptions}" if field_descriptions != :show)
+  ].compact.join(' '),
   method: method,
   data: {loading: defined?(loading) ? loading : true}
 )
@@ -53,7 +56,9 @@ else
   form_tag url_options, options
 end
 -%>
-  <%= hidden_field :record, @record.class.locking_column if add_locking_column && @record.persisted? && @record.locking_enabled? %>
+  <% if add_locking_column && @record.persisted? && @record.locking_enabled? %>
+    <%= hidden_field :record, @record.class.locking_column %>
+  <% end %>
   <%= as_element :form_title, headline -%>
 
   <%= as_element :form_messages_container, id: element_messages_id(action: form_action), class: 'messages-container' do %>

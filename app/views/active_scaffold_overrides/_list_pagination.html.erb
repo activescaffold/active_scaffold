@@ -5,7 +5,8 @@
   <% end %>
 <% end -%>
 <% if active_scaffold_config.list.pagination -%>
-  <%= as_element :pagination_links, class: "active-scaffold-pagination #{'auto-paginate' if active_scaffold_config.list.auto_pagination}" do %>
+  <%= as_element :pagination_links,
+                 class: "active-scaffold-pagination #{'auto-paginate' if active_scaffold_config.list.auto_pagination}" do %>
     <%= render 'list_pagination_links', current_page: @page if @page.pager.infinite? || @page.pager.number_of_pages > 1 %>
   <% end -%>
 <% end -%>

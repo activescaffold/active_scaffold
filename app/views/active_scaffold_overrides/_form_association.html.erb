@@ -2,7 +2,8 @@
   tabbed_by ||= nil
   tab_value ||= nil
   tab_id ||= nil
-  associated = column.association.singular? ? [parent_record.send(column.name)].compact : parent_record.send(column.name).to_a
+  associated = parent_record.send(column.name)
+  associated = column.association.singular? ? [associated].compact : associated.to_a
   associated = associated.select { |record| record.send(tabbed_by) == tab_value } if tabbed_by && tab_value
   if column.show_blank_record?(associated)
     show_blank_record = build_associated(column.association, parent_record) do |blank_record|
@@ -10,8 +11,13 @@
     end
   end
   disable_required_for_new = @disable_required_for_new
-  @disable_required_for_new = !show_blank_record.nil? unless column.association.singular? && column.required?(action_for_validation(parent_record))
-  subform_div_id = "#{sub_form_id(association: column.name, tab_id: tab_id, id: parent_record.id || generated_id(parent_record) || 99_999_999_999)}-div"
+  unless column.association.singular? && column.required?(action_for_validation(parent_record))
+    @disable_required_for_new = !show_blank_record.nil?
+  end
+  subform_div_id = "#{sub_form_id(
+    association: column.name, tab_id: tab_id,
+    id: parent_record.id || generated_id(parent_record) || 99_999_999_999
+  )}-div"
 
   # render footer before rendering associated records, fixes create new on self-associations
   # so generated_id for blank associated record is not used in create new button
@@ -29,8 +35,12 @@
 <%= content_tag :span, column.description, class: 'description' if column.description.present? %>
 <div id="<%= subform_div_id %>" <%= 'style="display: none;"'.html_safe if column.collapsed -%>>
 <%# HACK: to be able to delete all associated records %>
-  <%= hidden_field_tag "#{(opts = active_scaffold_input_options(column, scope, object: parent_record))[:name]}[0]", '', id: "#{opts[:id]}_0" if column.association.collection? %>
-  <%= render subform_partial_for_column(column), column: column, parent_record: parent_record, columns: columns, associated: associated, show_blank_record: show_blank_record, scope: scope, tab_id: tab_id %>
+  <% if column.association.collection? %>
+    <% opts = active_scaffold_input_options(column, scope, object: parent_record) %>
+    <%= hidden_field_tag "#{opts[:name]}[0]", '', id: "#{opts[:id]}_0" %>
+  <% end %>
+  <%= render subform_partial_for_column(column), column: column, parent_record: parent_record, columns: columns,
+             associated: associated, show_blank_record: show_blank_record, scope: scope, tab_id: tab_id %>
   <%= footer -%>
 </div>
 <%

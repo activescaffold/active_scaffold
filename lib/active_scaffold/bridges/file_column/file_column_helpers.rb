@@ -18,7 +18,7 @@ module ActiveScaffold
                 value = (value == 'true') if value.is_a?(String)
                 return unless value
 
-                # passing nil to the file column causes the file to be deleted.  Don't delete if we just uploaded a file!
+                # Passing nil deletes the file, so keep it when a new file was just uploaded.
                 send("#{field}=", nil) unless send("#{field}_just_uploaded?")
               end
             end

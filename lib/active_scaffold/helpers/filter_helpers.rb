@@ -30,14 +30,26 @@ module ActiveScaffold
 
       def display_filter_as_links(filter, options)
         content = options.map { |option| display_action_link(option, nil, nil, authorized: true, level: 1) }
-        display_action_link(filter, safe_join(content), nil, level: 0, title: filter.description) if content.present?
+        if content.present?
+          display_action_link(filter, safe_join(content), nil, level: 0, title: filter.description)
+        end
       end
 
       def display_filter_as_select(filter, options)
         content = options.map do |option|
-          content_tag :option, option.label(nil), data: {url: action_link_url(option, nil)}, selected: action_link_selected?(option, nil), title: option.description
+          content_tag :option, option.label(nil),
+                      data: {url: action_link_url(option, nil)},
+                      selected: action_link_selected?(option, nil), title: option.description
         end
-        select_tag nil, safe_join(content), class: "action_group #{filter.css_class}", title: filter.description || filter.label, data: {remote: :url} if content.present?
+        return if content.blank?
+
+        select_tag(
+          nil,
+          safe_join(content),
+          class: "action_group #{filter.css_class}",
+          title: filter.description || filter.label,
+          data: {remote: :url}
+        )
       end
     end
   end

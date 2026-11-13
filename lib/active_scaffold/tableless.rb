@@ -223,7 +223,8 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
 
   def self.execute_simple_calculation(relation, operation, column_name, distinct)
     unless operation == 'count' && [relation.klass.primary_key, :all].include?(column_name)
-      raise "self.execute_simple_calculation must be implemented in a Tableless model to support #{operation} #{column_name}#{' distinct' if distinct} columns"
+      raise 'self.execute_simple_calculation must be implemented in a Tableless model to support ' \
+            "#{operation} #{column_name}#{' distinct' if distinct} columns"
     end
 
     find_all(relation).size

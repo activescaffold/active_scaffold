@@ -7,7 +7,8 @@ module ActiveScaffold
       def cache_association_options(association, conditions, klass, cache: true)
         if active_scaffold_config.cache_association_options && cache
           @_associations_cache ||= Hash.new { |h, k| h[k] = {} }
-          key = [association.name, association.inverse_klass.name, klass.respond_to?(:cache_key) ? klass.cache_key : klass.name].join('/')
+          key = [association.name, association.inverse_klass.name,
+                 klass.respond_to?(:cache_key) ? klass.cache_key : klass.name].join('/')
           @_associations_cache[key][conditions] ||= yield
         else
           yield
@@ -25,7 +26,8 @@ module ActiveScaffold
         klass ||= _as_association_options_class(association, record)
         return [] unless klass
 
-        conditions ||= send(association_helper_method(association, :options_for_association_conditions), association, record)
+        conditions ||= send(association_helper_method(association, :options_for_association_conditions), association,
+                            record)
         klass = send(association_helper_method(association, :association_klass_scoped), association, klass, record)
         cache_association_options(association, conditions, klass, cache: cache) do
           relation = _as_association_options_relation(association, conditions, klass, record)
@@ -91,7 +93,8 @@ module ActiveScaffold
           if nested.association.through_reflection.collection?
             nested_parent_record.send(nested.association.through_reflection.name)
           else
-            klass.where(association.association_primary_key => nested_parent_record.send(nested.association.through_reflection.name)&.id)
+            through_record = nested_parent_record.send(nested.association.through_reflection.name)
+            klass.where(association.association_primary_key => through_record&.id)
           end
         else
           klass
@@ -114,7 +117,8 @@ module ActiveScaffold
       end
 
       def options_for_association_count(association, record)
-        conditions = send(association_helper_method(association, :options_for_association_conditions), association, record)
+        conditions = send(association_helper_method(association, :options_for_association_conditions), association,
+                          record)
         association_options_count(association, conditions)
       end
 

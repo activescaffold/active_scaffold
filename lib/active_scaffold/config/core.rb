@@ -19,7 +19,8 @@ module ActiveScaffold::Config
     self.actions = %i[create list search update delete show nested subform]
 
     # configures where the ActiveScaffold plugin itself is located. there is no instance version of this.
-    cattr_accessor :plugin_directory, default: File.expand_path(__FILE__).match(%{(^.*)/lib/active_scaffold/config/core.rb})[1]
+    cattr_accessor :plugin_directory,
+                   default: File.expand_path(__FILE__).match(%{(^.*)/lib/active_scaffold/config/core.rb})[1]
 
     # lets you specify a global ActiveScaffold theme for your frontend.
     cattr_accessor :theme, instance_accessor: false, default: :default
@@ -33,16 +34,19 @@ module ActiveScaffold::Config
     # enable caching of association options
     cattr_accessor :cache_association_options, instance_accessor: false, default: true
 
-    # enable setting ETag and LastModified on responses and using fresh_when/stale? to respond with 304 and avoid rendering views
+    # enable setting ETag and LastModified on responses and using fresh_when/stale? to respond with 304 and avoid
+    # rendering views
     cattr_accessor :conditional_get_support, instance_accessor: false, default: false
 
     # enable saving user settings in session (per_page, limit, page, sort, search params)
     cattr_accessor :store_user_settings, instance_accessor: false, default: true
 
-    # action links are used by actions to tie together. you can use them, too! this is a collection of ActiveScaffold::DataStructures::ActionLink objects.
+    # action links are used by actions to tie together. you can use them, too! this is a collection of
+    # ActiveScaffold::DataStructures::ActionLink objects.
     cattr_reader :action_links, instance_reader: false, default: ActiveScaffold::DataStructures::ActionLinks.new
 
-    # modules to include after all ActiveScaffold modules are included, to include generic customizations in all controllers
+    # modules to include after all ActiveScaffold modules are included, to include generic customizations in all
+    # controllers
     cattr_reader :custom_modules, instance_reader: false, default: []
 
     # access to the permissions configuration.
@@ -70,10 +74,12 @@ module ActiveScaffold::Config
     # lets you specify whether add a create link for each sti child
     cattr_accessor :sti_create_links, instance_accessor: false, default: true
 
-    # prefix messages with current timestamp, set the format to display (you can use I18n keys) or true and :short will be used
+    # prefix messages with current timestamp, set the format to display (you can use I18n keys) or true and :short will
+    # be used
     cattr_accessor :timestamped_messages, instance_accessor: false, default: false
 
-    # a hash of string (or array of strings) and highlighter string to highlight words in messages. It will use highlight rails helper
+    # a hash of string (or array of strings) and highlighter string to highlight words in messages. It will use
+    # highlight rails helper
     cattr_accessor :highlight_messages, instance_accessor: false, default: nil
 
     # method names or procs to be called after all configure blocks
@@ -107,7 +113,8 @@ module ActiveScaffold::Config
     # lets you override the global ActiveScaffold theme for a specific controller
     attr_accessor :theme
 
-    # modules to include after all ActiveScaffold modules are included, to include generic customizations in some controllers
+    # modules to include after all ActiveScaffold modules are included, to include generic customizations in some
+    # controllers
     # These modules are included after the modules in global custom_modules setting.
     attr_reader :custom_modules
 
@@ -120,7 +127,8 @@ module ActiveScaffold::Config
     # enable caching of association options
     attr_accessor :cache_association_options
 
-    # enable setting ETag and LastModified on responses and using fresh_when/stale? to respond with 304 and avoid rendering views
+    # enable setting ETag and LastModified on responses and using fresh_when/stale? to respond with 304 and avoid
+    # rendering views
     attr_accessor :conditional_get_support
 
     # enable saving user settings in session (per_page, limit, page, sort, search params)
@@ -133,23 +141,27 @@ module ActiveScaffold::Config
       sti_create_links && !sti_children.nil?
     end
 
-    # action links are used by actions to tie together. they appear as links for each record, or general links for the ActiveScaffold.
+    # action links are used by actions to tie together. they appear as links for each record, or general links for the
+    # ActiveScaffold.
     attr_reader :action_links
 
     # a generally-applicable name for this ActiveScaffold ... will be used for generating page/section headers
     attr_writer :label
 
     def label(options = {})
-      as_(@label, options) || model.model_name.human(options.merge(options[:count].to_i == 1 ? {} : {default: model.name.pluralize}))
+      as_(@label, options) ||
+        model.model_name.human(options.merge(options[:count].to_i == 1 ? {} : {default: model.name.pluralize}))
     end
 
     # STI children models, use an array of model names
     attr_accessor :sti_children
 
-    # prefix messages with current timestamp, set the format to display (you can use I18n keys) or true and :short will be used
+    # prefix messages with current timestamp, set the format to display (you can use I18n keys) or true and :short will
+    # be used
     attr_accessor :timestamped_messages
 
-    # a hash of string (or array of strings) and highlighter string to highlight words in messages. It will use highlight rails helper
+    # a hash of string (or array of strings) and highlighter string to highlight words in messages. It will use
+    # highlight rails helper
     attr_accessor :highlight_messages
 
     ##
@@ -177,7 +189,10 @@ module ActiveScaffold::Config
       content_columns = Set.new(_content_columns.map(&:name))
       @columns.exclude(*self.class.ignore_columns)
       @columns.exclude(*@columns.find_all { |c| c.column && content_columns.exclude?(c.column.name) }.collect(&:name))
-      @columns.exclude(*model.reflect_on_all_associations.filter_map { |a| a.foreign_type.to_sym if a.options[:polymorphic] })
+      foreign_types = model.reflect_on_all_associations.filter_map do |assoc|
+        assoc.foreign_type.to_sym if assoc.options[:polymorphic]
+      end
+      @columns.exclude(*foreign_types)
     end
 
     def initialize_core_settings
@@ -243,7 +258,8 @@ module ActiveScaffold::Config
       underscored_name = action_name.to_s.underscore.to_sym
       unless @actions.include? underscored_name
         raise ArgumentError,
-              "#{action_name.to_s.camelcase} is not enabled for #{model.name}. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
+              "#{action_name.to_s.camelcase} is not enabled for #{model.name}. Please enable it or remove " \
+              "any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
       end
 
       @action_configs ||= {}
@@ -287,7 +303,8 @@ module ActiveScaffold::Config
       mongoid? ? '_id' : model.primary_key
     end
 
-    # warning - this won't work as a per-request dynamic attribute in rails 2.0.  You'll need to interact with Controller#generic_view_paths
+    # warning - this won't work as a per-request dynamic attribute in rails 2.0.  You'll need to interact with
+    # Controller#generic_view_paths
     def inherited_view_paths
       @inherited_view_paths ||= []
     end
@@ -350,7 +367,8 @@ module ActiveScaffold::Config
       end
 
       def method_missing(name, *args)
-        # check if it's an action instead of checking if action is enabled, so we get a better error message when the action is not setup in the controller
+        # check if it's an action instead of checking if action is enabled, so we get a better error message when the
+        # action is not setup in the controller
         value = args.empty? && @conf.class.config_class?(name) ? @conf.send(name) : super
         value.is_a?(Base) ? action_user_settings(value) : value
       end

@@ -5,9 +5,11 @@ module ActiveScaffold
   # as opposed to the normal one. First, everything gets evaluated as part of the object including Configurable.
   # Then, as a failover, missing methods and variables are evaluated in the original binding of the block.
   #
-  # Note that this only works with "barewords". Constants, instance variables, and class variables are not currently supported in both contexts.
+  # Note that this only works with "barewords". Constants, instance variables, and class variables are not currently
+  # supported in both contexts.
   #
-  # May add the given functionality at both the class and instance level. For the former, use +extend+, and for the latter, use +include+.
+  # May add the given functionality at both the class and instance level. For the former, use +extend+, and for the
+  # latter, use +include+.
   module Configurable
     def configure(&configuration_block)
       return unless configuration_block

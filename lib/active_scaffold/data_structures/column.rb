@@ -22,23 +22,27 @@ module ActiveScaffold::DataStructures
         # What columns load from main table
         attr_accessor :select_columns
 
-        # define a calculation for the column. anything that ActiveRecord::Calculations::ClassMethods#calculate accepts will do.
+        # define a calculation for the column. anything that ActiveRecord::Calculations::ClassMethods#calculate accepts
+        # will do.
         attr_accessor :calculate
 
         # A placeholder text, to be used inside blank text fields to describe, what should be typed in
         attr_accessor :placeholder
 
-        # this will be /joined/ to the :name for the td's class attribute. useful if you want to style columns on different ActiveScaffolds the same way, but the columns have different names.
+        # this will be /joined/ to the :name for the td's class attribute. useful if you want to style columns on
+        # different ActiveScaffolds the same way, but the columns have different names.
         attr_accessor :css_class
 
         # whether the field is required or not. used on the form for visually indicating the fact to the user.
         attr_writer :required
 
-        # the display-name of the column. this will be used, for instance, as the column title in the table and as the field name in the form.
+        # the display-name of the column. this will be used, for instance, as the column title in the table and as the
+        # field name in the form.
         # if left alone it will utilize human_attribute_name which includes localization
         attr_writer :label
 
-        # a textual description of the column and its contents. this will be displayed with any associated form input widget, so you may want to consider adding a content example.
+        # a textual description of the column and its contents. this will be displayed with any associated form input
+        # widget, so you may want to consider adding a content example.
         attr_writer :description
 
         # enable it if local sorting shouldn't be used for this column at all
@@ -58,7 +62,8 @@ module ActiveScaffold::DataStructures
         # update_columns, but won't affect the form submission.
         # The value can be set in the scaffold controller as follows to dynamically
         # hide the column based on a Proc's output:
-        # config.columns[:my_column].hide_form_column_if = Proc.new { |record, column, scope| record.vehicle_type == 'tractor' }
+        # config.columns[:my_column].hide_form_column_if = Proc.new { |record, column, scope| record.vehicle_type ==
+        # 'tractor' }
         # OR to always hide the column:
         # config.columns[:my_column].hide_form_column_if = true
         # OR to call a method on the record to determine whether to hide the column:
@@ -71,7 +76,8 @@ module ActiveScaffold::DataStructures
         # text to display when the column is empty, defaults nil, so list.empty_field_text is used
         attr_accessor :empty_field_text
 
-        # a collection of columns to load from the association when eager loading is disabled, if it's nil all columns will be loaded
+        # a collection of columns to load from the association when eager loading is disabled, if it's nil all columns
+        # will be loaded
         attr_accessor :select_associated_columns
 
         # to modify the default order of columns
@@ -120,7 +126,8 @@ module ActiveScaffold::DataStructures
         @inplace_edit = value
       end
 
-      # this should not only delete any existing link but also prevent column links from being automatically added by later routines
+      # this should not only delete any existing link but also prevent column links from being automatically added by
+      # later routines
       def clear_link
         @link = nil
         @autolink = false
@@ -145,7 +152,8 @@ module ActiveScaffold::DataStructures
       end
 
       def placeholder
-        @placeholder || I18n.t(name, scope: [:activerecord, :placeholder, active_record_class.to_s.underscore.to_sym], default: '')
+        @placeholder || I18n.t(name, scope: [:activerecord, :placeholder, active_record_class.to_s.underscore.to_sym],
+                                     default: '')
       end
 
       def label(record = nil, scope = nil)
@@ -180,7 +188,8 @@ module ActiveScaffold::DataStructures
       # sorting on a column can be configured four ways:
       #   sort = true               default, uses intelligent sorting sql default
       #   sort = false              sometimes sorting doesn't make sense
-      #   sort = {sql: ""}       define your own sql for sorting. this should be result in a sortable value in SQL. ActiveScaffold will handle the ascending/descending.
+      #   sort = {sql: ""}       define your own sql for sorting. this should be result in a sortable value in SQL.
+      #   ActiveScaffold will handle the ascending/descending.
       #   sort = {method: ""}    define ruby-side code for sorting. this is SLOW with large recordsets!
       def sort=(value)
         if value.is_a? Hash
@@ -332,7 +341,8 @@ module ActiveScaffold::DataStructures
 
       # describes how to search on a column
       #   search = true           default, uses intelligent search sql
-      #   search = "CONCAT(a, b)" define your own sql for searching. this should be the "left-side" of a WHERE condition. the operator and value will be supplied by ActiveScaffold.
+      #   search = "CONCAT(a, b)" define your own sql for searching. this should be the "left-side" of a WHERE
+      #   condition. the operator and value will be supplied by ActiveScaffold.
       #   search = [:a, :b]       searches in both fields
       def search_sql=(value)
         @search_sql =
@@ -428,7 +438,8 @@ module ActiveScaffold::DataStructures
       end
 
       def uses_native_separator?(number, format)
-        number.exclude?(format[:separator]) && number.include?('.') && (format[:delimiter] != '.' || number !~ /\.\d{3}$/)
+        number.exclude?(format[:separator]) && number.include?('.') &&
+          (format[:delimiter] != '.' || number !~ /\.\d{3}$/)
       end
     end
 
@@ -441,7 +452,8 @@ module ActiveScaffold::DataStructures
     attr_reader :active_record_class
     alias model active_record_class
 
-    # this is the name of the getter on the ActiveRecord model. it is the only absolutely required attribute ... all others will be inferred from this name.
+    # this is the name of the getter on the ActiveRecord model. it is the only absolutely required attribute ... all
+    # others will be inferred from this name.
     attr_reader :name
 
     include ProxyableMethods
@@ -665,7 +677,8 @@ module ActiveScaffold::DataStructures
     end
 
     def use_like_in_postgresql?
-      active_record? && @db_column&.collation.present? && @active_record_class.connection.adapter_name.in?(%w[PostgreSQL PostGIS])
+      active_record? && @db_column&.collation.present? &&
+        @active_record_class.connection.adapter_name.in?(%w[PostgreSQL PostGIS])
     end
 
     def setup_association_info

@@ -14,7 +14,8 @@ module ActiveScaffold
         elsif search_ui && override_human_condition?(search_ui)
           send(override_human_condition(search_ui), column, value)
         else
-          logger.warn "undefined active_scaffold_human_condition method for search_ui #{search_ui} on column #{column.name}"
+          logger.warn "undefined active_scaffold_human_condition method for search_ui #{search_ui} " \
+                      "on column #{column.name}"
         end
       end
 
@@ -38,8 +39,14 @@ module ActiveScaffold
       end
 
       def active_scaffold_human_condition_integer(column, value)
-        from = format_number_value(controller.class.condition_value_for_numeric(column, value['from']), column.options) if value['from'].present?
-        to = "- #{format_number_value(controller.class.condition_value_for_numeric(column, value['to']), column.options)}" if value['opt'] == 'BETWEEN'
+        if value['from'].present?
+          from = format_number_value(controller.class.condition_value_for_numeric(column, value['from']),
+                                     column.options)
+        end
+        if value['opt'] == 'BETWEEN'
+          to = "- #{format_number_value(controller.class.condition_value_for_numeric(column, value['to']),
+                                        column.options)}"
+        end
         format_human_condition column, value['opt'].downcase, from, to
       end
       alias active_scaffold_human_condition_decimal active_scaffold_human_condition_integer
@@ -91,14 +98,6 @@ module ActiveScaffold
           I18n.t 'date.formats.default'
         end
       end
-      # def active_scaffold_human_condition_date(column, value)
-      #   conversion = column.column_type == :date ? :to_date : :to_time
-      #   from = controller.class.condition_value_for_datetime(column, value['from'], conversion)
-      #   from = I18n.l from if from
-      #   to = controller.class.condition_value_for_datetime(column, value['to'], conversion) if value['opt'] == 'BETWEEN' || (value['opt'].nil? && value['to'])
-      #   to = "- #{I18n.l to}" if to
-      #   format_human_condition column, value['opt'], from, to
-      # end
 
       def active_scaffold_human_condition_boolean(column, value)
         attribute = column.label
@@ -137,7 +136,9 @@ module ActiveScaffold
 
       def _as_human_condition_option_labels(column, associated)
         associated.collect do |value|
-          text, option_value = column.options[:options].find { |text, candidate| (candidate.nil? ? text : candidate).to_s == value.to_s }
+          text, option_value = column.options[:options].find do |text, candidate|
+            (candidate.nil? ? text : candidate).to_s == value.to_s
+          end
           text ? active_scaffold_translated_option(column, text, option_value).first : value
         end
       end

@@ -139,7 +139,10 @@ module ActiveScaffold::Actions
       apply_constraints_to_record(@form_record) unless scope
       create_association_with_parent @form_record, check_match: true if nested?
       if @form_action == :field_search
-        update_columns_from_params(@form_record, columns, attributes || {}, :read, avoid_changes: true, search_attributes: true)
+        update_columns_from_params(
+          @form_record, columns, attributes || {}, :read,
+          avoid_changes: true, search_attributes: true
+        )
       else
         update_record_from_params(@form_record, columns, attributes || {}, avoid_changes: true)
       end
@@ -261,7 +264,9 @@ module ActiveScaffold::Actions
       dst ||= orig.class.new
       orig.attributes.each { |attr, value| dst.send :write_attribute, attr, value }
       orig.class.reflect_on_all_associations.each do |assoc|
-        dst.association(assoc.name).target = orig.association(assoc.name).target if orig.send(:association_cached?, assoc.name)
+        next unless orig.send(:association_cached?, assoc.name)
+
+        dst.association(assoc.name).target = orig.association(assoc.name).target
       end
       dst.changes_applied
       dst
@@ -383,7 +388,8 @@ module ActiveScaffold::Actions
       @successful = val ? true : false
     end
 
-    # Redirect to the main page (override if the ActiveScaffold is used as a component on another controllers page) for Javascript degradation
+    # Redirect to the main page (override if the ActiveScaffold is used as a component on another controllers page) for
+    # Javascript degradation
     def return_to_main
       options = main_path_to_return
       # use url_for in case main_path_to_return returns Hash with status param,
@@ -613,7 +619,8 @@ module ActiveScaffold::Actions
     end
 
     def action_link_authorized?(link, record = nil)
-      link&.security_method.nil? || !respond_to?(link.security_method, true) || Array(send(link.security_method, *record))[0]
+      link&.security_method.nil? || !respond_to?(link.security_method, true) ||
+        Array(send(link.security_method, *record))[0]
     end
 
     def action_confirmation_respond_to_html(confirm_action = action_name.to_sym)
@@ -713,7 +720,9 @@ module ActiveScaffold::Actions
         controller = self.class.active_scaffold_controller_for(klass)
         cfg = controller.active_scaffold_config if controller.uses_active_scaffold?
         next unless cfg&.add_sti_create_links?
-        return controller if cfg.sti_children.map(&:to_s).include? self.class.active_scaffold_config.model.name.underscore
+
+        model_name = self.class.active_scaffold_config.model.name.underscore
+        return controller if cfg.sti_children.map(&:to_s).include? model_name
       end
     rescue ActiveScaffold::ControllerNotFound => e
       logger.warn "#{e.message} looking for parent_sti of #{self.class.active_scaffold_config.model.name}"

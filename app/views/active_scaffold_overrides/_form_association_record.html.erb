@@ -11,6 +11,9 @@
   scope = column_scope(record_column, scope, record) if record_column
   options = active_scaffold_input_options(config.columns[record.class.primary_key], scope, object: record)
   tr_id = "association-#{options[:id]}"
+  record_classes = ['association-record']
+  record_classes << 'association-record-new' if record.new_record?
+  record_classes << 'locked' if locked
   layout ||= ui_options[:layout] || config.subform.layout
 
   if layout == :vertical
@@ -36,12 +39,18 @@
 -%>
 <%= content_tag record_tag, class: 'sub-form-record' do %>
   <% unless record.errors.empty? -%>
-  <%= content_tag error_tag, class: 'association-record-errors', id: element_messages_id(action: record.class.name.underscore) do %>
+  <%= content_tag error_tag, class: 'association-record-errors',
+                  id: element_messages_id(action: record.class.name.underscore) do %>
     <% errors = active_scaffold_error_messages_for(:record, object: record) %>
-    <%= error_inner_tag ? content_tag(error_inner_tag, errors, colspan: (active_scaffold_config_for(record.class).subform.columns.length + 1 if error_inner_tag == :td)) : errors %>
+    <%= if error_inner_tag
+          colspan = active_scaffold_config_for(record.class).subform.columns.length + 1 if error_inner_tag == :td
+          content_tag(error_inner_tag, errors, colspan: colspan)
+        else
+          errors
+        end %>
   <% end %>
   <% end %>
-  <%= content_tag row_tag, id: tr_id, class: "association-record#{' association-record-new' if record.new_record?}#{' locked' if locked}" do %>
+  <%= content_tag row_tag, id: tr_id, class: record_classes.join(' ') do %>
   <% columns.each_column(for: record.class, crud_type: :read, flatten: flatten) do |column| %>
   <%
     if column.respond_to? :each_column
@@ -59,7 +68,8 @@
     col_class << 'hidden' if column_renders_as(column) == :hidden
   -%>
     <%= content_tag column_tag, class: col_class.join(' ') do %>
-      <%= active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class: false, record: record, form_columns: column_names) %>
+      <%= active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class: false, record: record,
+                                                form_columns: column_names) %>
     <% end %>
   <% end -%>
   <% if show_actions -%>

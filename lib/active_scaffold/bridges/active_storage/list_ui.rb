@@ -31,7 +31,11 @@ module ActiveScaffold
           else
             attachment.filename
           end
-        link_to(content, rails_blob_url(attachment, disposition: 'attachment'), target: '_blank', rel: 'noopener noreferrer')
+        link_to(
+          content,
+          rails_blob_url(attachment, disposition: 'attachment'),
+          target: '_blank', rel: 'noopener noreferrer'
+        )
       end
     end
   end

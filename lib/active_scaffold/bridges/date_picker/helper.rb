@@ -40,7 +40,27 @@ module ActiveScaffold::Bridges
       end
 
       def self.date_options(locale)
-        date_picker_options = {
+        date_picker_options = default_date_options(locale)
+
+        as_date_picker_options = I18n.translate!(
+          :date_picker_options, scope: :active_scaffold, locale: locale, default: ''
+        )
+        if as_date_picker_options.is_a? Hash
+          date_picker_options.merge!(normalize_translated_values(as_date_picker_options))
+        end
+        if as_date_picker_options.blank?
+          Rails.logger.warn "ActiveScaffold: Missing date picker localization for your locale: #{locale}"
+        end
+
+        js_format = to_datepicker_format(I18n.translate!('date.formats.default', locale: locale, default: ''))
+        date_picker_options[:dateFormat] = js_format if js_format.present?
+        date_picker_options
+      rescue StandardError
+        raise if locale == I18n.locale
+      end
+
+      def self.default_date_options(locale)
+        {
           closeText:       as_(:close),
           prevText:        as_(:previous),
           nextText:        as_(:next),
@@ -53,17 +73,8 @@ module ActiveScaffold::Bridges
           changeYear:      true,
           changeMonth:     true
         }
-
-        as_date_picker_options = I18n.translate! :date_picker_options, scope: :active_scaffold, locale: locale, default: ''
-        date_picker_options.merge!(normalize_translated_values(as_date_picker_options)) if as_date_picker_options.is_a? Hash
-        Rails.logger.warn "ActiveScaffold: Missing date picker localization for your locale: #{locale}" if as_date_picker_options.blank?
-
-        js_format = to_datepicker_format(I18n.translate!('date.formats.default', locale: locale, default: ''))
-        date_picker_options[:dateFormat] = js_format if js_format.present?
-        date_picker_options
-      rescue StandardError
-        raise if locale == I18n.locale
       end
+      private_class_method :default_date_options
 
       def self.normalize_translated_values(options)
         options.transform_values do |v|
@@ -101,9 +112,13 @@ module ActiveScaffold::Bridges
           microsecText: I18n.translate!('datetime.prompts.microsec', locale: locale)
         }
 
-        as_datetime_picker_options = I18n.translate! :datetime_picker_options, scope: :active_scaffold, locale: locale, default: ''
+        as_datetime_picker_options = I18n.translate!(
+          :datetime_picker_options, scope: :active_scaffold, locale: locale, default: ''
+        )
         datetime_picker_options.merge!(as_datetime_picker_options) if as_datetime_picker_options.is_a? Hash
-        Rails.logger.warn "ActiveScaffold: Missing datetime picker localization for your locale: #{locale}" if as_datetime_picker_options.blank?
+        if as_datetime_picker_options.blank?
+          Rails.logger.warn "ActiveScaffold: Missing datetime picker localization for your locale: #{locale}"
+        end
 
         datetime_picker_options.merge! format_to_datetime_picker(rails_time_format)
         datetime_picker_options
@@ -183,7 +198,10 @@ module ActiveScaffold::Bridges
           value =
             if current_search.is_a? Hash
               conversion = column.search_ui == :date_picker ? :to_date : :to_time
-              controller.class.condition_value_for_datetime(column, current_search[name], conversion, ui_method: :search_ui, ui_options: ui_options)
+              controller.class.condition_value_for_datetime(
+                column, current_search[name], conversion,
+                ui_method: :search_ui, ui_options: ui_options
+              )
             else
               current_search
             end
@@ -207,7 +225,10 @@ module ActiveScaffold::Bridges
 
           format = datepicker_format(options, column.form_ui)
           conversion = column.form_ui == :date_picker ? :to_date : :to_time
-          value = controller.class.condition_value_for_datetime(column, record.send(column.name), conversion, ui_method: :form_ui, ui_options: ui_options)
+          value = controller.class.condition_value_for_datetime(
+            column, record.send(column.name), conversion,
+            ui_method: :form_ui, ui_options: ui_options
+          )
           options[:data] = datepicker_format_options(column, format).reverse_merge!(options[:data] || {})
           options[:value] = (value ? l(value, format: format) : nil)
           text_field(:record, column.name, options)

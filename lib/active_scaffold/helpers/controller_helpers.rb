@@ -72,7 +72,8 @@ module ActiveScaffold
           params.except(*BLACKLIST_PARAMS).each do |key, value|
             @params_for[key.to_sym] = copy_param(value)
           end
-          @params_for[:controller] = "/#{@params_for[:controller]}" unless @params_for[:controller]&.first(1) == '/' # for namespaced controllers
+          # Prefix namespaced controllers with a slash.
+          @params_for[:controller] = "/#{@params_for[:controller]}" unless @params_for[:controller]&.first(1) == '/'
           @params_for.delete(:id) if @params_for[:id].nil?
         end
         @params_for
@@ -114,7 +115,8 @@ module ActiveScaffold
         end
       end
 
-      # Parameters to generate url to the main page (override if the ActiveScaffold is used as a component on another controllers page)
+      # Parameters to generate url to the main page (override if the ActiveScaffold is used as a component on another
+      # controllers page)
       def main_path_to_return
         if params[:return_to]
           params[:return_to]
@@ -153,7 +155,8 @@ module ActiveScaffold
         if nested_singular_association?
           {controller: nested.parent_scaffold.controller_path, action: :index, id: nested.parent_id}
         elsif parent_sti_controller
-          options = params_for(controller: parent_sti_controller.controller_path, action: render_parent_action, parent_sti: nil)
+          options = params_for(controller: parent_sti_controller.controller_path, action: render_parent_action,
+                               parent_sti: nil)
           options.merge!(action: :index, id: @record.to_param) if render_parent_action == :row
           options
         end
@@ -200,7 +203,8 @@ module ActiveScaffold
         # build full chain, only check create_associated on initial parent_record
         parent_record = build_associated(association.through_reflection, parent_record)
         build_associated(association.source_reflection, parent_record).tap do |record|
-          save_record_to_association(record, association.source_reflection.reverse_association, parent_record) # set inverse
+          reverse_association = association.source_reflection.reverse_association
+          save_record_to_association(record, reverse_association, parent_record) # set inverse
         end
       end
 

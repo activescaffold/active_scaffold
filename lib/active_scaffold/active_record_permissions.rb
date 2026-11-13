@@ -90,7 +90,9 @@ module ActiveScaffold
 
           # collect other possibly-related methods that actually exist
           methods = cached_authorized_for_methods(options)
-          return authorization_response(ActiveRecordPermissions.default_permission, nil, options[:reason]) if methods.empty?
+          if methods.empty?
+            return authorization_response(ActiveRecordPermissions.default_permission, nil, options[:reason])
+          end
 
           # if any method returns false, then return false
           methods.each do |method|

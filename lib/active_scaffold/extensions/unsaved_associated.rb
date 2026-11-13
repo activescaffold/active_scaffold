@@ -7,7 +7,8 @@ module ActiveScaffold::UnsavedAssociated
 
     path << self
     # using [].all? syntax to avoid a short-circuit
-    # errors to associated record can be added by update_record_from_params when association fails to set and ActiveRecord::RecordNotSaved is raised
+    # errors to associated record can be added by update_record_from_params when association fails to set and
+    # ActiveRecord::RecordNotSaved is raised
     with_unsaved_associated { |a| [a.keeping_errors { a.valid? }, a.associated_valid?(path)].all? }.all?
   end
 
@@ -37,7 +38,9 @@ module ActiveScaffold::UnsavedAssociated
   # Otherwise the default behaviour of traversing all associations will be preserved.
   def associations_for_update
     if respond_to?(:scaffold_update_nofollow)
-      self.class.reflect_on_all_associations.reject { |association| scaffold_update_nofollow.include?(association.name) }
+      self.class.reflect_on_all_associations.reject do |association|
+        scaffold_update_nofollow.include?(association.name)
+      end
     elsif respond_to?(:scaffold_update_follow)
       self.class.reflect_on_all_associations.select { |association| scaffold_update_follow.include?(association.name) }
     else
@@ -49,7 +52,8 @@ module ActiveScaffold::UnsavedAssociated
 
   # yields every associated object that has been instantiated and is flagged as unsaved.
   # returns false if any yield returns false.
-  # returns true otherwise, even when none of the associations have been instantiated. build wrapper methods accordingly.
+  # returns true otherwise, even when none of the associations have been instantiated. build wrapper methods
+  # accordingly.
   def with_unsaved_associated(&block)
     associations_for_update.flat_map do |assoc|
       association_proxy = association(assoc.name)

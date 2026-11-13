@@ -41,7 +41,8 @@ module ActiveScaffold
           columns.to_h do |column|
             casted_value =
               if column.text?
-                like_pattern.sub('?', column.active_record? ? column.active_record_class.sanitize_sql_like(value) : value)
+                value = column.active_record_class.sanitize_sql_like(value) if column.active_record?
+                like_pattern.sub('?', value)
               else
                 ActiveScaffold::Core.column_type_cast(value, column.column, column.model)
               end
@@ -200,7 +201,8 @@ module ActiveScaffold
           condition_for_range(column, value, like_pattern)
         when :date, :time, :datetime, :timestamp, :timestamptz
           condition_for_datetime(column, value)
-        when :select, :select_multiple, :draggable, :multi_select, :country, :usa_state, :chosen, :multi_chosen, :choices, :multi_choices
+        when :select, :select_multiple, :draggable, :multi_select, :country, :usa_state,
+             :chosen, :multi_chosen, :choices, :multi_choices
           return condition_for_array(column, value) unless value.is_a?(Hash)
 
           condition_for_range(column, value, like_pattern)
@@ -224,7 +226,8 @@ module ActiveScaffold
         elsif value[:from].blank? || ActiveScaffold::Finder::NUMERIC_COMPARATORS.exclude?(value[:opt])
           nil
         elsif value[:opt] == 'BETWEEN'
-          ['(%<search_sql>s BETWEEN ? AND ?)', condition_value_for_numeric(column, value[:from]), condition_value_for_numeric(column, value[:to])]
+          ['(%<search_sql>s BETWEEN ? AND ?)', condition_value_for_numeric(column, value[:from]),
+           condition_value_for_numeric(column, value[:to])]
         else
           ["%<search_sql>s #{value[:opt]} ?", condition_value_for_numeric(column, value[:from])]
         end
@@ -265,7 +268,8 @@ module ActiveScaffold
       def condition_for_string_comparator(column, value)
         text = column.active_record? ? column.active_record_class.sanitize_sql_like(value[:from]) : value[:from]
         [
-          "%<search_sql>s #{'NOT ' if value[:opt].start_with?('not_')}#{ActiveScaffold::Finder.like_operator(column)} ?",
+          "%<search_sql>s #{'NOT ' if value[:opt].start_with?('not_')}" \
+          "#{ActiveScaffold::Finder.like_operator(column)} ?",
           value[:opt].sub('not_', '').sub('?', text)
         ]
       end
@@ -431,7 +435,10 @@ module ActiveScaffold
       end
 
       def condition_for_datetime(column, value, like_pattern = nil)
-        operator = ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(value['opt']) && value['opt'] != 'BETWEEN' ? value['opt'] : nil
+        operator =
+          if ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(value['opt']) && value['opt'] != 'BETWEEN'
+            value['opt']
+          end
         from_value, to_value = datetime_from_to(column, value)
 
         if column.search_sql.is_a? Proc
@@ -555,7 +562,8 @@ module ActiveScaffold
     DATE_COMPARATORS = %w[PAST FUTURE RANGE].freeze
     DATE_UNITS = %w[DAYS WEEKS MONTHS YEARS].freeze
     TIME_UNITS = %w[SECONDS MINUTES HOURS].freeze
-    DATE_RANGES = %w[TODAY YESTERDAY TOMORROW THIS_WEEK PREV_WEEK NEXT_WEEK THIS_MONTH PREV_MONTH NEXT_MONTH THIS_YEAR PREV_YEAR NEXT_YEAR].freeze
+    DATE_RANGES = %w[TODAY YESTERDAY TOMORROW THIS_WEEK PREV_WEEK NEXT_WEEK THIS_MONTH PREV_MONTH NEXT_MONTH THIS_YEAR
+                     PREV_YEAR NEXT_YEAR].freeze
 
     def self.included(klass)
       klass.extend ClassMethods
@@ -591,14 +599,16 @@ module ActiveScaffold
     end
 
     # Override this method on your controller to define conditions to be used when querying a recordset (e.g. for List).
-    # The return of this method should be any format compatible with the :conditions clause of ActiveRecord::Base's find.
+    # The return of this method should be any format compatible with the :conditions clause of ActiveRecord::Base's
+    # find.
     def conditions_for_collection; end
 
     # Override this method on your controller to define joins to be used when querying a recordset (e.g. for List).
     # The return of this method should be any format compatible with the :joins clause of ActiveRecord::Base's find.
     def joins_for_collection; end
 
-    # Override this method on your controller to provide custom finder options to the find() call. The return of this method should be a hash.
+    # Override this method on your controller to provide custom finder options to the find() call. The return of this
+    # method should be a hash.
     def custom_finder_options
       {}
     end
@@ -724,7 +734,8 @@ module ActiveScaffold
     def find_page_query(options)
       find_options = finder_options(options)
       query = filtered_query
-      query = query.where(nil) if active_scaffold_config.active_record? # where(nil) is needed because we need a relation
+      # where(nil) is needed because we need a relation.
+      query = query.where(nil) if active_scaffold_config.active_record?
       [find_options, query]
     end
 
@@ -780,12 +791,17 @@ module ActiveScaffold
       left_joins = active_scaffold_outer_joins
       left_joins += includes if includes
       primary_key = active_scaffold_config.primary_key
-      subquery = append_to_query(filtered_query, conditions: conditions, joins: joins_for_finder, left_joins: left_joins, select: active_scaffold_config.columns[primary_key].field)
+      selected_field = active_scaffold_config.columns[primary_key].field
+      subquery = append_to_query(
+        filtered_query,
+        conditions: conditions, joins: joins_for_finder, left_joins: left_joins, select: selected_field
+      )
       subquery.unscope(:order)
     end
 
     def calculate_query(id_condition: true)
-      active_scaffold_config.model.where(active_scaffold_config.primary_key => calculate_subquery(id_condition: id_condition))
+      subquery = calculate_subquery(id_condition: id_condition)
+      active_scaffold_config.model.where(active_scaffold_config.primary_key => subquery)
     end
 
     def append_to_query(relation, options)

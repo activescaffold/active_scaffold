@@ -33,7 +33,10 @@ module ActiveScaffold::Config
         if column.association.polymorphic?
           column.label
         else
-          column.association.klass.model_name.human(count: column.association.singular? ? 1 : 2, default: column.association.klass.name.pluralize)
+          column.association.klass.model_name.human(
+            count: column.association.singular? ? 1 : 2,
+            default: column.association.klass.name.pluralize
+          )
         end
       options.reverse_merge! security_method: :nested_authorized?, label: label
       action_group = options.delete(:action_group) || self.action_group

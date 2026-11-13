@@ -3,10 +3,17 @@
   <tr class="record even-record">
     <td <%= as_element_attributes :list_messages_container, colspan: column_count, class: 'messages-container' %>>
       <%= render 'list_messages_content' unless active_scaffold_config.list.messages_above_header %>
-      <%= as_element :filtered_message,
-                     style: ('display:none;' unless @filtered),
-                     data: ({search: search_params || ''} if active_scaffold_config.store_user_settings && respond_to?(:search_params)) do %>
-        <div><%= @filtered.is_a?(Array) ? render('human_conditions', columns: @filtered) : as_(active_scaffold_config.list.filtered_message) %></div>
+      <%
+        if active_scaffold_config.store_user_settings && respond_to?(:search_params)
+          message_data = {search: search_params || ''}
+        end
+      %>
+      <%= as_element :filtered_message, style: ('display:none;' unless @filtered), data: message_data do %>
+        <div><%= if @filtered.is_a?(Array)
+                   render('human_conditions', columns: @filtered)
+                 else
+                   as_(active_scaffold_config.list.filtered_message)
+                 end %></div>
         <% if active_scaffold_config.list.show_search_reset && @filtered -%>
           <%= as_element :message_reset do %>
             <%= loading_indicator_tag(action: :record, id: nil) %>
@@ -14,10 +21,17 @@
           <% end -%>
         <% end %>
       <% end %>
-      <% applied_filters = (@filter_states || {}).values.filter_map { |filter| filter[:option] if filter[:status] == :applied && !filter[:default] } %>
+      <% applied_filters = (@filter_states || {}).values.filter_map do |filter|
+           filter[:option] if filter[:status] == :applied && !filter[:default]
+         end %>
       <%= as_element :applied_filters_message,
-                      style: ('display:none;' unless active_scaffold_config.list.filter_human_message && applied_filters.present?) do %>
-        <div><%= render('human_filters', filters: applied_filters) if active_scaffold_config.list.filter_human_message && applied_filters.present? %></div>
+                      style: ('display:none;' unless active_scaffold_config.list.filter_human_message &&
+                                                           applied_filters.present?) do %>
+        <div>
+          <% if active_scaffold_config.list.filter_human_message && applied_filters.present? %>
+            <%= render('human_filters', filters: applied_filters) %>
+          <% end %>
+        </div>
         <% if active_scaffold_config.list.show_filter_reset && applied_filters.present? -%>
           <%= as_element :message_reset do %>
             <%= loading_indicator_tag(action: :record, id: nil) %>
@@ -30,4 +44,4 @@
       <% end %>
     </td>
   </tr>
-</tbody>    
+</tbody>
