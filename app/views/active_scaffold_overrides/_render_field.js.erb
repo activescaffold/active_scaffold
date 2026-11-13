@@ -1,8 +1,6 @@
 <%
   record ||= @record
   active_scaffold_config ||= self.active_scaffold_config
-  ActiveScaffold.deprecator.warn "use `as: :column` when rendering render_field partial" if local_assigns[:render_field]
-  column ||= render_field
   if column.is_a?(Hash)
     traverse ||= []
     column.each do |assoc_name, columns|
