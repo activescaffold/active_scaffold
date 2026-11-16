@@ -49,7 +49,6 @@
 /config/initializers/localeapp.rb
 /.ruby-version
 /gemfiles/Gemfile.rails-master.lock
-/Gemfile.lock
 
 .localeapp
 /tmp/
