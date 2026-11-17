@@ -61,9 +61,9 @@ module ActiveScaffold
                             iframe associated_id authenticity_token _added _removed _popstate _].freeze
 
       def params_for(options = {})
-        url_options = base_params_for.merge(options)
+        url_options = base_params_for.merge(options.slice(:controller))
         add_user_settings_to_params(url_options)
-        url_options
+        url_options.merge(options)
       end
 
       def base_params_for
