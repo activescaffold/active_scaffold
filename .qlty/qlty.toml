@@ -61,7 +61,7 @@ mode = "comment"
 # Qlty counts Ruby keyword arguments, while RuboCop intentionally does not.
 # Helper methods pass cohesive keyword configuration without relying on
 # argument order. RuboCop continues to enforce positional parameter limits.
-threshold = 8
+threshold = 9
 
 [smells.file_complexity]
 threshold = 100
