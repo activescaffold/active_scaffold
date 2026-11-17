@@ -768,9 +768,21 @@ module ActiveScaffold
     end
 
     def count_after_loading_first_page?(options)
-      active_scaffold_config.active_record? && options[:pagination] && options[:pagination] != :infinite &&
-        options[:page].to_i == 1 && !options[:sorting]&.sorts_by_method?
+      active_scaffold_config.active_record? &&
+        finite_pagination?(options) &&
+        first_page?(options) &&
+        !options[:sorting]&.sorts_by_method?
     end
+
+    def finite_pagination?(options)
+      options[:pagination] && options[:pagination] != :infinite
+    end
+
+    def first_page?(options)
+      options[:page].to_i == 1
+    end
+
+    private :first_page?, :finite_pagination?
 
     def load_page_for_delayed_count(query, per_page)
       page_query = append_to_query(query, offset: 0, limit: per_page)
