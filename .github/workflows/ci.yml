@@ -86,6 +86,7 @@ jobs:
           - ruby: '4.0'
             rails: '8.1'
             coverage: true
+            allow_failure: false
     timeout-minutes: 60
     env:
       JRUBY_OPTS: "--debug"
