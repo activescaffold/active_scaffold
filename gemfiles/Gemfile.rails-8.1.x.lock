@@ -222,6 +222,8 @@ GEM
       date
       stringio
     public_suffix (7.0.5)
+    puma (8.1.2)
+      nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.6)
     rack-session (2.1.2)
@@ -356,6 +358,7 @@ DEPENDENCIES
   minitest-reporters
   mocha
   propshaft
+  puma
   rack
   rails (~> 8.1.0)
   rake

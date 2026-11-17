@@ -240,6 +240,10 @@ GEM
       date
       jar-dependencies (>= 0.1.7)
     public_suffix (7.0.5)
+    puma (8.1.2)
+      nio4r (~> 2.0)
+    puma (8.1.2-java)
+      nio4r (~> 2.0)
     racc (1.8.1)
     racc (1.8.1-java)
     rack (3.2.6)
@@ -381,6 +385,7 @@ DEPENDENCIES
   minitest-reporters
   mocha
   propshaft
+  puma
   rack
   rails (~> 8.0.0)
   rake

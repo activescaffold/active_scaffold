@@ -12,6 +12,7 @@ group :development, :test do
   gem 'propshaft'
   gem 'dartsass-rails'
   gem 'jquery-rails'
+  gem 'puma'
 end
 
 group :test do
