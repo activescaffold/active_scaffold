@@ -44,6 +44,8 @@ group :development, :test do
 end
 
 group :test do
+  # Browser support for the reusable plugin JavaScript test application.
+  gem 'capybara'
   # Mocking and stubbing library with JMock/SchMock syntax, which allows
   # mocking and stubbing of methods on real (non-mock) classes
   gem 'mocha'
@@ -55,6 +57,7 @@ group :test do
   # Code coverage for Ruby 1.9+ with a powerful configuration library and
   # automatic merging of coverage across test suites
   gem 'simplecov', require: false
+  gem 'selenium-webdriver'
 
   platforms :jruby do
     # This module allows Ruby programs to interface with the SQLite3 database engine

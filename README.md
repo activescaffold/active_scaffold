@@ -160,6 +160,37 @@ import 'active_scaffold'
 
 In the layout, load the importmap modules, in this case we are not using `to` in the importmap, so the js.erb file will be used, that include some generated code, and calling active_scaffold_javascript_tag is not needed.
 
+### Testing JavaScript in ActiveScaffold plugins
+
+ActiveScaffold includes an opt-in Rails system-test application for plugin JavaScript. It is not loaded by
+ActiveScaffold in applications. A plugin test suite can load it explicitly after loading the plugin:
+
+```ruby
+require 'rails'
+require 'active_scaffold'
+require 'my_active_scaffold_plugin'
+require 'active_scaffold/test_support/javascript'
+
+class PluginJavascriptTest < ActiveScaffold::TestSupport::Javascript::TestCase
+  def fixture_html
+    '<div class="my-plugin">Plugin fixture</div>'
+  end
+
+  def test_initializes_the_fixture
+    visit_javascript_fixture
+
+    assert_javascript 'document.querySelector(".my-plugin").pluginInitialized'
+    assert_no_javascript_errors
+  end
+end
+```
+
+Load the plugin before the test support so its engine and assets are present when the reusable application boots.
+Plugin test bundles must include `propshaft`, `jquery-rails`, `capybara`, `selenium-webdriver`, and `puma`. These are
+test dependencies and do not need to be runtime dependencies of the plugin. The base uses a headless Chrome browser
+and the real Rails asset paths, jQuery, UJS, ActiveScaffold loader, and registered plugin assets. It also provides
+`insert_fixture_html`, `trigger_active_scaffold_event`, `assert_javascript`, and `assert_no_javascript_errors`.
+
 Threadsafe
 ----------
 
