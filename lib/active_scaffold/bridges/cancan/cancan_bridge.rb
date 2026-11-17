@@ -20,9 +20,8 @@ module ActiveScaffold::Bridges
       end
     end
 
-    # controller level authorization
-    # As already has callbacks to ensure authorization at controller method via "authorization_method"
-    # but let's include this too, just in case, no sure how performance is affected tough :TODO benchmark
+    # CanCanCan provides a controller-level authorization check in addition to Active Scaffold's authorized_for? checks.
+    # verify whether CanCanCan's controller-level check provides additional protection.
     module ClassMethods
       def active_scaffold(model_id = nil, &)
         super
@@ -42,7 +41,7 @@ module ActiveScaffold::Bridges
     # beginning of chain integration
     module Actions
       module Core
-        # :TODO can this be expanded more ?
+        # Scope Active Scaffold queries using the current CanCanCan ability.
         def beginning_of_chain
           super.accessible_by(current_ability)
         end

@@ -107,7 +107,6 @@ module ActiveScaffold
 
       # Generates an SQL condition for the given ActiveScaffold column based on
       # that column's database type (or form_ui ... for virtual columns?).
-      # TODO: this should reside on the column, not the controller
       def condition_for_column(column, value, text_search, session)
         like_pattern = like_pattern(text_search)
         value = value.with_indifferent_access if value.is_a? Hash
@@ -864,7 +863,6 @@ module ActiveScaffold
       end
     end
 
-    # TODO: this should reside on the column, not the controller
     def sort_collection_by_column(collection, column, order)
       sorter = column.sort[:method]
       collection = collection.sort_by do |record|

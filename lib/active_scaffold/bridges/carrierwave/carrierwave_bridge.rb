@@ -20,7 +20,7 @@ module ActiveScaffold
 
         def configure_carrierwave_field(field)
           columns << field
-          columns[field].form_ui ||= :carrierwave # :TODO thumbnail
+          columns[field].form_ui ||= :carrierwave
           columns[field].params.add "#{field}_cache"
           columns[field].params.add "remove_#{field}"
         end
