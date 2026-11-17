@@ -52,5 +52,7 @@
 
 .localeapp
 /tmp/
+/lib/active_scaffold/test_support/javascript/application/app/assets/stylesheets/active_scaffold/deps.scss
+/lib/active_scaffold/test_support/javascript/application/tmp/
 /brakeman/
 /node_modules/
