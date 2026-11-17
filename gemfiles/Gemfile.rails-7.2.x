@@ -26,7 +26,7 @@ group :test do
   gem 'minitest', '~> 5.0'
   # Create customizable MiniTest output formats
   gem 'minitest-reporters', require: false
-  gem 'selenium-webdriver'
+  gem 'selenium-webdriver', '< 4.45'
   # Code coverage for Ruby 1.9+ with a powerful configuration library and automatic merging of coverage across test suites
   gem 'simplecov', require: false
 

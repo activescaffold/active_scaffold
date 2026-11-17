@@ -273,6 +273,7 @@ GEM
       io-console (~> 0.5)
     request_store (1.7.0)
       rack (>= 1.4)
+    rexml (3.4.4)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     rubyzip (3.7.0)
@@ -296,9 +297,10 @@ GEM
     sass-embedded (1.102.0-x86_64-linux-musl)
       google-protobuf (~> 4.31)
     securerandom (0.4.1)
-    selenium-webdriver (4.52.0)
+    selenium-webdriver (4.44.0)
       base64 (~> 0.2)
       logger (~> 1.4)
+      rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
     simplecov (0.22.0)
@@ -362,7 +364,7 @@ DEPENDENCIES
   rack
   rails (~> 8.1.0)
   rake
-  selenium-webdriver
+  selenium-webdriver (< 4.45)
   simplecov
   sqlite3
 

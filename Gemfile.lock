@@ -308,7 +308,7 @@ GEM
       google-protobuf (~> 4.31)
       rake (~> 13.3)
     securerandom (0.4.1)
-    selenium-webdriver (4.38.0)
+    selenium-webdriver (4.44.0)
       base64 (~> 0.2)
       logger (~> 1.4)
       rexml (~> 3.2, >= 3.2.5)
@@ -371,7 +371,7 @@ DEPENDENCIES
   rubocop-performance
   rubocop-rails
   ruby-prof
-  selenium-webdriver
+  selenium-webdriver (< 4.45)
   simplecov
   sqlite3
 
