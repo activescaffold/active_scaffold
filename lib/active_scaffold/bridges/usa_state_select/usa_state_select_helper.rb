@@ -90,16 +90,8 @@ ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::UsaStateSelect::FormColumnHelpers
   include ActiveScaffold::Bridges::UsaStateSelect::SearchColumnHelpers
 end
-if defined? ActionView::Helpers::InstanceTag # TODO: remove when rails 3.2 support is dropped
-  module ActionView::Helpers::Tags
-    class UsaStateSelect < ActionView::Helpers::InstanceTag
-      include ActiveScaffold::Bridges::UsaStateSelect::UsaStateSelectOptionsHelpers
-      include ActiveScaffold::Bridges::UsaStateSelect::InstanceTagMethods
-    end
-  end
-else
-  class ActionView::Helpers::Tags::UsaStateSelect < ActionView::Helpers::Tags::Base # :nodoc:
-    include ActiveScaffold::Bridges::UsaStateSelect::UsaStateSelectOptionsHelpers
-    include ActiveScaffold::Bridges::UsaStateSelect::InstanceTagMethods
-  end
+
+class ActionView::Helpers::Tags::UsaStateSelect < ActionView::Helpers::Tags::Base # :nodoc:
+  include ActiveScaffold::Bridges::UsaStateSelect::UsaStateSelectOptionsHelpers
+  include ActiveScaffold::Bridges::UsaStateSelect::InstanceTagMethods
 end
