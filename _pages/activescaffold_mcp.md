@@ -9,7 +9,7 @@ hero_heading: MCP tools from ActiveScaffold configuration
 hero_lead: Give MCP clients controlled, read-only access to your ActiveScaffold resources
 ---
 
-ActiveScaffold MCP generates [ActionMCP](https://github.com/seuros/action_mcp) tools from the configuration already defined in ActiveScaffold controllers. Version 0.1.1 supports read-only list and show tools, with explicit control over the actions, columns, filters, and record lookups exposed to MCP clients.
+ActiveScaffold MCP generates [ActionMCP](https://github.com/seuros/action_mcp) tools from the configuration already defined in ActiveScaffold controllers. Version 0.1.3 supports read-only list and show tools, with explicit control over the actions, columns, filters, record lookups, and structured presentation exposed to MCP clients.
 
 ### Requirements
 
@@ -23,7 +23,7 @@ ActiveScaffold MCP generates [ActionMCP](https://github.com/seuros/action_mcp) t
 Add the gem to your `Gemfile`:
 
 {% highlight ruby -%}
-gem "active_scaffold_mcp", "~> 0.1.1"
+gem "active_scaffold_mcp", "~> 0.1.3"
 {%- endhighlight %}
 
 Then run:
@@ -121,6 +121,39 @@ config.mcp.expose :show,
 
 Presenter methods should return structured, non-HTML values. See [Customize presentation](/doc/active-scaffold-mcp-read-tools/#customize-presentation) for list and show configuration details.
 
+Version 0.1.3 can also map an ActiveScaffold `list_ui` or `show_ui` to one
+presentation method. This is useful when several columns share a UI adapter:
+
+```ruby
+module AttachmentMCPPresentation
+  def mcp_list_paperclip(record, column, ui_options:)
+    attachment = record.public_send(column.name)
+    return unless attachment.file?
+
+    {
+      filename: attachment.original_filename,
+      content_type: attachment.content_type,
+      byte_size: attachment.size
+    }
+  end
+end
+
+config.mcp.expose :list,
+                  columns: %i[id invoice],
+                  presenter_modules: AttachmentMCPPresentation
+```
+
+List tools call `mcp_list_<list_ui>`. Show tools first look for
+`mcp_show_<show_ui>` and then reuse `mcp_list_<show_ui>`, matching
+ActiveScaffold's UI inheritance. Each method receives the record, column, and
+the UI-specific options through `ui_options:`. A `<column>_column` method still
+takes precedence when one column needs different handling.
+
+The default presenter already returns structured attachment metadata for
+Active Storage, Paperclip, CarrierWave, Dragonfly, and file-column fields.
+Depending on the backend, the result can contain `filename`, `content_type`,
+`byte_size`, and `updated_at`; missing attachments are returned as `null`.
+
 When changing individual record fields is not enough, list and show tools also
 provide a protected `render_result` hook. The default implementation renders
 the records as JSON. An action module can override the hook to return different
@@ -152,7 +185,7 @@ format itself must change. ActionMCP also accepts Base64 data through the
 
 ActiveScaffold MCP does not publish every scaffold automatically. Applications choose the actions and data appropriate for agent access. Generated tools apply ActiveScaffold's column and record authorization, action-specific authorization such as `list_authorized?`, and an optional application-level authorization hook during both discovery and execution.
 
-Version 0.1.1 is intentionally read-only. It generates list and show tools. Support for write actions—including create, update, delete, and applicable custom actions—is planned for later releases.
+Version 0.1.3 is intentionally read-only. It generates list and show tools. Support for write actions—including create, update, delete, and applicable custom actions—is planned for later releases.
 
 ### Documentation
 
