@@ -160,7 +160,7 @@ module ActiveScaffold
       end
 
       def server_error_msg(content = nil, **attributes, &)
-        as_element :server_error, content, **attributes, &
+        as_element(:server_error, content, **attributes, &)
       end
 
       def column_empty?(column_value)

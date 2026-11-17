@@ -63,6 +63,9 @@ mode = "comment"
 # argument order. RuboCop continues to enforce positional parameter limits.
 threshold = 8
 
+[smells.file_complexity]
+threshold = 100
+
 [[source]]
 name = "default"
 default = true
@@ -93,4 +96,12 @@ name = "zizmor"
 [[triage]]
 match.plugins = ["zizmor"]
 match.rules = ["zizmor/unpinned-uses"]
+set.ignored = true
+
+[[triage]]
+match.rules = ["qlty:similar-code"]
+match.file_patterns = [
+  "lib/active_scaffold/bridges/dragonfly/form_ui.rb",
+  "lib/active_scaffold/bridges/paperclip/form_ui.rb",
+]
 set.ignored = true
