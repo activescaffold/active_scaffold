@@ -266,12 +266,18 @@ GEM
       rack (>= 1.4)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
+    rubyzip (3.7.0)
     sass-embedded (1.102.0)
       google-protobuf (~> 4.31)
       rake (>= 13)
     sass-embedded (1.102.0-x86_64-linux-gnu)
       google-protobuf (~> 4.31)
     securerandom (0.4.1)
+    selenium-webdriver (4.52.0)
+      base64 (~> 0.2)
+      logger (~> 1.4)
+      rubyzip (>= 1.2.2, < 4.0)
+      websocket (~> 1.0)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -288,6 +294,7 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     useragent (0.16.11)
+    websocket (1.2.11)
     websocket-driver (0.8.0)
       base64
       websocket-extensions (>= 0.1.0)
@@ -318,6 +325,7 @@ DEPENDENCIES
   rack
   rails (~> 7.2.0)
   rake
+  selenium-webdriver
   simplecov
   sqlite3
 
