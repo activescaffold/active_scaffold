@@ -97,11 +97,3 @@ name = "zizmor"
 match.plugins = ["zizmor"]
 match.rules = ["zizmor/unpinned-uses"]
 set.ignored = true
-
-[[triage]]
-match.rules = ["qlty:similar-code"]
-match.file_patterns = [
-  "lib/active_scaffold/bridges/dragonfly/form_ui.rb",
-  "lib/active_scaffold/bridges/paperclip/form_ui.rb",
-]
-set.ignored = true
