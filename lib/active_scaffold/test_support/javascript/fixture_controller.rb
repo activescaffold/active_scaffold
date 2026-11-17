@@ -5,6 +5,8 @@ module ActiveScaffold
     module Javascript
       # The reusable application cannot depend on a host ApplicationController.
       class FixtureController < ::ActionController::Base # rubocop:disable Rails/ApplicationController
+        protect_from_forgery with: :exception
+
         helper ActiveScaffold::Helpers::AssetsHelpers
 
         def show
