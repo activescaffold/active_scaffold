@@ -21,7 +21,6 @@ module ActiveScaffold::Bridges
     end
 
     # CanCanCan provides a controller-level authorization check in addition to Active Scaffold's authorized_for? checks.
-    # verify whether CanCanCan's controller-level check provides additional protection.
     module ClassMethods
       def active_scaffold(model_id = nil, &)
         super
