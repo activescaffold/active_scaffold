@@ -6,7 +6,6 @@ gemspec
 
 group :development do
   # RDoc produces HTML and command-line documentation for Ruby projects
-  gem 'puma'
   gem 'rdoc'
 end
 
@@ -39,6 +38,7 @@ group :development, :test do
   gem 'dartsass-rails'
   gem 'jquery-rails'
   gem 'propshaft'
+  gem 'puma'
   # Rack provides a minimal interface between webservers that support Ruby and Ruby frameworks
   gem 'rack'
 end
