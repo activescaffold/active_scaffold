@@ -695,7 +695,7 @@ module ActiveScaffold
     def count_items(query, find_options = {}, count_includes = nil)
       count_includes ||= find_options[:includes] if find_options[:conditions].present?
       options = find_options.except(:select, :reorder, :order)
-      # NOTE: we must use includes in the count query, because some conditions may reference other tables
+      # Keep includes in the count query because conditions may reference joined tables.
       options[:includes] = count_includes
 
       count = append_to_query(query, options).count
@@ -716,7 +716,6 @@ module ActiveScaffold
       find_options, query = find_page_query(options)
       count_query = query
 
-      # NOTE: we must use :include in the count query, because some conditions may reference other tables
       count_after_first_page = count_after_loading_first_page?(options)
       if options[:pagination] && options[:pagination] != :infinite && !count_after_first_page
         count = count_items(query, find_options, options[:count_includes])

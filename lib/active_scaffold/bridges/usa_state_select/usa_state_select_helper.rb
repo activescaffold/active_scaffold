@@ -14,7 +14,7 @@ module ActiveScaffold::Bridges
       # Returns a string of option tags for the states in the United States. Supply a state name as +selected to
       # have it marked as the selected option tag. Included also is the option to set a couple of +priority_states+
       # in case you want to highligh a local area
-      # NOTE: Only the option tags are returned from this method, wrap it in a <select>
+      # This method returns only option tags; wrap them in a <select>.
       def usa_state_options_for_select(selected = nil, priority_states = nil)
         state_options =
           if priority_states

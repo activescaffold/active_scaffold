@@ -45,7 +45,5 @@ Minitest::Test.class_eval do
   end
 end
 
-Config = RbConfig # HACK: needed some comments
-
 class ColumnMock < ActiveScaffold::Tableless::Column
 end

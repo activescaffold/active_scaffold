@@ -42,7 +42,6 @@ module ActiveScaffold::DataStructures
           options[:type] ||= default_type if default_type
           ActiveScaffold::DataStructures::ActionLink.new(action, options)
         end
-      # NOTE: this duplicate check should be done by defining the comparison operator for an Action data structure
       existing = find_duplicate(link)
 
       if existing

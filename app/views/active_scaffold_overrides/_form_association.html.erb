@@ -34,7 +34,7 @@
 <% end %>
 <%= content_tag :span, column.description, class: 'description' if column.description.present? %>
 <div id="<%= subform_div_id %>" <%= 'style="display: none;"'.html_safe if column.collapsed -%>>
-<%# HACK: to be able to delete all associated records %>
+<%# Submit an empty sentinel so removing every associated record still sends the association parameter. %>
   <% if column.association.collection? %>
     <% opts = active_scaffold_input_options(column, scope, object: parent_record) %>
     <%= hidden_field_tag "#{opts[:name]}[0]", '', id: "#{opts[:id]}_0" %>

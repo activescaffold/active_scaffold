@@ -10,7 +10,7 @@ module ActiveScaffold
   #     'name' => 'John',
   #     # a plural association hash
   #     'roles' => {
-  #       # hack to be able to clear roles
+  #       # empty sentinel that allows clearing all roles
   #       '0' => ''
   #       # associate with an existing role
   #       '5' => {'id' => 5}
@@ -215,7 +215,7 @@ module ActiveScaffold
       if column.association&.singular?
         manage_nested_record_from_params(parent_record, column, value, avoid_changes: avoid_changes)
       elsif column.association&.collection?
-        # HACK: to be able to delete all associated records, hash will include "0" => ""
+        # Ignore the empty sentinel submitted when all associated records are removed.
         value.compact_blank.filter_map do |id, attributes|
           manage_nested_record_from_params(parent_record, column, attributes,
                                            avoid_changes: avoid_changes).tap do |record|
