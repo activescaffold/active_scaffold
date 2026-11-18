@@ -39,7 +39,7 @@ module ActiveScaffold::DataStructures
       names
     end
 
-    include Column::ProxyableMethods
+    include ColumnConfiguration
 
     def method_missing(name, ...)
       if respond_to_missing?(name, true)
