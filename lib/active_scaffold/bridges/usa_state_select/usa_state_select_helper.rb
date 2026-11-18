@@ -4,9 +4,7 @@ module ActiveScaffold::Bridges
   class UsaStateSelect
     module UsaStateSelectHelpers
       def usa_state_select(object, method, priority_states = nil, options = {}, html_options = {})
-        ActionView::Helpers::Tags::UsaStateSelect.new(object, method, self, options).to_usa_state_select_tag(
-          priority_states, options, html_options
-        )
+        select(object, method, usa_state_choices(priority_states), options, html_options)
       end
     end
 
@@ -16,22 +14,13 @@ module ActiveScaffold::Bridges
       # in case you want to highligh a local area
       # This method returns only option tags; wrap them in a <select>.
       def usa_state_options_for_select(selected = nil, priority_states = nil)
-        state_options =
-          if priority_states
-            priority_options = priority_states + [['-------------', '']]
-            options_for_select(priority_options, selected: selected, disabled: '')
-          else
-            options_for_select([])
-          end
+        options_for_select(usa_state_choices(priority_states), selected)
+      end
 
-        state_options +=
-          if priority_states&.include?(selected)
-            options_for_select(USASTATES - priority_states, selected: selected)
-          else
-            options_for_select(USASTATES, selected: selected)
-          end
+      def usa_state_choices(priority_states = nil)
+        return USASTATES unless priority_states
 
-        state_options
+        priority_states + [['-------------', '', {disabled: true}]] + (USASTATES - priority_states)
       end
 
       unless const_defined?(:USASTATES)
@@ -47,21 +36,6 @@ module ActiveScaffold::Bridges
           %w[Tennessee TN], %w[Texas TX], %w[Utah UT], %w[Vermont VT], %w[Virginia VA], %w[Washington WA],
           %w[Wisconsin WI], ['West Virginia', 'WV'], %w[Wyoming WY]
         ].freeze
-      end
-    end
-
-    module InstanceTagMethods
-      def to_usa_state_select_tag(priority_states, options, html_options)
-        html_options = html_options.stringify_keys
-        add_default_name_and_id(html_options)
-        selected_value =
-          if options.key?(:selected)
-            options[:selected]
-          else
-            method(:value).parameters.any? ? value(object) : value
-          end
-        state_options = usa_state_options_for_select(selected_value, priority_states)
-        content_tag('select', add_options(state_options, options, selected_value), html_options)
       end
     end
 
@@ -89,9 +63,4 @@ ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::UsaStateSelect::UsaStateSelectOptionsHelpers
   include ActiveScaffold::Bridges::UsaStateSelect::FormColumnHelpers
   include ActiveScaffold::Bridges::UsaStateSelect::SearchColumnHelpers
-end
-
-class ActionView::Helpers::Tags::UsaStateSelect < ActionView::Helpers::Tags::Base # :nodoc:
-  include ActiveScaffold::Bridges::UsaStateSelect::UsaStateSelectOptionsHelpers
-  include ActiveScaffold::Bridges::UsaStateSelect::InstanceTagMethods
 end
