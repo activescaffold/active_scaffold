@@ -27,6 +27,14 @@ module ActiveScaffold::Actions
 
     protected
 
+    def each_marked_record(&)
+      active_scaffold_config.model.as_marked.each(&)
+    end
+
+    def marked_records
+      active_scaffold_session_storage['marked_records'] ||= {}
+    end
+
     def mark_respond_to_html
       do_list
       list_respond_to_html

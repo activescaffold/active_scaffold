@@ -3,6 +3,7 @@
 require 'active_scaffold/finder/subquery_conditions'
 require 'active_scaffold/finder/conditions'
 require 'active_scaffold/finder/date_conditions'
+require 'active_scaffold/finder/parameter_conditions'
 require 'active_scaffold/finder/collection'
 require 'active_scaffold/finder/pagination'
 require 'active_scaffold/finder/querying'
@@ -155,5 +156,6 @@ module ActiveScaffold
     include Collection
     include Pagination
     include Querying
+    include ParameterConditions
   end
 end
