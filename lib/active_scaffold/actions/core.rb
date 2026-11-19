@@ -2,6 +2,76 @@
 
 module ActiveScaffold::Actions
   module Core
+    class AuthorizedApiResponse
+      def initialize(response_object, columns_names, config)
+        @response_object = response_object
+        @columns_names = columns_names
+        @config = config
+      end
+
+      def to_json(options = {})
+        serialized_response(:as_json).to_json(options)
+      end
+
+      def to_xml(options = {})
+        return serialized_response(:to_xml, options) unless collection?
+
+        xml_options = options.dup
+        records = response_records
+        if records.present? && records.all?(records.first.class)
+          record_name = ActiveSupport::Inflector.underscore(records.first.class.name).tr('/', '_')
+          xml_options[:root] ||= ActiveSupport::Inflector.pluralize(record_name)
+        end
+        serialized_response(:serializable_hash).to_xml(xml_options)
+      end
+
+      private
+
+      def serialized_response(method, options = {})
+        if collection?
+          response_records.map do |record|
+            record.public_send(method, options.merge(serialization_options(record)))
+          end
+        else
+          @response_object.public_send(method, options.merge(serialization_options(@response_object)))
+        end
+      end
+
+      def collection?
+        @response_object.respond_to?(:to_ary)
+      end
+
+      def response_records
+        @response_records ||= @response_object.to_ary
+      end
+
+      def serialization_options(record)
+        columns_names =
+          if record.respond_to?(:authorized_for?)
+            @columns_names.select do |column_name|
+              record.authorized_for?(crud_type: :read, column: column_name)
+            end
+          else
+            @columns_names
+          end
+        {
+          only: columns_names + [@config.model.primary_key],
+          include: association_columns(columns_names),
+          methods: virtual_columns(columns_names)
+        }
+      end
+
+      def virtual_columns(columns_names)
+        columns_names.reject do |column_name|
+          @config._columns_hash[column_name.to_s] || @config.columns[column_name]&.association
+        end
+      end
+
+      def association_columns(columns_names)
+        columns_names.select { |column_name| @config.columns[column_name]&.association }
+      end
+    end
+
     def self.included(base)
       base.class_eval do
         before_action :set_vary_accept_header
@@ -328,15 +398,13 @@ module ActiveScaffold::Actions
     end
 
     def response_to_api(format, columns_names, options = {})
-      render(
-        options.reverse_merge(
-          format => response_object,
-          only: columns_names + [active_scaffold_config.model.primary_key],
-          include: association_columns(columns_names),
-          methods: virtual_columns(columns_names),
-          status: response_status
-        )
-      )
+      response =
+        if successful?
+          AuthorizedApiResponse.new(response_object, columns_names, active_scaffold_config)
+        else
+          response_object
+        end
+      render(options.reverse_merge(format => response, status: response_status))
     end
 
     # Success is the existence of one or more model objects. Most actions
