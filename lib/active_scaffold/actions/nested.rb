@@ -197,11 +197,11 @@ module ActiveScaffold::Actions::Nested
     end
 
     def add_existing_respond_to_xml
-      render xml: response_object, only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
+      response_to_api(:xml, active_scaffold_config.list.columns.visible_columns_names)
     end
 
     def add_existing_respond_to_json
-      render json: response_object, only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
+      response_to_api(:json, active_scaffold_config.list.columns.visible_columns_names)
     end
 
     def destroy_existing_respond_to_html
