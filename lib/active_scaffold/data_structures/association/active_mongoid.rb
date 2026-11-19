@@ -37,7 +37,7 @@ module ActiveScaffold::DataStructures::Association
     end
 
     def table_name
-      @association.klass < ActiveRecord::Base ? @association.klass.table_name : super
+      @association.klass < ::ActiveRecord::Base ? @association.klass.table_name : super
     end
 
     protected
