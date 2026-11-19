@@ -13,4 +13,9 @@ class PeopleController < ApplicationController
   def forbidden
     raise ActiveScaffold::ActionNotAllowed, 'forbidden by integration test'
   end
+
+  def refresh_row
+    @record = find_if_allowed(params[:id], :read)
+    render 'update_row'
+  end
 end

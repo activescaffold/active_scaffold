@@ -35,6 +35,17 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "people-list-#{person.id}-row"
   end
 
+  test 'custom xhr action can render the update row view' do
+    person = Person.create!(first_name: 'Alice', last_name: 'Example')
+
+    get "/people/#{person.id}/refresh_row.js", xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.update_row'
+    assert_includes response.body, "people-list-#{person.id}-row"
+    assert_includes response.body, 'Alice'
+  end
+
   test 'xhr list renders a member action links menu' do
     person = Person.create!(first_name: 'Alice', last_name: 'Example')
 
