@@ -25,11 +25,7 @@ module ActiveScaffold
       script = responds_to_parent_html(script)
 
       # Clear out the previous render to prevent double render and then render
-      if respond_to?(:erase_results, true)
-        erase_results
-      else
-        instance_variable_set(:@_response_body, nil)
-      end
+      instance_variable_set(:@_response_body, nil)
 
       # We're returning HTML instead of JS now, content_type needed if not inside respond_to block
       render html: script.html_safe, content_type: 'text/html' # rubocop:disable Rails/OutputSafety
