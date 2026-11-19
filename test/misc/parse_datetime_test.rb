@@ -123,6 +123,43 @@ class ParseDatetimeTest < ActiveSupport::TestCase
     assert_equal ActiveSupport::TimeZone[3].local(2017, 4, 8, 16, 30, 0), condition_value('2017-04-08 16:30 +0300', :datetime)
   end
 
+  def test_condition_for_time_with_zone_preserves_its_offset
+    Time.use_zone('Madrid') do
+      value = Time.zone.local(2017, 4, 8, 16, 30)
+
+      result = condition_value(value)
+
+      assert_instance_of Time, result
+      assert_equal value, result
+      assert_equal value.utc_offset, result.utc_offset
+    end
+  end
+
+  def test_range_and_trend_convert_datetime_bounds_to_time
+    Time.use_zone('Madrid') do
+      now = Time.zone.local(2017, 4, 8, 16, 30)
+      self.class.stubs(:datetime_now).returns(now)
+      column = @config.columns[:run_at]
+
+      range = self.class.datetime_from_to(column, 'opt' => 'RANGE', 'range' => 'TODAY')
+      trend = self.class.datetime_from_to(column, 'opt' => 'PAST', 'number' => '2', 'unit' => 'HOURS')
+
+      assert_equal [Time, Time], range.map(&:class)
+      assert_equal [Time, Time], trend.map(&:class)
+      assert_equal now.utc_offset, range.first.utc_offset
+      assert_equal now.utc_offset, trend.last.utc_offset
+    end
+  end
+
+  def test_range_converts_date_column_bounds_to_date
+    column = ContactsController.active_scaffold_config.columns[:birthday]
+    self.class.stubs(:datetime_now).returns(Time.zone.local(2017, 4, 8, 16, 30))
+
+    values = self.class.datetime_from_to(column, 'opt' => 'RANGE', 'range' => 'TODAY')
+
+    assert_equal [Date.new(2017, 4, 8), Date.new(2017, 4, 8)], values
+  end
+
   def test_condition_for_spanish_date
     @config.columns[:run_at].options[:format] = :long
     I18n.with_locale :es do

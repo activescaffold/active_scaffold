@@ -93,13 +93,7 @@ module ActiveScaffold
           if value.is_a? Hash
             local_time_from_hash(value, conversion)
           elsif value.respond_to?(:strftime)
-            if conversion == :to_time
-              # Explicitly get the current zone, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
-              # https://github.com/rails/rails/pull/2453
-              value.to_time.in_time_zone
-            else
-              value.send(conversion)
-            end
+            value.send(conversion)
           elsif conversion == :to_date
             parse_date_with_format(*format_for_date(column, value, column.send(ui_method), ui_options))
           elsif value.match?(/\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/) # iso8601 format
@@ -141,15 +135,9 @@ module ActiveScaffold
           conversion = datetime_conversion_for_condition(column)
           case value['opt']
           when 'RANGE'
-            values = datetime_from_to_for_range(column, value)
-            # Avoid calling to_time, not needed and broken on rails >= 4, because return local time instead of UTC
-            values.collect!(&conversion) if conversion != :to_time
-            values
+            datetime_from_to_for_range(column, value).map(&conversion)
           when 'PAST', 'FUTURE'
-            values = datetime_from_to_for_trend(column, value)
-            # Avoid calling to_time, not needed and broken on rails >= 4, because return local time instead of UTC
-            values.collect!(&conversion) if conversion != :to_time
-            values
+            datetime_from_to_for_trend(column, value).map(&conversion)
           else
             %w[from to].collect { |field| condition_value_for_datetime(column, value[field], conversion) }
           end
