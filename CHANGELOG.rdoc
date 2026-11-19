@@ -1,5 +1,6 @@
 = Unreleased
 - Fix opening +field_search+ after a text search when both +search+ and +field_search+ actions are enabled.
+- Encode URLs and JSON values embedded in JavaScript responses as JavaScript literals instead of marking raw output as HTML safe.
 - Remove deprecated inline JavaScript datepicker and TinyMCE settings. Configuration must reference a registered callback name, and other datepicker values must use JSON-compatible data attributes.
 - Require TinyMCE 6 or newer, removing the legacy TinyMCE 5 editor initialization path. TinyMCE 5 reached end of support in April 2023.
 - Make HTML safety explicit in +as_+ translations. This is a backward-incompatible change: ordinary translations are no longer marked HTML safe. Applications must move translations containing markup under an +html+ subkey:
