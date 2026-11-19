@@ -95,6 +95,7 @@ GEM
     ansi (1.5.0)
     base64 (0.3.0)
     bigdecimal (4.1.2)
+    bson (5.2.0)
     builder (3.3.0)
     capybara (3.40.0)
       addressable
@@ -180,6 +181,14 @@ GEM
       ruby-progressbar
     mocha (3.0.1)
       ruby2_keywords (>= 0.0.5)
+    mongo (2.26.2)
+      base64
+      bson (>= 4.14.1, < 6.0.0)
+    mongoid (9.1.2)
+      activemodel (>= 5.1, < 8.2, != 7.0.0)
+      concurrent-ruby (>= 1.0.5, < 2.0)
+      mongo (>= 2.18.0, < 3.0.0)
+      ostruct
     net-imap (0.6.4)
       date
       net-protocol
@@ -209,6 +218,7 @@ GEM
       racc (~> 1.4)
     nokogiri (1.19.3-x86_64-linux-musl)
       racc (~> 1.4)
+    ostruct (0.6.3)
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
@@ -353,6 +363,7 @@ DEPENDENCIES
   jquery-rails
   minitest-reporters
   mocha
+  mongoid (~> 9.1)
   propshaft
   puma
   rack
