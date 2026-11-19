@@ -24,6 +24,60 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'Bob'
   end
 
+  test 'xhr list with an id refreshes one row' do
+    person = Person.create!(first_name: 'Alice', last_name: 'Example')
+
+    get '/people.js', params: {id: person.id}, xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'Alice'
+    assert_includes response.body, "people-list-#{person.id}-row"
+  end
+
+  test 'xhr list renders a member action links menu' do
+    person = Person.create!(first_name: 'Alice', last_name: 'Example')
+
+    get '/people.js', params: {id: person.id, action_links: 'member'}, xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'Edit'
+    assert_includes response.body, 'Delete'
+  end
+
+  test 'list applies requested sorting' do
+    Person.create!(first_name: 'Alice', last_name: 'Example')
+    Person.create!(first_name: 'Bob', last_name: 'Example')
+
+    get '/people', params: {sort: 'first_name', sort_direction: 'desc'}
+
+    assert_response :success
+    assert_equal %w[Bob Alice], css_select('tbody.records .first_name-column').map { |cell| cell.text.strip }
+  end
+
+  test 'list uses cached counts for an association without includes' do
+    alice = Person.create!(first_name: 'Alice', last_name: 'Example')
+    bob = Person.create!(first_name: 'Bob', last_name: 'Example')
+    alice.roles << Role.create!(name: 'First')
+    alice.roles << Role.create!(name: 'Second')
+
+    get '/people'
+
+    assert_response :success
+    rows = css_select('tbody.records > tr.record').index_by { |row| row.at_css('.first_name-column').text.strip }
+    assert_equal '2', rows.fetch('Alice').at_css('.roles-column').text.strip
+    assert_equal '0', rows.fetch('Bob').at_css('.roles-column').text.strip
+  end
+
+  test 'embedded loading renders the list without the application layout' do
+    Person.create!(first_name: 'Alice', last_name: 'Example')
+
+    get '/people', params: {embedded: {loading: true}}
+
+    assert_response :success
+    assert_not_includes response.body, 'ActiveScaffold test app'
+    assert_select '.active-scaffold', text: /Alice/
+  end
+
   test 'action authorization errors are rescued as forbidden responses' do
     get '/people/forbidden'
 
@@ -38,6 +92,18 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select '.active-scaffold .index-view', text: /Alice/
+  end
+
+  test 'xhr list can be wrapped in the inline rendering adapter' do
+    Person.create!(first_name: 'Alice', last_name: 'Example')
+
+    get '/people', params: {adapter: '_list_inline_adapter'}, xhr: true
+
+    assert_response :success
+    assert_includes response.body, '<tr class="inline-adapter"'
+    assert_includes response.body, '<td class="inline-adapter-cell">'
+    assert_includes response.body, 'inline-adapter-close as_cancel'
+    assert_includes response.body, 'Alice'
   end
 
   test 'search filters the list through the controller callback chain' do
@@ -267,6 +333,17 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'too short'
   end
 
+  test 'create with dont_close persists and returns to a new form' do
+    assert_difference('Person.count') do
+      post '/people', params: {
+        dont_close: true,
+        record: {first_name: 'Alice', last_name: 'Example'}
+      }
+    end
+
+    assert_redirected_to '/people/new'
+  end
+
   test 'update persists configured attributes and redirects to the list' do
     person = Person.create!(first_name: 'Before', last_name: 'Example')
 
@@ -275,6 +352,27 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_redirected_to '/people'
     assert_equal 'After', person.reload.first_name
     assert_equal 'Example', person.last_name
+  end
+
+  test 'update with dont_close persists and renders the edit form' do
+    category = Category.create!(name: 'Before category')
+
+    patch "/categories/#{category.id}", params: {dont_close: true, record: {name: 'After category'}}
+
+    assert_response :success
+    assert_equal 'After category', category.reload.name
+    assert_select 'input[name=?][value=?]', 'record[name]', 'After category'
+  end
+
+  test 'invalid update renders errors without changing the record' do
+    category = Category.create!(name: 'Valid category')
+
+    patch "/categories/#{category.id}", params: {record: {name: 'x'}}
+
+    assert_response :success
+    assert_equal 'Valid category', category.reload.name
+    assert_select '.errorExplanation, .active-scaffold-record-errors, .association-record-errors'
+    assert_includes response.body, 'too short'
   end
 
   test 'destroy removes the record and redirects to the list' do

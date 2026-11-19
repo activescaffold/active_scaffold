@@ -156,6 +156,73 @@ class ListActionTest < ActiveSupport::TestCase
     action.send(:set_api_pagination_headers)
   end
 
+  def test_add_auto_select_options_adds_visible_and_primary_key_columns
+    action = list_action.new
+    first_name = stub(select_columns: {'people.first_name' => nil})
+    calculated = stub(select_columns: {'people.last_name' => 'display_name'})
+    primary_key = stub(select_columns: {'people.id' => nil})
+    columns = {id: primary_key}
+    model = stub(primary_key: :id)
+    list = stub(auto_select_columns: true)
+    action.stubs(:list_columns).returns([first_name, calculated])
+    action.stubs(:active_scaffold_config).returns(stub(list: list, columns: columns, model: model))
+    options = {}
+
+    action.send(:add_auto_select_options, options)
+
+    assert_equal 'people.first_name', options[:select][0]
+    assert_equal 'people.last_name', options[:select][1].left.to_s
+    assert_equal 'display_name', options[:select][1].right
+    assert_equal 'people.id', options[:select][2]
+  end
+
+  def test_do_refresh_list_removes_id_and_reapplies_search
+    action = list_action.new
+    parameters = ActionController::Parameters.new(id: '7')
+    action.stubs(:params).returns(parameters)
+    action.define_singleton_method(:do_search) {}
+    action.stubs(:search_params).returns({})
+    action.expects(:store_search_params_into_session)
+    action.expects(:do_search)
+    action.expects(:do_list)
+
+    action.send(:do_refresh_list)
+
+    assert_not parameters.key?(:id)
+  end
+
+  def test_each_record_in_page_yields_page_items
+    action = list_action.new
+    action.stubs(:page_items).returns(%i[first second])
+    yielded = []
+
+    action.send(:each_record_in_page) { |record| yielded << record }
+
+    assert_equal %i[first second], yielded
+  end
+
+  def test_page_items_restores_the_requested_page_after_search
+    action = list_action.new
+    user = Struct.new(:page).new(4)
+    config = Struct.new(:list).new(Struct.new(:user).new(user))
+    page = stub(items: %i[first second])
+    action.stubs(:active_scaffold_config).returns(config)
+    action.define_singleton_method(:do_search) { user.page = 1 }
+    action.expects(:current_page).returns(page)
+
+    assert_equal %i[first second], action.send(:page_items)
+    assert_equal 4, user.page
+    assert_same page, action.instance_variable_get(:@page)
+  end
+
+  def test_list_respond_to_html_omits_layout_while_loading_embedded
+    action = list_action.new
+    action.stubs(:loading_embedded?).returns(true)
+    action.expects(:render).with(action: 'list', layout: false)
+
+    action.send(:list_respond_to_html)
+  end
+
   def test_apply_filters_tracks_applied_default_and_requested_filters
     filters = filter_set do |set|
       set.add(:visibility) do |filter|

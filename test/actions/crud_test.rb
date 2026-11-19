@@ -30,6 +30,15 @@ class CreateActionTest < ActionController::TestCase
     assert_equal 'association failed', flash[:error]
   end
 
+  test 'disallows create through a readonly nested association' do
+    nested = stub(readonly?: true)
+    @controller.stubs(:nested?).returns(true)
+    @controller.stubs(:nested).returns(nested)
+    @controller.expects(:authorized_for?).never
+
+    assert_not @controller.send(:create_authorized?)
+  end
+
   private
 
   def assign_params(parameters)
@@ -84,6 +93,38 @@ class UpdateActionTest < ActionController::TestCase
 
     assert_not_predicate @controller, :successful?
     assert_predicate record.errors[:base], :present?
+  end
+
+  test 'reports record not saved errors on the updated record' do
+    record = Person.new
+    @controller.instance_variable_set(:@record, record)
+    @controller.stubs(:update_record_from_params).raises(ActiveRecord::RecordNotSaved, 'callback stopped save')
+    assign_params record: {first_name: 'Alice'}
+
+    @controller.send(:update_save)
+
+    assert_not_predicate @controller, :successful?
+    assert_predicate record.errors[:base], :present?
+  end
+
+  test 'reports active record errors raised while assigning update attributes' do
+    record = Person.new
+    @controller.instance_variable_set(:@record, record)
+    @controller.stubs(:update_record_from_params).raises(ActiveRecord::RecordInvalid, record)
+    assign_params record: {first_name: 'Alice'}
+
+    @controller.send(:update_save)
+
+    assert_not_predicate @controller, :successful?
+    assert_predicate flash[:error], :present?
+  end
+
+  test 'disallows update through a readonly nested association' do
+    @controller.stubs(:nested?).returns(true)
+    @controller.stubs(:nested).returns(stub(readonly?: true))
+    @controller.expects(:authorized_for?).never
+
+    assert_not @controller.send(:update_authorized?)
   end
 
   private

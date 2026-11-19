@@ -33,6 +33,18 @@ class NestedActionTest < ActionController::TestCase
     assert_predicate flash[:warning], :present?
   end
 
+  test 'treats a concurrent HABTM insert as an existing association' do
+    @controller.instance_variable_set(:@record, @person)
+    association = mock
+    association.expects(:include?).with(@person).twice.returns(false, true)
+    association.expects(:<<).with(@person).raises(ActiveRecord::RecordNotUnique)
+    association.expects(:reset)
+
+    assert @controller.send(:add_existing_to_association, association)
+    assert @controller.instance_variable_get(:@association_already_exists)
+    assert_predicate flash[:warning], :present?
+  end
+
   test 'shallow destroy removes only the HABTM association' do
     @role.people << @person
     assign_params id: @person.id
@@ -41,6 +53,22 @@ class NestedActionTest < ActionController::TestCase
 
     assert_empty @role.reload.people
     assert_predicate Person.find(@person.id), :persisted?
+  end
+
+  test 'non-shallow destroy delegates to record destruction' do
+    @controller.stubs(:active_scaffold_config).returns(stub(nested: stub(shallow_delete: false)))
+    @controller.expects(:do_destroy)
+
+    @controller.send(:do_destroy_existing)
+  end
+
+  test 'associates a newly created HABTM record with the nested parent' do
+    assign_params association_macro: :has_and_belongs_to_many
+    @controller.expects(:do_add_existing)
+
+    @controller.send(:after_create_save, @person)
+
+    assert_same @person, @controller.params[:associated_id]
   end
 
   test 'authorization delegates to the nested parent association' do
@@ -69,6 +97,18 @@ class NestedActionTest < ActionController::TestCase
     @controller.stubs(:nested_parent_record).returns(@role)
 
     assert_equal :relation, @controller.send(:beginning_of_chain)
+  end
+
+  test 'nested label identifies a belongs-to parent and escapes its label' do
+    @controller.stubs(:nested).returns(stub(belongs_to?: true))
+    @controller.stubs(:nested_parent_record).returns(stub(to_label: '<Editor>'))
+    @controller.expects(:as_).with(
+      :nested_of_model,
+      nested_model: 'Person',
+      parent_model: '&lt;Editor&gt;'
+    ).returns('nested label')
+
+    assert_equal 'nested label', @controller.send(:nested_label)
   end
 
   test 'nested chain handles belongs-to associations' do
@@ -140,6 +180,14 @@ class NestedActionTest < ActionController::TestCase
     @controller.expects(:create_on_through_singular).with(record, association, @role)
 
     @controller.send(:create_association_with_parent, record, check_match: true)
+  end
+
+  test 'does not associate a record when the nested model does not match' do
+    nested = stub(create_with_parent?: true, match_model?: false)
+    @controller.stubs(:nested).returns(nested)
+    @controller.expects(:nested_parent_record).never
+
+    assert_not @controller.send(:create_association_with_parent?, check_match: true)
   end
 
   private
