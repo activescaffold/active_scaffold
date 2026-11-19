@@ -118,6 +118,37 @@ class RenderFieldTest < ActionController::TestCase
     assert_nil @controller.send(:attributes_from_scope, attributes, '[buildings][1][floors]')
   end
 
+  test 'finds an existing record in a collection scope' do
+    person = Person.new
+    building = person.buildings.build(name: 'Tower')
+    building.id = 42
+
+    result = @controller.send(:find_from_scope, person, '[buildings][42]')
+
+    assert_same building, result
+  end
+
+  test 'finds a generated record missing from the association target' do
+    person = Person.new
+    building = Building.new(name: 'Generated')
+    @controller.instance_variable_set(:@new_records, {Building => {'7' => building}})
+
+    result = @controller.send(:find_from_scope, person, '[buildings][7]')
+
+    assert_same building, result
+  end
+
+  test 'copies attributes and loaded associations without dirty changes' do
+    person = Person.new(first_name: 'Alice')
+    building = person.buildings.build(name: 'Tower')
+
+    copy = @controller.send(:copy_attributes, person)
+
+    assert_equal 'Alice', copy.first_name
+    assert_equal [building], copy.buildings
+    assert_not_predicate copy, :changed?
+  end
+
   private
 
   def assign_params(params)

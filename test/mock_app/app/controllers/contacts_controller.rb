@@ -6,5 +6,8 @@ class ContactsController < ApplicationController
     conf.list.always_show_search = :search
     conf.field_search.columns = %i[first_name last_name birthday]
     conf.field_search.link.parameters = {kind: :field_search}
+    conf.field_search.default_params = proc do
+      {first_name: {opt: '%?%', from: 'Alice'}} if params[:apply_default_search]
+    end
   end
 end

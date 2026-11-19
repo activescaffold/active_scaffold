@@ -66,6 +66,44 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, 'Bob'
   end
 
+  test 'field search applies configured default params through the request callback' do
+    Contact.create!(first_name: 'Alice', last_name: 'Example')
+    Contact.create!(first_name: 'Bob', last_name: 'Example')
+
+    get '/contacts', params: {apply_default_search: true}
+
+    assert_response :success
+    assert_includes response.body, 'Alice'
+    assert_not_includes response.body, 'Bob'
+  end
+
+  test 'nested list only renders records belonging to its parent' do
+    person = Person.create!(first_name: 'Alice')
+    person.contacts.create!(first_name: 'Nested')
+    Contact.create!(first_name: 'Unrelated')
+
+    get '/contacts', params: {
+      parent_scaffold: 'people', association: 'contacts', person_id: person.id
+    }
+
+    assert_response :success
+    assert_includes response.body, 'Nested'
+    assert_not_includes response.body, 'Unrelated'
+  end
+
+  test 'nested create associates the new record with its parent' do
+    person = Person.create!(first_name: 'Alice')
+
+    assert_difference('Contact.count') do
+      post '/contacts', params: {
+        parent_scaffold: 'people', association: 'contacts', person_id: person.id,
+        record: {first_name: 'Nested'}
+      }
+    end
+
+    assert_equal person, Contact.order(:id).last.contactable
+  end
+
   test 'show renders the requested record' do
     person = Person.create!(first_name: 'Alice', last_name: 'Example')
 
@@ -147,6 +185,23 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal 'Mondeo', car.reload.model
   end
 
+  test 'render field supports inplace editing requests' do
+    car = Car.create!(brand: 'Ford', model: 'Focus')
+
+    get "/cars/#{car.id}/render_field.js", params: {update_column: 'model'}, xhr: true
+
+    assert_response :success
+    assert_select 'input[name=?][value=?]', 'record[model]', 'Focus'
+  end
+
+  test 'render field processes update-column requests' do
+    post '/people/render_field.js', params: {
+      column: 'first_name', value: 'Ada', source_id: 'person_first_name'
+    }, xhr: true
+
+    assert_response :success
+  end
+
   test 'subform action renders an associated record through the dummy application' do
     person = Person.create!(first_name: 'Alice')
 
@@ -156,6 +211,28 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, 'record[buildings]'
+  end
+
+  test 'subform action builds a new parent when the form has not been persisted' do
+    get '/people/edit_associated.js',
+        params: {child_association: 'buildings', generated_id: 'new-person'},
+        xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'record[buildings]'
+  end
+
+  test 'subform action loads an existing associated record' do
+    person = Person.create!(first_name: 'Alice')
+    building = Building.create!(name: 'Existing building')
+
+    get "/people/#{person.id}/edit_associated.js",
+        params: {child_association: 'buildings', associated_id: building.id},
+        xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'Existing building'
+    assert_nil building.reload.owner_id
   end
 
   test 'mark action persists marked state in the session' do
