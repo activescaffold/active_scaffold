@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'test_helper'
+require 'active_scaffold/data_structures/nested_info'
 
 class NestedInfoTest < ActiveSupport::TestCase
   def test_builds_named_scope_information
