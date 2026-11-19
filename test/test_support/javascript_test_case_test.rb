@@ -8,6 +8,12 @@ class JavascriptTestCaseTest < ActiveScaffold::TestSupport::Javascript::TestCase
     '<div class="active-scaffold"><button id="fixture-button">Test</button></div>'
   end
 
+  def test_default_fixture_html
+    default_html = ActiveScaffold::TestSupport::Javascript::TestCase.instance_method(:fixture_html).bind_call(self)
+
+    assert_equal '<div class="active-scaffold"></div>', default_html
+  end
+
   def test_loads_active_scaffold_and_supports_dynamic_fixtures
     visit_javascript_fixture
 

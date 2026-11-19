@@ -83,18 +83,20 @@ module ActiveScaffold
     end
 
     initializer 'active_scaffold.testing' do
+      require 'active_scaffold/test_support/assert_embedded_load'
+
       ActiveSupport.on_load(:action_dispatch_integration_test) do
-        include ActiveScaffold::Testing::AssertEmbeddedLoad
+        include ActiveScaffold::TestSupport::AssertEmbeddedLoad
       end
 
       ActiveSupport.on_load(:action_controller_test_case) do
-        include ActiveScaffold::Testing::AssertEmbeddedLoad
+        include ActiveScaffold::TestSupport::AssertEmbeddedLoad
       end
 
       if defined?(RSpec)
         RSpec.configure do |config|
-          config.include ActiveScaffold::Testing::AssertEmbeddedLoad, type: :request
-          config.include ActiveScaffold::Testing::AssertEmbeddedLoad, type: :controller
+          config.include ActiveScaffold::TestSupport::AssertEmbeddedLoad, type: :request
+          config.include ActiveScaffold::TestSupport::AssertEmbeddedLoad, type: :controller
         end
       end
     end
