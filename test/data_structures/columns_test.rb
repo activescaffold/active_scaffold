@@ -68,4 +68,56 @@ class ColumnsTest < ActiveSupport::TestCase
     assert @columns.include?(:d)
     assert @columns.include?(:c)
   end
+
+  def test_inheritable_columns_are_sorted_by_weight
+    @columns[:a].weight = 500
+    @columns[:b].weight = 100
+
+    assert_equal %i[b a], @columns._inheritable
+  end
+
+  def test_inheritable_columns_can_be_replaced_without_resorting
+    @columns._inheritable = [:b]
+    @columns.add :a
+
+    assert_equal %i[b a], @columns._inheritable
+  end
+
+  def test_exclude_only_removes_the_column_from_inheritance
+    @columns.exclude 'a'
+
+    assert @columns.include?(:a)
+    assert_not_includes @columns._inheritable, :a
+    assert_includes @columns._inheritable, :b
+  end
+
+  def test_adds_readonly_columns_delegated_through_a_singular_association
+    columns = ActiveScaffold::DataStructures::Columns.new(ModelStub, :other_model)
+
+    columns.add_association_columns(:other_model, :a)
+    delegated_column = columns[:a]
+
+    assert_equal ModelStub, delegated_column.active_record_class
+    assert_equal :other_model, delegated_column.delegated_association.name
+    assert_not_includes columns._inheritable, :a
+
+    columns.add_association_columns(:other_model, :a)
+    assert_same delegated_column, columns[:a]
+  end
+
+  def test_rejects_invalid_associations_for_delegated_columns
+    error = assert_raises(ArgumentError) { @columns.add_association_columns(:missing, :c) }
+    assert_equal 'unknown column missing', error.message
+
+    error = assert_raises(ArgumentError) { @columns.add_association_columns(:a, :c) }
+    assert_equal 'column a is not an association', error.message
+
+    columns = ActiveScaffold::DataStructures::Columns.new(ModelStub, :other_models)
+    error = assert_raises(ArgumentError) { columns.add_association_columns(:other_models, :c) }
+    assert_equal 'column other_models is not singular association', error.message
+
+    columns = ActiveScaffold::DataStructures::Columns.new(Contact, :contactable)
+    error = assert_raises(ArgumentError) { columns.add_association_columns(:contactable, :name) }
+    assert_equal 'column contactable is polymorphic association', error.message
+  end
 end
