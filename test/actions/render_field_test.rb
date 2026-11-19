@@ -69,6 +69,63 @@ class RenderFieldTest < ActionController::TestCase
     assert_equal [:first_name], @controller.instance_variable_get(:@main_columns).to_a
   end
 
+  test 'uses an explicitly requested enabled form action' do
+    @controller.stubs(:active_scaffold_config).returns(stub(actions: [:field_search]))
+    assign_params form_action: 'field_search'
+
+    assert_equal :field_search, @controller.send(:render_field_form_action)
+    assert_not @controller.params.key?(:form_action)
+  end
+
+  test 'add tab prepares the selected column and record' do
+    columns = stub
+    column = stub
+    record = stub
+    @controller.instance_variable_set(:@main_columns, columns)
+    @controller.instance_variable_set(:@scope, '[tasks]')
+    @controller.expects(:process_render_field_params)
+    columns.expects(:find_by_name).with('status').returns(column)
+    @controller.expects(:updated_record_with_form).with(columns, {}, '[tasks]').returns(record)
+    assign_params column: 'status'
+
+    @controller.send(:add_tab)
+
+    assert_same column, @controller.instance_variable_get(:@column)
+    assert_same record, @controller.instance_variable_get(:@record)
+  end
+
+  test 'field search preserves an array for a singular association' do
+    record = Person.new
+    column = stub(association: stub(singular?: true))
+    @controller.instance_variable_set(:@form_action, :field_search)
+    @controller.stubs(:new_model).returns(record)
+    @controller.stubs(:apply_constraints_to_record).with(record)
+    @controller.expects(:update_column_from_params).never
+    assign_params({})
+
+    result = @controller.send(:updated_record_with_column, column, %w[1 2], nil)
+
+    assert_same record, result
+    assert_equal %w[1 2], @controller.instance_variable_get(:@value)
+  end
+
+  test 'copies a saved record into a clean form record' do
+    saved = Person.new(first_name: 'Alice')
+    saved.id = 42
+    config = @controller.active_scaffold_config
+    relation = config.model.all
+    @controller.stubs(:preload_for_form).returns([:buildings])
+    config.model.expects(:preload).with([:buildings]).returns(relation)
+    @controller.expects(:find_if_allowed).with(42, :read, relation).returns(saved)
+
+    copy = @controller.send(:copy_data_from_saved_record, 42)
+
+    assert_not_same saved, copy
+    assert_equal 42, copy.id
+    assert_equal 'Alice', copy.first_name
+    assert_not_predicate copy, :changed?
+  end
+
   test 'finds parent column through nested collection scope' do
     assign_params record: {buildings: {'1' => {}}}
 

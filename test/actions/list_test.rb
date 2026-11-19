@@ -43,6 +43,29 @@ class ListActionTest < ActiveSupport::TestCase
     assert yielded
   end
 
+  def test_process_get_action_loads_record_for_confirmation
+    action = core_action.new
+    record = Object.new
+    action.stubs(:request).returns(stub(get?: true, head?: false))
+    action.stubs(:params).returns(ActionController::Parameters.new(id: '7'))
+    action.expects(:find_if_allowed).with('7', :read).returns(record)
+    action.expects(:respond_to_action).with(:action_confirmation)
+
+    action.send(:process_action_link_action)
+
+    assert_same record, action.instance_variable_get(:@record)
+  end
+
+  def test_load_action_link_record_uses_delete_security_for_delete_requests
+    action = core_action.new
+    action.stubs(:params).returns(ActionController::Parameters.new(id: '7'))
+    action.stubs(:request).returns(stub(delete?: true))
+    action.stubs(:action_name).returns('archive')
+    action.expects(:get_row).with({crud_type: :delete, action: 'archive'})
+
+    action.send(:load_action_link_record, nil)
+  end
+
   def test_process_member_action_handles_get_row_returning_nil
     action = core_action.new
     link = ActiveScaffold::DataStructures::ActionLink.new('custom', security_method: :custom_authorized?)
@@ -80,6 +103,20 @@ class ListActionTest < ActiveSupport::TestCase
     action.send(:get_row)
 
     assert_equal :record, action.record
+  end
+
+  def test_current_page_moves_to_last_page_when_requested_page_is_out_of_range
+    action = list_action.new
+    last_page = stub(number: 3)
+    pager = stub(number_of_pages: 3, infinite?: false, last: last_page)
+    action.stubs(:set_includes_for_columns)
+    action.stubs(:find_page_options).returns(:options)
+    action.stubs(:find_page).with(:options).returns(stub(number: 9, pager: pager))
+    user = stub
+    user.expects(:page=).with(3)
+    action.stubs(:active_scaffold_config).returns(stub(list: stub(user: user)))
+
+    assert_same last_page, action.send(:current_page)
   end
 
   def test_show_gets_record_without_list_row_preparation

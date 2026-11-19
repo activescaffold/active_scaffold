@@ -121,7 +121,12 @@ module ActiveScaffold
           return column_value if column_value
           return @_association_join_text if defined? @_association_join_text
 
-          @_association_join_text = active_scaffold_config.list.association_join_text
+          @_association_join_text =
+            if active_scaffold_config.actions.include?(:list)
+              active_scaffold_config.list.association_join_text
+            else
+              ActiveScaffold::Config::List.association_join_text
+            end
         end
 
         def format_collection_association_value(value, column, label_method, size)

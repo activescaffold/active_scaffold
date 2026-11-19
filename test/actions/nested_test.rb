@@ -126,6 +126,22 @@ class NestedActionTest < ActionController::TestCase
     assert_equal [@role], collection
   end
 
+  test 'associates a record through a singular join association' do
+    record = mock
+    association = stub
+    nested = stub(
+      create_with_parent?: true,
+      match_model?: true,
+      child_association: stub(singular?: false),
+      create_through_singular?: true,
+      association: association
+    )
+    @controller.stubs(:nested).returns(nested)
+    @controller.expects(:create_on_through_singular).with(record, association, @role)
+
+    @controller.send(:create_association_with_parent, record, check_match: true)
+  end
+
   private
 
   def assign_params(parameters)

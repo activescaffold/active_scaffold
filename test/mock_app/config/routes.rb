@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   resources :people do
     concerns :active_scaffold, except: %i[mark]
   end
+  resources :standalone_people, only: %i[show edit update]
 
   # Tabs test models
   resources :categories, concerns: :active_scaffold

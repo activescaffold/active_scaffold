@@ -114,6 +114,20 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'Example'
   end
 
+  test 'show and edit work when list and nested actions are disabled' do
+    person = Person.create!(first_name: 'Standalone', last_name: 'Example')
+
+    get "/standalone_people/#{person.id}"
+
+    assert_response :success
+    assert_includes response.body, 'Standalone'
+
+    get "/standalone_people/#{person.id}/edit"
+
+    assert_response :success
+    assert_select 'input[name=?][value=?]', 'record[first_name]', 'Standalone'
+  end
+
   test 'new and edit render forms for configured columns' do
     category = Category.create!(name: 'Example')
 
@@ -200,6 +214,17 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     }, xhr: true
 
     assert_response :success
+  end
+
+  test 'render field adds a tab for a tabbed association' do
+    category = Category.create!(name: 'Frontend')
+
+    post '/projects/render_field.js', params: {
+      tabbed_by: 'category', column: 'Assignments', value: category.id, form_action: 'create'
+    }, xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'Frontend'
   end
 
   test 'subform action renders an associated record through the dummy application' do
