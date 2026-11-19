@@ -325,16 +325,7 @@ module ActiveScaffold::Config
     def known_columns
       attribute_names = _columns.collect { |c| c.name.to_sym }.sort_by(&:to_s)
       association_column_names = _reflect_on_all_associations.collect { |a| a.name.to_sym }
-      association_column_names.concat am_relations
       attribute_names + association_column_names.sort_by(&:to_s)
-    end
-
-    def am_relations
-      if defined?(ActiveMongoid) && model < ActiveMongoid::Associations
-        model.am_relations.keys.map(&:to_sym)
-      else
-        []
-      end
     end
 
     def cache_columns

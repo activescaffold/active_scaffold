@@ -27,6 +27,37 @@ These versions are not supported anymore:
 3-3-stable supports rails 3.2.x and ruby >= 1.8  
 rails-3.2 supports Rails 3.1 & 3.2, and is the current source of the 3.2.x line of gems.
 
+## ORM Support
+
+Active Record is the only fully supported ORM.
+
+ActiveScaffold has a limited Mongoid compatibility layer for model metadata and read-query construction. Master checks
+that Mongoid 9.1 fields and associations can be configured on Rails 8.1, and has unit coverage for Mongoid-specific
+filtering, searching, sorting, pagination, includes, and association counts. This is not an end-to-end Mongoid CRUD
+test suite, and a MongoDB-backed integration application is not currently included.
+
+Create and update are not supported for Mongoid models. Those paths depend on Active Record-specific validation,
+association, and save extensions which are installed only on Active Record models. Delete happens to use the generic
+`destroy` API, but is not covered by Mongoid integration tests and must also be considered unsupported. Association
+forms, nested writes, inline updates, and other write features have the same limitation.
+
+Even read-only scaffolds are not currently plug-and-play: authorization and label extensions are installed on Active
+Record models only. Applications experimenting with Mongoid must provide the corresponding model/controller hooks and
+should limit the scaffold to read actions. The following is a starting point, not a declaration of full support:
+
+```ruby
+gem 'mongoid', '~> 9.1'
+
+# In the ActiveScaffold controller configuration:
+config.actions.exclude :create, :update, :delete, :nested, :subform
+```
+
+ActiveScaffold's Mongoid compatibility tests use model and association metadata without requiring a running MongoDB
+server. Applications still need MongoDB for persistence and queries.
+
+ActiveMongoid is not supported. Its final release depends on the obsolete `bson_ext` native extension, which does not
+build on the Ruby versions supported by master, and it has no release compatible with the current Mongoid API.
+
 ## Quick Start
 To get started with a new Rails project
 

@@ -31,6 +31,8 @@ module ActiveScaffold::DataStructures::Association
     end
 
     def foreign_type
+      return @association.inverse_type || @association.type if @association.respond_to?(:inverse_type)
+
       @association.type
     end
 

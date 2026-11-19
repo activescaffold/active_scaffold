@@ -251,9 +251,6 @@ module ActiveScaffold::DataStructures
           elsif mongoid?
             Association::Mongoid.new(assoc)
           end
-        elsif defined?(ActiveMongoid) && model < ActiveMongoid::Associations
-          assoc = @active_record_class.reflect_on_am_association(@name)
-          Association::ActiveMongoid.new(assoc) if assoc
         end
 
       return unless @association

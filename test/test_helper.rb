@@ -6,6 +6,14 @@ if ENV['COVERAGE'] == 'true'
 end
 
 ENV['RAILS_ENV'] = 'test'
+require 'mongoid'
+Mongoid.configure do |config|
+  config.clients.default = {
+    hosts: ['127.0.0.1:27017'],
+    database: 'active_scaffold_test',
+    options: {monitoring_io: false, server_selection_timeout: 0}
+  }
+end
 require 'mock_app/config/environment'
 require 'rails/test_help'
 require 'minitest/autorun'

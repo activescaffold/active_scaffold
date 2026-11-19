@@ -2,73 +2,81 @@
 
 require 'test_helper'
 
+class MongoidAssociationOwner
+  include Mongoid::Document
+
+  has_many :articles, class_name: 'MongoidAssociationArticle', inverse_of: :owner
+  has_one :profile, class_name: 'MongoidAssociationProfile', inverse_of: :owner
+  has_and_belongs_to_many :tags, class_name: 'MongoidAssociationTag', inverse_of: :owners
+  has_many :comments, as: :commentable, class_name: 'MongoidAssociationComment', inverse_of: :commentable
+end
+
+class MongoidAssociationArticle
+  include Mongoid::Document
+
+  belongs_to :owner, class_name: 'MongoidAssociationOwner', inverse_of: :articles, optional: true
+end
+
+class MongoidAssociationProfile
+  include Mongoid::Document
+
+  belongs_to :owner, class_name: 'MongoidAssociationOwner', inverse_of: :profile, optional: true
+end
+
+class MongoidAssociationTag
+  include Mongoid::Document
+
+  has_and_belongs_to_many :owners, class_name: 'MongoidAssociationOwner', inverse_of: :tags
+end
+
+class MongoidAssociationComment
+  include Mongoid::Document
+
+  belongs_to :commentable, polymorphic: true, inverse_of: :comments, optional: true
+end
+
 class MongoidAssociationTest < ActiveSupport::TestCase
-  setup do
-    @original_mongoid = Object.const_get(:Mongoid) if Object.const_defined?(:Mongoid)
-    Object.send(:remove_const, :Mongoid) if Object.const_defined?(:Mongoid)
-
-    mongoid = Module.new
-    association = Module.new
-    @belongs_to_class = Class.new
-    @has_one_class = Class.new
-    @has_many_class = Class.new
-    @habtm_class = Class.new
-    association.const_set(
-      :MACRO_MAPPING,
-      {
-        belongs_to: @belongs_to_class,
-        has_one: @has_one_class,
-        has_many: @has_many_class,
-        has_and_belongs_to_many: @habtm_class
-      }
-    )
-    mongoid.const_set(:Association, association)
-    Object.const_set(:Mongoid, mongoid)
+  test 'maps real Mongoid reflection classes to association predicates' do
+    assert_predicate adapter(MongoidAssociationArticle, :owner), :belongs_to?
+    assert_predicate adapter(MongoidAssociationOwner, :profile), :has_one?
+    assert_predicate adapter(MongoidAssociationOwner, :articles), :has_many?
+    assert_predicate adapter(MongoidAssociationOwner, :tags), :habtm?
+    assert_predicate adapter(MongoidAssociationOwner, :articles), :collection?
   end
 
-  teardown do
-    Object.send(:remove_const, :Mongoid) if Object.const_defined?(:Mongoid)
-    Object.const_set(:Mongoid, @original_mongoid) if @original_mongoid
+  test 'exposes real Mongoid reflection metadata' do
+    association = adapter(MongoidAssociationArticle, :owner)
+
+    assert_not_predicate association, :polymorphic?
+    assert_equal '_id', association.association_primary_key
+    assert_nil association.foreign_type
+    assert_equal MongoidAssociationArticle, association.inverse_klass
+    assert_nil association.as
+    assert_nil association.dependent
+    assert_equal :articles, association.inverse
+    assert_equal '_id', association.quoted_primary_key
   end
 
-  test 'maps Mongoid reflection classes to association predicates' do
-    assert_predicate adapter(@belongs_to_class), :belongs_to?
-    assert_predicate adapter(@has_one_class), :has_one?
-    assert_predicate adapter(@has_many_class), :has_many?
-    assert_predicate adapter(@habtm_class), :habtm?
-    assert_predicate adapter(@has_many_class), :collection?
-  end
-
-  test 'exposes Mongoid reflection metadata without a database connection' do
-    model = stub(collection: stub(name: 'articles'))
-    reflection = reflection(@belongs_to_class, klass: model)
-    reflection.stubs(
-      polymorphic?: true,
-      primary_key: :uuid,
-      type: :owner_type,
-      inverse_klass: String,
-      as: :owner,
-      dependent: :destroy,
-      inverse: :articles
-    )
-    association = described_class.new(reflection)
+  test 'exposes polymorphic reflection metadata' do
+    association = adapter(MongoidAssociationComment, :commentable)
 
     assert_predicate association, :polymorphic?
-    assert_equal :uuid, association.association_primary_key
-    assert_equal :owner_type, association.foreign_type
-    assert_equal 'articles', association.table_name
-    assert_equal 'articles', association.quoted_table_name
-    assert_equal '_id', association.quoted_primary_key
-    assert_equal String, association.inverse_klass
-    assert_equal :owner, association.as
-    assert_equal :destroy, association.dependent
-    assert_equal :articles, association.inverse
+    assert_not_predicate association, :allow_join?
+    assert_equal 'commentable_type', association.foreign_type
   end
 
-  test 'lists relations from a Mongoid model' do
-    model = stub(relations: {owner: :owner_reflection, tags: :tags_reflection})
+  test 'uses the real Mongoid collection name without a running server' do
+    assert_equal 'mongoid_association_owners', adapter(MongoidAssociationArticle, :owner).table_name
+    assert_equal 'mongoid_association_owners', adapter(MongoidAssociationArticle, :owner).quoted_table_name
+  end
 
-    assert_equal %i[owner_reflection tags_reflection], described_class.reflect_on_all_associations(model)
+  test 'lists real relations from a Mongoid model' do
+    associations = described_class.reflect_on_all_associations(MongoidAssociationOwner)
+
+    assert_equal MongoidAssociationOwner.relations.values, associations
+    assert_includes associations.map(&:name), :articles
+    assert_includes associations.map(&:name), :profile
+    assert_includes associations.map(&:name), :tags
   end
 
   private
@@ -77,13 +85,7 @@ class MongoidAssociationTest < ActiveSupport::TestCase
     ActiveScaffold::DataStructures::Association::Mongoid
   end
 
-  def adapter(reflection_class)
-    described_class.new(reflection(reflection_class))
-  end
-
-  def reflection(reflection_class, klass: stub)
-    reflection_class.new.tap do |value|
-      value.stubs(macro: :unused, klass: klass, foreign_key: :owner_id, options: {}, name: :owner)
-    end
+  def adapter(model, name)
+    described_class.new(model.relations.fetch(name.to_s))
   end
 end

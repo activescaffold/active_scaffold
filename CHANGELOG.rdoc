@@ -1,5 +1,6 @@
 = Unreleased
 - Drop support for Rails 7.2, Rails 8.0, and Ruby 3.2. Master now requires Rails 8.1 or newer and Ruby 3.3 or newer.
+- Test the limited Mongoid 9.1 metadata and query compatibility layer on Rails 8.1. Mongoid write actions remain unsupported. Remove the obsolete ActiveMongoid integration, which cannot be installed on supported Ruby versions.
 - Remove support for the obsolete +render_component+ integration. Embedded ActiveScaffold components now always load through AJAX, and parent scaffolds refresh through +ActiveScaffold.reload+.
 - Fix opening +field_search+ after a text search when both +search+ and +field_search+ actions are enabled.
 - Encode URLs and JSON values embedded in JavaScript responses as JavaScript literals instead of marking raw output as HTML safe.

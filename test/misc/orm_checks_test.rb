@@ -56,6 +56,8 @@ class OrmChecksTest < ActiveSupport::TestCase
   end
 
   def test_mongoid_metadata_and_casting
+    original_mongoid = Object.const_get(:Mongoid) if Object.const_defined?(:Mongoid)
+    Object.send(:remove_const, :Mongoid) if Object.const_defined?(:Mongoid)
     mongoid = Module.new
     document = Module.new
     mongoid.const_set(:Document, document)
@@ -89,5 +91,6 @@ class OrmChecksTest < ActiveSupport::TestCase
     assert_equal 7, ActiveScaffold::OrmChecks.cast(klass, :count, '7')
   ensure
     Object.send(:remove_const, :Mongoid) if Object.const_defined?(:Mongoid)
+    Object.const_set(:Mongoid, original_mongoid) if original_mongoid
   end
 end
