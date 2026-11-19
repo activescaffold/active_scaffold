@@ -34,11 +34,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
         precision: cast_type.precision,
         scale: cast_type.scale
       )
-      if ActiveRecord.version >= Gem::Version.new('8.1')
-        super(name, cast_type, default, metadata, null, *, **)
-      else
-        super(name, default, metadata, null, *, **)
-      end
+      super(name, cast_type, default, metadata, null, *, **)
     end
   end
 
