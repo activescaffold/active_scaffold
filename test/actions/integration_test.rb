@@ -46,6 +46,28 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'Alice'
   end
 
+  test 'successful xhr action link closes with the updated row' do
+    person = Person.create!(first_name: 'Alice', last_name: 'Example')
+
+    post "/people/#{person.id}/archive.js", xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.find_action_link'
+    assert_includes response.body, "if (link) link.close('"
+    assert_includes response.body, 'Alice'
+  end
+
+  test 'failed xhr action link updates its form messages' do
+    person = Person.create!(first_name: 'Alice', last_name: 'Example')
+
+    post "/people/#{person.id}/archive.js", params: {force_action_failure: true}, xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'link.update_flash_messages'
+    assert_includes response.body, 'ActiveScaffold.enable_form'
+    assert_includes response.body, 'custom action failed'
+  end
+
   test 'xhr list renders a member action links menu' do
     person = Person.create!(first_name: 'Alice', last_name: 'Example')
 
@@ -103,6 +125,41 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'ActiveScaffold.replace'
     assert_includes response.body, 'calculations'
     assert_includes response.body, 'Count: 2'
+  end
+
+  test 'xhr list refresh replaces its content and records browser history' do
+    Person.create!(first_name: 'Alice', last_name: 'Example')
+
+    get '/people.js', xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.replace_html'
+    assert_includes response.body, 'ActiveScaffold.add_to_history'
+    assert_includes response.body, 'Alice'
+  end
+
+  test 'xhr list refresh can include the header through request configuration' do
+    Person.create!(first_name: 'Alice', last_name: 'Example')
+
+    get '/people.js', params: {refresh_with_header: true}, xhr: true
+
+    assert_response :success
+    assert_includes response.body, "ActiveScaffold.replace('as_people-active-scaffold'"
+    assert_includes response.body, 'active-scaffold-header'
+    assert_includes response.body, 'Alice'
+  end
+
+  test 'xhr auto pagination appends records and loads the next page' do
+    Person.create!(first_name: 'Alice', last_name: 'Example')
+    Person.create!(first_name: 'Bob', last_name: 'Example')
+
+    get '/people.js', params: {auto_pagination: true, limit: 1, page: 1}, xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.append'
+    assert_includes response.body, 'ActiveScaffold.auto_load_page'
+    assert_includes response.body, 'Alice'
+    assert_not_includes response.body, 'ActiveScaffold.add_to_history'
   end
 
   test 'embedded loading renders the list without the application layout' do
@@ -284,6 +341,22 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal person, Contact.order(:id).last.contactable
   end
 
+  test 'xhr nested create updates its nested scaffold' do
+    person = Person.create!(first_name: 'Alice')
+
+    assert_difference('Contact.count') do
+      post '/contacts.js', params: {
+        parent_scaffold: 'people', association: 'contacts', person_id: person.id,
+        record: {first_name: 'Nested'}
+      }, xhr: true
+    end
+
+    assert_response :success
+    assert_equal person, Contact.order(:id).last.contactable
+    assert_includes response.body, 'ActiveScaffold.create_record_row'
+    assert_includes response.body, "as_people-#{person.id}-contacts-active-scaffold"
+  end
+
   test 'show renders the requested record' do
     person = Person.create!(first_name: 'Alice', last_name: 'Example')
 
@@ -447,6 +520,46 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'too short'
   end
 
+  test 'list can show the create form through request configuration' do
+    get '/people', params: {always_show_create: true}
+
+    assert_response :success
+    assert_select 'form.as_form.create'
+    assert_select 'form.as_form.create a.as_cancel', count: 0
+  end
+
+  test 'xhr create resets an always visible create form' do
+    assert_difference('Person.count') do
+      post '/people.js', params: {
+        always_show_create: true,
+        record: {first_name: 'Alice', last_name: 'Example'}
+      }, xhr: true
+    end
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.create_record_row'
+    assert_includes response.body, 'ActiveScaffold.reset_form'
+    assert_includes response.body, 'people-create--form'
+  end
+
+  test 'xhr create can update the association field that launched it' do
+    assert_difference('Person.count') do
+      post '/people.js', params: {
+        from_field: 'role_people',
+        parent_model: 'Role',
+        parent_column: 'people',
+        parent_scope: 'record[people]',
+        record: {first_name: 'Alice', last_name: 'Example'}
+      }, xhr: true
+    end
+
+    assert_response :success
+    assert_includes response.body, "var field = jQuery('#role_people')"
+    assert_includes response.body, "field.is('select')"
+    assert_includes response.body, "field.is('.checkbox-list')"
+    assert_includes response.body, 'field.trigger(\'change\')'
+  end
+
   test 'create with dont_close persists and returns to a new form' do
     assert_difference('Person.count') do
       post '/people', params: {
@@ -512,6 +625,41 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'too short'
   end
 
+  test 'xhr persistent update refreshes the row and keeps the form enabled' do
+    person = Person.create!(first_name: 'Before', last_name: 'Example')
+
+    patch "/people/#{person.id}.js", params: {
+      dont_close: true,
+      iframe: 'true',
+      record: {first_name: 'After'}
+    }, xhr: true
+
+    assert_response :success
+    assert_equal 'After', person.reload.first_name
+    assert_includes response.body, 'ActiveScaffold.update_row'
+    assert_includes response.body, 'action_link.target'
+    assert_includes response.body, 'ActiveScaffold.enable_form'
+  end
+
+  test 'edit can show the nested actions header through request configuration' do
+    person = Person.create!(first_name: 'Alice', last_name: 'Example')
+
+    get "/people/#{person.id}/edit", params: {nested_links: true}
+
+    assert_response :success
+    assert_select '.update-view > .active-scaffold-header .actions'
+  end
+
+  test 'edit can render a vertical subform through request configuration' do
+    person = Person.create!(first_name: 'Alice', last_name: 'Example')
+    person.buildings.create!(name: 'Tower')
+
+    get "/people/#{person.id}/edit", params: {vertical_subform: true}
+
+    assert_response :success
+    assert_select '.buildings-sub-form .sub-form-record > ol', minimum: 1
+  end
+
   test 'destroy removes the record and redirects to the list' do
     person = Person.create!(first_name: 'Alice')
 
@@ -534,6 +682,21 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "people-list-#{person.id}-row"
   end
 
+  test 'xhr nested destroy updates its nested scaffold' do
+    person = Person.create!(first_name: 'Alice')
+    contact = person.contacts.create!(first_name: 'Nested')
+
+    assert_difference('Contact.count', -1) do
+      delete "/contacts/#{contact.id}.js", params: {
+        parent_scaffold: 'people', association: 'contacts', person_id: person.id
+      }, xhr: true
+    end
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.delete_record_row'
+    assert_includes response.body, "as_people-#{person.id}-contacts-list-#{contact.id}-row"
+  end
+
   test 'json list returns serialized records' do
     person = Person.create!(first_name: 'Alice', last_name: 'Example')
 
@@ -554,6 +717,46 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal 'Mondeo', car.reload.model
   end
 
+  test 'inline update can refresh its complete row through request configuration' do
+    car = Car.create!(brand: 'Ford', model: 'Focus')
+
+    post "/cars/#{car.id}/update_column.js", params: {
+      column: 'model', value: 'Mondeo', inplace_edit_update: 'row'
+    }, xhr: true
+
+    assert_response :success
+    assert_equal 'Mondeo', car.reload.model
+    assert_includes response.body, 'ActiveScaffold.update_row'
+    assert_includes response.body, 'Mondeo'
+  end
+
+  test 'inline update can refresh its complete table through request configuration' do
+    car = Car.create!(brand: 'Ford', model: 'Focus')
+
+    post "/cars/#{car.id}/update_column.js", params: {
+      column: 'model', value: 'Mondeo', inplace_edit_update: 'table'
+    }, xhr: true
+
+    assert_response :success
+    assert_equal 'Mondeo', car.reload.model
+    assert_includes response.body, 'ActiveScaffold.replace_html'
+    assert_includes response.body, 'as_cars-content'
+    assert_includes response.body, 'Mondeo'
+  end
+
+  test 'inline update can refresh dependent columns through request configuration' do
+    car = Car.create!(brand: 'Ford', model: 'Focus')
+
+    post "/cars/#{car.id}/update_column.js", params: {
+      column: 'model', value: 'Mondeo', inplace_edit_update: 'columns'
+    }, xhr: true
+
+    assert_response :success
+    assert_equal 'Mondeo', car.reload.model
+    assert_includes response.body, '.brand-column'
+    assert_includes response.body, 'Ford'
+  end
+
   test 'render field supports inplace editing requests' do
     car = Car.create!(brand: 'Ford', model: 'Focus')
 
@@ -569,6 +772,34 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     }, xhr: true
 
     assert_response :success
+  end
+
+  test 'render field refreshes configured dependent form columns' do
+    post '/people/render_field.js', params: {
+      update_columns: true,
+      column: 'first_name',
+      value: 'Ada',
+      source_id: 'person_first_name'
+    }, xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.render_form_field'
+    assert_includes response.body, 'person_first_name'
+    assert_includes response.body, 'last_name-input'
+  end
+
+  test 'render field traverses configured dependent column trees' do
+    post '/people/render_field.js', params: {
+      nested_update_columns: true,
+      column: 'first_name',
+      source_id: 'person_first_name',
+      record: {first_name: 'Ada', last_name: 'Lovelace'}
+    }, xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.render_form_field'
+    assert_includes response.body, 'last_name-input'
+    assert_includes response.body, 'Lovelace'
   end
 
   test 'render field adds a tab for a tabbed association' do
@@ -615,6 +846,87 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_nil building.reload.owner_id
   end
 
+  test 'new existing renders its form for an xhr request' do
+    person = Person.create!(first_name: 'Alice')
+    role = Role.create!(name: 'Editor')
+
+    get '/people/new_existing.js', params: add_existing_params(role, person), xhr: true
+
+    assert_response :success
+    assert_includes response.body, "as_roles-#{role.id}-people-add_existing-#{person.id}-form"
+    assert_includes response.body, 'associated_id'
+    assert_includes response.body, 'Add existing Person'
+    assert_includes response.body, 'data-remote="true"'
+  end
+
+  test 'html add existing associates the record and redirects' do
+    person = Person.create!(first_name: 'Alice')
+    role = Role.create!(name: 'Editor')
+
+    post '/people/add_existing', params: add_existing_params(role, person)
+
+    assert_response :redirect
+    assert_equal '/people', URI.parse(response.location).path
+    assert_equal [person], role.reload.people
+  end
+
+  test 'xhr add existing associates the record and updates the list' do
+    person = Person.create!(first_name: 'Alice')
+    role = Role.create!(name: 'Editor')
+
+    post '/people/add_existing.js', params: add_existing_params(role, person), xhr: true
+
+    assert_response :success
+    assert_equal [person], role.reload.people
+    assert_includes response.body, 'ActiveScaffold.create_record_row'
+    assert_includes response.body, 'ActiveScaffold.reset_form'
+    assert_includes response.body, 'ActiveScaffold.replace_html'
+    assert_includes response.body, 'Alice'
+  end
+
+  test 'xhr add existing reports an association that already exists' do
+    person = Person.create!(first_name: 'Alice')
+    role = Role.create!(name: 'Editor')
+    role.people << person
+
+    assert_no_difference('role.reload.people.count') do
+      post '/people/add_existing.js', params: add_existing_params(role, person), xhr: true
+    end
+
+    assert_response :success
+    assert_not_includes response.body, 'ActiveScaffold.create_record_row'
+    assert_includes response.body, 'ActiveScaffold.reset_form'
+    assert_includes response.body, 'already been added'
+  end
+
+  test 'html add existing failure renders the form and its errors' do
+    person = Person.create!(first_name: 'Alice')
+    role = Role.create!(name: 'Editor')
+    params = add_existing_params(role, person).merge(force_add_existing_failure: true)
+
+    post '/people/add_existing', params: params
+
+    assert_response :success
+    assert_empty role.reload.people
+    assert_select "form#as_roles-#{role.id}-people-add_existing-#{person.id}-form"
+    assert_select '.errorExplanation, .active-scaffold-record-errors, .association-record-errors',
+                  text: /custom add existing action failed/
+  end
+
+  test 'xhr add existing failure replaces the form messages' do
+    person = Person.create!(first_name: 'Alice')
+    role = Role.create!(name: 'Editor')
+    params = add_existing_params(role, person).merge(force_add_existing_failure: true)
+
+    post '/people/add_existing.js', params: params, xhr: true
+
+    assert_response :success
+    assert_empty role.reload.people
+    assert_includes response.body, 'ActiveScaffold.replace_html'
+    assert_includes response.body, "as_roles-#{role.id}-people-add_existing-#{person.id}-messages"
+    assert_includes response.body, 'custom add existing action failed'
+  end
+
   test 'mark action persists marked state in the session' do
     address = Address.create!(street: 'Main Street', city: 'Madrid')
 
@@ -631,5 +943,16 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     get '/addresses'
     assert_response :success
     assert_select 'input[name=?][checked]', 'record[as_marked]', count: 0
+  end
+
+  private
+
+  def add_existing_params(role, person)
+    {
+      parent_scaffold: 'roles',
+      association: 'people',
+      role_id: role.id,
+      associated_id: person.id
+    }
   end
 end
