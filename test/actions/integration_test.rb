@@ -71,6 +71,29 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal '0', rows.fetch('Bob').at_css('.roles-column').text.strip
   end
 
+  test 'list renders configured column calculations in its footer' do
+    Car.create!(brand: 'Ford', model: 'Focus')
+    Car.create!(brand: 'Ford', model: 'Mondeo')
+
+    get '/cars'
+
+    assert_response :success
+    assert_select 'tfoot .active-scaffold-calculations', text: /Count:\s*2/
+  end
+
+  test 'xhr row refresh updates configured column calculations' do
+    car = Car.create!(brand: 'Ford', model: 'Focus')
+    Car.create!(brand: 'Ford', model: 'Mondeo')
+
+    get '/cars.js', params: {id: car.id}, xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.update_row'
+    assert_includes response.body, 'ActiveScaffold.replace'
+    assert_includes response.body, 'calculations'
+    assert_includes response.body, 'Count: 2'
+  end
+
   test 'embedded loading renders the list without the application layout' do
     Person.create!(first_name: 'Alice', last_name: 'Example')
 
