@@ -6,7 +6,11 @@ class IntegrationPeopleController < ApplicationController
     conf.field_search.columns = %i[first_name last_name]
     conf.field_search.human_conditions = true
 
-    conf.show.columns = %i[first_name last_name car contacts buildings]
+    conf.show.inline_links = true
+    conf.show.columns = %i[car contacts buildings]
+    conf.show.columns.add_subgroup('Identity') do |group|
+      group.add :first_name, :last_name
+    end
     conf.columns[:car].show_ui = :horizontal
     conf.columns[:contacts].show_ui = [:horizontal, {subform_columns: %i[first_name last_name]}]
     conf.columns[:buildings].show_ui = [:vertical, {subform_columns: %i[name floors_count]}]

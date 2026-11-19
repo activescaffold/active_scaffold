@@ -180,7 +180,7 @@ class ListActionTest < ActiveSupport::TestCase
     action = list_action.new
     parameters = ActionController::Parameters.new(id: '7')
     action.stubs(:params).returns(parameters)
-    action.define_singleton_method(:do_search) {}
+    action.define_singleton_method(:do_search) { nil }
     action.stubs(:search_params).returns({})
     action.expects(:store_search_params_into_session)
     action.expects(:do_search)

@@ -30,6 +30,7 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     get '/people.js', params: {id: person.id}, xhr: true
 
     assert_response :success
+    assert_includes response.body, 'ActiveScaffold.update_row'
     assert_includes response.body, 'Alice'
     assert_includes response.body, "people-list-#{person.id}-row"
   end
@@ -40,6 +41,7 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     get '/people.js', params: {id: person.id, action_links: 'member'}, xhr: true
 
     assert_response :success
+    assert_includes response.body, 'ActiveScaffold.display_dynamic_action_group'
     assert_includes response.body, 'Edit'
     assert_includes response.body, 'Delete'
   end
@@ -51,12 +53,13 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     get '/people', params: {sort: 'first_name', sort_direction: 'desc'}
 
     assert_response :success
-    assert_equal %w[Bob Alice], css_select('tbody.records .first_name-column').map { |cell| cell.text.strip }
+    sorted_names = css_select('tbody.records .first_name-column').map { |cell| cell.text.strip }
+    assert_equal %w[Bob Alice], sorted_names
   end
 
   test 'list uses cached counts for an association without includes' do
     alice = Person.create!(first_name: 'Alice', last_name: 'Example')
-    bob = Person.create!(first_name: 'Bob', last_name: 'Example')
+    Person.create!(first_name: 'Bob', last_name: 'Example')
     alice.roles << Role.create!(name: 'First')
     alice.roles << Role.create!(name: 'Second')
 
@@ -176,6 +179,29 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, 'Bob'
   end
 
+  test 'search action renders its full page for an html request' do
+    get '/contacts/show_search', params: {kind: 'search'}
+
+    assert_response :success
+    assert_select '.active-scaffold .search-view.contacts-view' do
+      assert_select 'form.as_form.search'
+      assert_select 'input[type=?][name=?]', 'search', 'search'
+      assert_select 'a.as_cancel', text: 'Reset'
+    end
+  end
+
+  test 'field search action renders its full page for an html request' do
+    get '/contacts/show_search', params: {kind: 'field_search'}
+
+    assert_response :success
+    assert_select '.active-scaffold .search-view' do
+      assert_select 'form.as_form.search'
+      assert_select '[name^=?]', 'search[first_name]'
+      assert_select '[name^=?]', 'search[last_name]'
+      assert_select '[name^=?]', 'search[birthday]'
+    end
+  end
+
   test 'field search renders human conditions for the applied fields' do
     Person.create!(first_name: 'Alice', last_name: 'Example')
     Person.create!(first_name: 'Bob', last_name: 'Example')
@@ -234,6 +260,31 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'Example'
   end
 
+  test 'xhr show renders the show partial without the full page wrapper' do
+    person = Person.create!(first_name: 'Alice', last_name: 'Example')
+
+    get "/people/#{person.id}.js", xhr: true
+
+    assert_response :success
+    assert_select '.show-view', count: 0
+    assert_select 'h4', count: 1
+    assert_select '.first_name-view', text: 'Alice'
+    assert_select '.last_name-view', text: 'Example'
+  end
+
+  test 'show renders destroy confirmation for non-javascript fallback' do
+    person = Person.create!(first_name: 'Alice', last_name: 'Example')
+
+    get "/people/#{person.id}", params: {destroy_action: true}
+
+    assert_response :success
+    assert_select '.delete-view form[action=?]', "/people/#{person.id}" do
+      assert_select 'input[name=?][value=?]', '_method', 'delete'
+      assert_select 'input[type=?]', 'submit'
+    end
+    assert_includes response.body, 'Are you sure you want to delete'
+  end
+
   test 'show renders an override and horizontal and vertical association UIs' do
     person = Person.create!(first_name: 'Alice', last_name: 'Example')
     person.create_car!(brand: 'Ford', model: 'Focus')
@@ -243,6 +294,11 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     get "/integration_people/#{person.id}"
 
     assert_response :success
+    assert_select '.show-view > .active-scaffold-header .actions' do
+      assert_select 'a.edit', text: 'Edit'
+      assert_select 'a.destroy', text: 'Delete'
+    end
+    assert_select 'dt', text: 'Identity'
     assert_select '.first_name-view', text: /Profile: Alice/
     assert_select '.car-view table' do
       assert_select 'th', text: 'Brand'
@@ -333,6 +389,30 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'too short'
   end
 
+  test 'xhr create inserts a successful record into the list' do
+    assert_difference('Person.count') do
+      post '/people.js', params: {
+        record: {first_name: 'Alice', last_name: 'Example'}
+      }, xhr: true
+    end
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.create_record_row'
+    assert_includes response.body, 'Alice'
+    assert_includes response.body, 'if (action_link) action_link.close();'
+  end
+
+  test 'xhr create replaces the form when validation fails' do
+    assert_no_difference('Category.count') do
+      post '/categories.js', params: {record: {name: 'x'}}, xhr: true
+    end
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.replace'
+    assert_includes response.body, 'categories-create--form'
+    assert_includes response.body, 'too short'
+  end
+
   test 'create with dont_close persists and returns to a new form' do
     assert_difference('Person.count') do
       post '/people', params: {
@@ -375,6 +455,29 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'too short'
   end
 
+  test 'xhr update replaces the list row after a successful save' do
+    person = Person.create!(first_name: 'Before', last_name: 'Example')
+
+    patch "/people/#{person.id}.js", params: {record: {first_name: 'After'}}, xhr: true
+
+    assert_response :success
+    assert_equal 'After', person.reload.first_name
+    assert_includes response.body, 'action_link.close'
+    assert_includes response.body, 'After'
+  end
+
+  test 'xhr update replaces the form when validation fails' do
+    category = Category.create!(name: 'Valid category')
+
+    patch "/categories/#{category.id}.js", params: {record: {name: 'x'}}, xhr: true
+
+    assert_response :success
+    assert_equal 'Valid category', category.reload.name
+    assert_includes response.body, 'ActiveScaffold.replace'
+    assert_includes response.body, "categories-update-#{category.id}-form"
+    assert_includes response.body, 'too short'
+  end
+
   test 'destroy removes the record and redirects to the list' do
     person = Person.create!(first_name: 'Alice')
 
@@ -383,6 +486,18 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to '/people'
+  end
+
+  test 'xhr destroy removes the record and its list row' do
+    person = Person.create!(first_name: 'Alice')
+
+    assert_difference('Person.count', -1) do
+      delete "/people/#{person.id}.js", xhr: true
+    end
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.delete_record_row'
+    assert_includes response.body, "people-list-#{person.id}-row"
   end
 
   test 'json list returns serialized records' do
