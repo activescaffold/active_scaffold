@@ -214,6 +214,92 @@ class ConstraintsTest < ActiveSupport::TestCase
     @test_object.send(:apply_constraint_on_association, record, association, [1])
   end
 
+  def test_reads_constraints_from_embedded_parameters
+    object_class = Class.new do
+      def self.helper_method(*); end
+
+      include ActiveScaffold::Constraints
+
+      def active_scaffold_embedded_params
+        {constraints: ActionController::Parameters.new(first_name: 'Alice')}
+      end
+    end
+    object = object_class.new
+
+    assert_equal({'first_name' => 'Alice'}, object.send(:active_scaffold_constraints))
+  end
+
+  def test_columns_from_constraint_handles_scalar_single_and_polymorphic_values
+    @test_object.active_scaffold_config = config_for('address')
+
+    assert_equal :first_name, @test_object.send(:columns_from_constraint, :first_name, 'Alice')
+    assert_equal [:addressable_type], @test_object.send(:columns_from_constraint, :addressable, [1])
+    assert_equal %i[addressable_type addressable],
+                 @test_object.send(:columns_from_constraint, :addressable, ['ModelStubs::User', 1])
+    assert_equal [:addressable_type],
+                 @test_object.send(:columns_from_constraint, :addressable, ['ModelStubs::User', 1, 2])
+    assert_nil @test_object.send(:columns_from_constraint, :addressable, {user: 1})
+  end
+
+  def test_unknown_and_malformed_polymorphic_constraints_raise_descriptive_errors
+    @test_object.active_scaffold_config = config_for('address')
+
+    @test_object.active_scaffold_constraints = {missing: 1}
+    error = assert_raises(ActiveScaffold::MalformedConstraint) do
+      @test_object.send(:conditions_from_constraints)
+    end
+    assert_includes error.message, 'ModelStubs::Address#missing'
+
+    @test_object.active_scaffold_constraints = {addressable: 1}
+    error = assert_raises(ActiveScaffold::MalformedConstraint) do
+      @test_object.send(:conditions_from_constraints)
+    end
+    assert_includes error.message, 'addressable polymorphic association'
+  end
+
+  def test_applies_collection_and_polymorphic_association_constraints
+    associated = stub
+    collection = mock
+    collection.expects(:<<).with(associated)
+    record = mock
+    record.expects(:items).returns(collection)
+    association = stub(through_singular?: false, collection?: true, nested?: false, name: :items,
+                       klass: stub(find: associated), polymorphic?: false)
+
+    @test_object.send(:apply_constraint_on_association, record, association, 1)
+
+    user = stub
+    ModelStubs::User.expects(:find).with(2).returns(user)
+    record = mock
+    record.expects(:owner=).with(user)
+    polymorphic = stub(through_singular?: false, collection?: false, polymorphic?: true, name: :owner,
+                       foreign_type: :owner_type)
+    @test_object.send(:apply_constraint_on_association, record, polymorphic, ['ModelStubs::User', 2])
+
+    record = mock
+    record.expects(:owner_type=).with('ModelStubs::User')
+    @test_object.send(:apply_constraint_on_association, record, polymorphic, ['ModelStubs::User', 2, 3])
+  end
+
+  def test_rejects_malformed_polymorphic_constraint_when_applying_it
+    association = stub(name: :owner)
+
+    error = assert_raises(ActiveScaffold::MalformedConstraint) do
+      @test_object.send(:apply_constraint_on_polymorphic_association, stub, association, 1)
+    end
+
+    assert_includes error.message, 'owner polymorphic association'
+  end
+
+  def test_applies_plain_attribute_constraints_to_a_record
+    @test_object.active_scaffold_config = config_for('user')
+    record = ModelStubs::User.new
+
+    @test_object.send(:apply_constraints_to_record, record, constraints: {foo: 'constrained'})
+
+    assert_equal 'constrained', record.foo
+  end
+
   protected
 
   def assert_constraint_condition(constraint, condition, message = nil)

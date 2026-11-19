@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   concern :active_scaffold, ActiveScaffold::Routing::Basic.new(association: true)
   concern :active_scaffold_association, ActiveScaffold::Routing::Association.new
 
+  get 'people/forbidden', to: 'people#forbidden'
   resources :addresses, concerns: :active_scaffold
   resources :buildings, except: :index do
     concerns :active_scaffold, except: %i[mark add_existing new_existing destroy_existing]
@@ -13,6 +14,9 @@ Rails.application.routes.draw do
     concerns :active_scaffold, except: [:mark]
   end
   resources :people do
+    concerns :active_scaffold, except: %i[mark]
+  end
+  resources :integration_people do
     concerns :active_scaffold, except: %i[mark]
   end
   resources :standalone_people, only: %i[show edit update]

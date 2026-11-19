@@ -31,6 +31,21 @@ class FinderTest < ActiveSupport::TestCase
     assert_nil ClassWithFinder.conditions_for_columns('foo', [])
   end
 
+  def test_create_conditions_for_columns_supports_all_active_record_patterns_and_non_text_casting
+    text_column = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
+
+    assert_equal [['"model_stubs"."a" LIKE ?', 'foo%']],
+                 ClassWithFinder.conditions_for_columns('foo', [text_column], :start)
+    assert_equal [['"model_stubs"."a" LIKE ?', '%foo']],
+                 ClassWithFinder.conditions_for_columns('foo', [text_column], :end)
+    assert_equal [['"model_stubs"."a" LIKE ?', 'foo']],
+                 ClassWithFinder.conditions_for_columns('foo', [text_column], :exact)
+
+    numeric_column = ActiveScaffold::DataStructures::Column.new(:buildings_count, Person)
+    assert_equal [['"people"."buildings_count" = ?', 12]],
+                 ClassWithFinder.conditions_for_columns('12', [numeric_column])
+  end
+
   def test_create_conditions_for_columns_uses_like_for_collated_postgresql_column
     columns_hash = ModelStub.columns_hash.merge('b' => ColumnMock.new('b', '', 'varchar(255)', true, collation: 'case_insensitive'))
     ModelStub.stubs(columns_hash: columns_hash)
@@ -47,6 +62,48 @@ class FinderTest < ActiveSupport::TestCase
     assert_nil columns.first.like_operator
     assert_equal 'LIKE', columns.last.like_operator
     assert_equal [expected_conditions], ClassWithFinder.conditions_for_columns('foo', columns)
+  end
+
+  def test_mongoid_conditions_build_regex_selectors_for_each_text_search_mode
+    query = Struct.new(:selector)
+    model = Class.new
+    model.define_singleton_method(:or) { |conditions| query.new({or: conditions}) }
+    model.define_singleton_method(:and) { |conditions| query.new({and: conditions}) }
+    config = stub(active_record?: false, mongoid?: true, model: model)
+    finder = Class.new
+    finder.define_singleton_method(:active_scaffold_config) { config }
+    finder.extend ActiveScaffold::Finder::ClassMethods
+    column = stub(name: :name, text?: true, search_sql: %w[name nickname], active_record?: false)
+
+    {
+      full: 'Alice',
+      start: '^Alice',
+      end: 'Alice$',
+      exact: '^Alice$'
+    }.each do |mode, expected_pattern|
+      conditions = finder.conditions_for_columns('Alice', [column], mode)
+      token_conditions = conditions.first.fetch(:and).first.fetch(:or)
+
+      assert_equal %w[name nickname], token_conditions.flat_map(&:keys)
+      assert_equal [expected_pattern, expected_pattern], token_conditions.flat_map(&:values).map(&:source)
+    end
+  end
+
+  def test_mongoid_conditions_combine_multiple_tokens_with_and
+    query = Struct.new(:selector)
+    model = Class.new
+    model.define_singleton_method(:or) { |conditions| query.new({or: conditions}) }
+    model.define_singleton_method(:and) { |conditions| query.new({and: conditions}) }
+    config = stub(active_record?: false, mongoid?: true, model: model)
+    finder = Class.new
+    finder.define_singleton_method(:active_scaffold_config) { config }
+    finder.extend ActiveScaffold::Finder::ClassMethods
+    column = stub(name: :name, text?: true, search_sql: [:name], active_record?: false)
+
+    conditions = finder.conditions_for_columns(%w[Alice Bob], [column])
+
+    patterns = conditions.first.fetch(:and).map { |condition| condition[:or].first['name'].source }
+    assert_equal %w[Alice Bob], patterns
   end
 
   def test_like_operator_is_not_set_for_model_attribute
@@ -81,6 +138,63 @@ class FinderTest < ActiveSupport::TestCase
     column.sort_by method: 'a'
     collection = [ModelStub.new(a: 'c'), ModelStub.new(a: 'a'), ModelStub.new(a: 'b')]
     assert_equal collection.map(&:a).sort, @klass.send(:sort_collection_by_column, collection, column, 'asc').map(&:a)
+  end
+
+  def test_find_if_allowed_normalizes_symbol_security_options
+    record = mock
+    record.expects(:authorized_for?).with({crud_type: :read}).returns(true)
+    relation = mock
+    relation.expects(:find).with(7).returns(record)
+
+    assert_same record, @klass.send(:find_if_allowed, 7, :read, relation)
+  end
+
+  def test_find_if_allowed_raises_for_an_unauthorized_record
+    record = stub(authorized_for?: false)
+    relation = stub(find: record, to_s: 'People')
+
+    error = assert_raises(ActiveScaffold::RecordNotAllowed) do
+      @klass.send(:find_if_allowed, 7, {crud_type: :update}, relation)
+    end
+
+    assert_includes error.message, 'id = 7'
+  end
+
+  def test_joins_for_finder_normalizes_custom_joins
+    @klass.send(:active_scaffold_joins=, [:configured_join])
+
+    @klass.stubs(:joins_for_collection).returns('INNER JOIN owners ON owners.id = owner_id')
+    assert_equal ['INNER JOIN owners ON owners.id = owner_id', :configured_join],
+                 @klass.send(:joins_for_finder)
+
+    @klass.stubs(:joins_for_collection).returns([:people])
+    assert_equal %i[people configured_join], @klass.send(:joins_for_finder)
+  end
+
+  def test_mongoid_finder_options_merge_references_and_preloads_as_includes
+    @klass.active_scaffold_config.stubs(active_record?: false, mongoid?: true)
+    @klass.send(:active_scaffold_references=, %i[owner comments])
+    @klass.send(:active_scaffold_preload=, %i[comments tags])
+
+    options = @klass.send(:finder_options)
+
+    assert_equal %i[owner comments tags], options[:includes]
+    assert_not options.key?(:joins)
+    assert_not options.key?(:preload)
+  end
+
+  def test_append_to_query_applies_nested_conditions_and_relations
+    base = ModelStub.where(nil)
+    relation = ModelStub.where(a: 'from relation')
+
+    query = @klass.send(
+      :append_to_query,
+      base,
+      conditions: [[{id: 1}]], relations: [relation]
+    )
+
+    assert_equal({'id' => 1, 'a' => 'from relation'}, query.where_clause.to_h)
+    assert_includes query.to_sql, 'from relation'
   end
 
   def test_method_sorted_page_beyond_collection_returns_empty_array

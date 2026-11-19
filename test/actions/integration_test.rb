@@ -5,11 +5,11 @@ require 'test_helper'
 class ActionsIntegrationTest < ActionDispatch::IntegrationTest
   setup do
     RequestStore.clear!
-    [Address, Contact, Building, Person, Car, Category].each(&:delete_all)
+    [Address, Contact, Building, Person, Car, Category, Role].each(&:delete_all)
   end
 
   teardown do
-    [Address, Contact, Building, Person, Car, Category].each(&:delete_all)
+    [Address, Contact, Building, Person, Car, Category, Role].each(&:delete_all)
     RequestStore.clear!
   end
 
@@ -22,6 +22,13 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, 'Alice'
     assert_includes response.body, 'Bob'
+  end
+
+  test 'action authorization errors are rescued as forbidden responses' do
+    get '/people/forbidden'
+
+    assert_response :forbidden
+    assert_empty response.body
   end
 
   test 'xhr list can be wrapped in a rendering adapter' do
@@ -103,6 +110,16 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, 'Bob'
   end
 
+  test 'field search renders human conditions for the applied fields' do
+    Person.create!(first_name: 'Alice', last_name: 'Example')
+    Person.create!(first_name: 'Bob', last_name: 'Example')
+
+    get '/integration_people', params: {search: {first_name: {opt: '%?%', from: 'Alice'}}}
+
+    assert_response :success
+    assert_select '.filtered-message', text: /First name.*Alice/
+  end
+
   test 'field search applies configured default params through the request callback' do
     Contact.create!(first_name: 'Alice', last_name: 'Example')
     Contact.create!(first_name: 'Bob', last_name: 'Example')
@@ -149,6 +166,60 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, 'Alice'
     assert_includes response.body, 'Example'
+  end
+
+  test 'show renders an override and horizontal and vertical association UIs' do
+    person = Person.create!(first_name: 'Alice', last_name: 'Example')
+    person.create_car!(brand: 'Ford', model: 'Focus')
+    person.contacts.create!(first_name: 'Bob', last_name: 'Contact')
+    person.buildings.create!(name: 'Headquarters', floors_count: 3)
+
+    get "/integration_people/#{person.id}"
+
+    assert_response :success
+    assert_select '.first_name-view', text: /Profile: Alice/
+    assert_select '.car-view table' do
+      assert_select 'th', text: 'Brand'
+      assert_select 'td.brand-column', text: 'Ford'
+      assert_select 'td.model-column', text: 'Focus'
+    end
+    assert_select '.contacts-view table' do
+      assert_select 'td.first_name-column', text: 'Bob'
+      assert_select 'td.last_name-column', text: 'Contact'
+    end
+    assert_select '.buildings-view' do
+      assert_select '.name-view', text: 'Headquarters'
+      assert_select '.floors_count-view', text: '3'
+    end
+  end
+
+  test 'list filters render and restrict records' do
+    Person.create!(first_name: 'Alice', adult: true)
+    Person.create!(first_name: 'Bob', adult: false)
+
+    get '/integration_people', params: {age: 'adults'}
+
+    assert_response :success
+    assert_select '.filters', text: /Age/
+    assert_select '.filters a', text: 'Adults'
+    assert_select '.applied-filters', text: /Adults/
+    assert_select 'tbody.records .first_name-column', text: 'Alice', count: 1
+    assert_select 'tbody.records .first_name-column', text: 'Bob', count: 0
+  end
+
+  test 'form renders configured radio and checkbox inputs' do
+    admin = Role.create!(name: 'Admin')
+    editor = Role.create!(name: 'Editor')
+
+    get '/integration_people/new'
+
+    assert_response :success
+    assert_select 'input[type=?][name=?][value=?]', 'radio', 'record[adult]', 'true'
+    assert_select 'input[type=?][name=?][value=?]', 'radio', 'record[adult]', 'false'
+    assert_select '.roles-input.checkbox-list' do
+      assert_select 'input[type=?][name=?][value=?]', 'checkbox', 'record[roles][]', admin.id.to_s
+      assert_select 'input[type=?][name=?][value=?]', 'checkbox', 'record[roles][]', editor.id.to_s
+    end
   end
 
   test 'show and edit work when list and nested actions are disabled' do

@@ -5,4 +5,8 @@ class PeopleController < ApplicationController
     conf.columns[:buildings].associated_limit = 0
     conf.create.columns.exclude :address, :home
   end
+
+  def forbidden
+    raise ActiveScaffold::ActionNotAllowed, 'forbidden by integration test'
+  end
 end
