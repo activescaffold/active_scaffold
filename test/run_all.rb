@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-test_folders = %w[bridges config data_structures extensions misc]
+test_folders = %w[actions bridges config data_structures extensions misc]
 
 all_tests = test_folders.inject([]) do |folder, output|
   output << Dir[File.join(File.dirname(__FILE__), "#{folder}/**/*.rb")]

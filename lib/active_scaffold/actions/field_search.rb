@@ -32,9 +32,8 @@ module ActiveScaffold::Actions
       end
 
       def store_search_params_into_session
-        unless default_params.nil?
-          init_field_search_params(active_scaffold_config.field_search.default_params)
-        end
+        default_params = active_scaffold_config.field_search.default_params
+        init_field_search_params(default_params) unless default_params.nil?
         super
       end
 
