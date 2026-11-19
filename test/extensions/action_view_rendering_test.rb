@@ -97,6 +97,17 @@ class RenderInTest < ActionView::TestCase
     end
   end
 
+  test 'render embedded active scaffold builds an ajax loading component' do
+    params[:controller] = 'people'
+    result = render(active_scaffold: :people, label: 'Embedded people',
+                    constraints: {adult: true}, conditions: {first_name: 'Alice'})
+
+    assert_match(/active-scaffold-component/, result)
+    assert_match(/Embedded people/, result)
+    assert_match(/class="load-embedded"/, result)
+    assert_match(/embedded/, result)
+  end
+
   test 'render_in method receives correct view context' do
     # Test that the view context passed to render_in is correct
     received_context = nil

@@ -73,3 +73,41 @@ class RoutingMapperTest < ActionDispatch::IntegrationTest
     assert_raises(ActionController::RoutingError) { @routes.recognize_path '/cars/2/destroy_existing', method: :delete }
   end
 end
+
+class RoutingMapperResourcesTest < ActiveSupport::TestCase
+  setup do
+    @mapper = Object.new.extend(ActiveScaffold::Routing::MapperResources)
+    @mapper.stubs(parent_scaffold: 'admin/people')
+  end
+
+  test 'maps nested resources with parent and association options' do
+    yielded = false
+    options = {parent_scaffold: 'admin/people', association: :contacts, only: :index}
+    @mapper.expects(:resources).with(:contacts, options).yields
+
+    @mapper.as_nested_resources(:contacts, only: :index) { yielded = true }
+
+    assert yielded
+  end
+
+  test 'maps scoped routes with parent and association options' do
+    parent = stub(plural: 'people')
+    @mapper.stubs(parent_resource: parent)
+    yielded = false
+    options = {parent_scaffold: 'admin/people', association: 'people', named_scope: :recent, only: :index}
+    @mapper.expects(:resources).with(:recent, options).yields
+
+    @mapper.as_scoped_routes(:recent, only: :index) { yielded = true }
+
+    assert yielded
+  end
+
+  test 'parent scaffold combines module scope and parent resource' do
+    @mapper.unstub(:parent_scaffold)
+    @mapper.instance_variable_set(:@scope, module: 'admin')
+    @mapper.stubs(parent_resource: stub(plural: 'people'))
+    @mapper.expects(:merge_module_scope).with('admin', 'people').returns('admin/people')
+
+    assert_equal 'admin/people', @mapper.parent_scaffold
+  end
+end

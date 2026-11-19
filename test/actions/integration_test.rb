@@ -24,6 +24,15 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'Bob'
   end
 
+  test 'xhr list can be wrapped in a rendering adapter' do
+    Person.create!(first_name: 'Alice', last_name: 'Example')
+
+    get '/people', params: {adapter: '_popup_adapter'}, xhr: true
+
+    assert_response :success
+    assert_select '.active-scaffold .index-view', text: /Alice/
+  end
+
   test 'search filters the list through the controller callback chain' do
     Person.create!(first_name: 'Alice', last_name: 'Example')
     Person.create!(first_name: 'Bob', last_name: 'Example')
@@ -33,6 +42,34 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, 'Alice'
     assert_not_includes response.body, 'Bob'
+  end
+
+  test 'column parameters filter the list through finder parameter conditions' do
+    Person.create!(first_name: 'Alice', last_name: 'Example', buildings_count: 1)
+    Person.create!(first_name: 'Bob', last_name: 'Example', buildings_count: 3)
+
+    get '/people', params: {first_name: 'Alice'}
+
+    assert_response :success
+    assert_includes response.body, 'Alice'
+    assert_not_includes response.body, 'Bob'
+
+    get '/people', params: {buildings_count: '2..4'}
+
+    assert_response :success
+    assert_not_includes response.body, 'Alice'
+    assert_includes response.body, 'Bob'
+  end
+
+  test 'column parameters ending in an exclamation mark exclude matching records' do
+    Person.create!(first_name: 'Alice', last_name: 'Example')
+    Person.create!(first_name: 'Bob', last_name: 'Example')
+
+    get '/people', params: {'first_name!' => 'Alice'}
+
+    assert_response :success
+    assert_select 'tbody.records .first_name-column', text: 'Alice', count: 0
+    assert_select 'tbody.records .first_name-column', text: 'Bob', count: 1
   end
 
   test 'list always shows search and links to field search with its kind' do

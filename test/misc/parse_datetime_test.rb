@@ -160,6 +160,86 @@ class ParseDatetimeTest < ActiveSupport::TestCase
     assert_equal [Date.new(2017, 4, 8), Date.new(2017, 4, 8)], values
   end
 
+  def test_condition_value_accepts_multiparameter_hash_and_iso8601
+    column = @config.columns[:run_at]
+
+    hash_value = {year: '2017', month: '4', day: '8', hour: '16', minute: '30', second: '20'}
+    assert_equal Time.zone.local(2017, 4, 8, 16, 30, 20),
+                 self.class.condition_value_for_datetime(column, hash_value)
+    assert_equal Time.zone.parse('2017-04-08T16:30:00+03:00'),
+                 self.class.condition_value_for_datetime(column, '2017-04-08T16:30:00+03:00')
+  end
+
+  def test_invalid_date_time_values_return_nil
+    column = @config.columns[:run_at]
+    Rails.logger.expects(:warn).at_least_once
+
+    assert_nil self.class.condition_value_for_datetime(column, 'not a time')
+    assert_nil self.class.parse_date_with_format('not a date', ['%Y-%m-%d'])
+    assert_nil self.class.local_time_from_hash({year: '0', month: '0', day: '0'})
+  end
+
+  def test_datetime_column_conditions
+    column = ActiveScaffold::DataStructures::Column.new(:run_at, DateTimeModel)
+
+    between = self.class.condition_for_column(
+      column, {'opt' => 'BETWEEN', 'from' => '2017-04-08T10:00:00', 'to' => '2017-04-08T12:00:00'}, :full, {}
+    )
+    greater_than = self.class.condition_for_column(
+      column, {'opt' => '>', 'from' => '2017-04-08T10:00:00'}, :full, {}
+    )
+    null = self.class.condition_for_column(column, {'opt' => 'null'}, :full, {})
+
+    assert_equal '"date_time_models"."run_at" BETWEEN ? AND ?', between.first
+    assert_equal [Time.zone.local(2017, 4, 8, 10), Time.zone.local(2017, 4, 8, 12)], between.drop(1)
+    assert_equal ['"date_time_models"."run_at" > ?', Time.zone.local(2017, 4, 8, 10)], greater_than
+    assert_equal ['"date_time_models"."run_at" is null', []], null
+  end
+
+  def test_datetime_condition_supports_search_sql_proc
+    column = ActiveScaffold::DataStructures::Column.new(:run_at, DateTimeModel)
+    column.search_sql = proc { |from, to, operator| [from, to, operator] }
+
+    result = self.class.condition_for_datetime(
+      column, {'opt' => '>', 'from' => '2017-04-08T10:00:00'}
+    )
+
+    assert_equal [Time.zone.local(2017, 4, 8, 10), nil, '>'], result
+  end
+
+  def test_date_trends_use_whole_days_while_datetime_trends_use_exact_times
+    now = Time.zone.local(2017, 4, 8, 16, 30)
+    self.class.stubs(:datetime_now).returns(now)
+    date_column = ContactsController.active_scaffold_config.columns[:birthday]
+    datetime_column = @config.columns[:run_at]
+
+    assert_equal [now.beginning_of_day.ago(2.days), now.end_of_day],
+                 self.class.datetime_from_to_for_trend(date_column, 'opt' => 'PAST', 'number' => '2', 'unit' => 'DAYS')
+    assert_equal [now.beginning_of_day, now.end_of_day.in(2.days)],
+                 self.class.datetime_from_to_for_trend(date_column, 'opt' => 'FUTURE', 'number' => '2', 'unit' => 'DAYS')
+    assert_equal [now.ago(2.hours), now],
+                 self.class.datetime_from_to_for_trend(datetime_column, 'opt' => 'PAST', 'number' => '2', 'unit' => 'HOURS')
+    assert_equal [now, now.in(2.hours)],
+                 self.class.datetime_from_to_for_trend(datetime_column, 'opt' => 'FUTURE', 'number' => '2', 'unit' => 'HOURS')
+  end
+
+  def test_named_and_relative_date_ranges
+    now = Time.zone.local(2017, 4, 8, 16, 30)
+    self.class.stubs(:datetime_now).returns(now)
+    column = @config.columns[:run_at]
+
+    assert_equal [now.yesterday.beginning_of_day, now.yesterday.end_of_day],
+                 self.class.datetime_from_to_for_range(column, 'range' => 'YESTERDAY')
+    assert_equal [now.tomorrow.beginning_of_day, now.tomorrow.end_of_day],
+                 self.class.datetime_from_to_for_range(column, 'range' => 'TOMORROW')
+    assert_equal [now.ago(1.week).beginning_of_week, now.ago(1.week).end_of_week],
+                 self.class.datetime_from_to_for_named_range('PREV_WEEK')
+    assert_equal [now.in(1.month).beginning_of_month, now.in(1.month).end_of_month],
+                 self.class.datetime_from_to_for_named_range('NEXT_MONTH')
+    assert_equal [nil, nil], self.class.datetime_from_to_for_named_range('OTHER_YEAR')
+    assert_raises(ArgumentError) { self.class.datetime_from_to_for_named_range('THIS_DAY') }
+  end
+
   def test_condition_for_spanish_date
     @config.columns[:run_at].options[:format] = :long
     I18n.with_locale :es do

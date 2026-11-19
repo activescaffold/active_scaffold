@@ -51,6 +51,22 @@ class RespondingActionTest < ActionController::TestCase
                  @controller.send(:respond_method_for, :action_update, :json)
   end
 
+  test 'iframe action response redirects the parent document after an action redirect' do
+    @controller.set_request!(@request)
+    @controller.set_response!(@response)
+    @controller.define_singleton_method(:action_update_respond_to_js) do
+      redirect_to '/people'
+    end
+
+    @controller.send(:action_update_respond_on_iframe)
+
+    assert_response :success
+    assert_equal 'text/html; charset=utf-8', response.content_type
+    assert_not response.has_header?('location')
+    assert_includes response.body, "document.location.href = \\'http://test.host/people\\'"
+    assert_includes response.body, 'parentDocument.head.appendChild(script);'
+  end
+
   test 'serializes an XML collection with a model-derived root' do
     response = ActiveScaffold::Actions::Core::Responding::AuthorizedApiResponse.new(
       [Person.new(first_name: 'Alice')],

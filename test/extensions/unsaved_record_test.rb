@@ -30,4 +30,26 @@ class UnsavedRecordTest < ActiveSupport::TestCase
     assert person.save
     assert_not person.unsaved?
   end
+
+  test 'reports errors in unsaved associated records' do
+    person = Person.new(first_name: 'Alice')
+    building = person.buildings.build(name: 'Home')
+    building.unsaved = true
+    building.errors.add(:name, 'is invalid')
+
+    assert_not person.no_errors_in_associated?
+  end
+
+  test 'association traversal honors nofollow and follow lists' do
+    associations = Person.reflect_on_all_associations
+    person = Person.new
+
+    person.define_singleton_method(:scaffold_update_nofollow) { [:buildings] }
+    assert_not_includes person.send(:associations_for_update).map(&:name), :buildings
+
+    person.singleton_class.remove_method(:scaffold_update_nofollow)
+    person.define_singleton_method(:scaffold_update_follow) { [:contacts] }
+    assert_equal [:contacts], person.send(:associations_for_update).map(&:name)
+    assert_includes associations.map(&:name), :contacts
+  end
 end
