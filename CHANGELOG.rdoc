@@ -23,6 +23,9 @@
 - Removing the obsolete IE6 non-breaking-space workaround in the list
 - Applying association authorization only to automatically generated association links, custom links use normal action link authorization
 
+= 4.4.7
+- Apply per-record column read authorization to JSON and XML responses, preventing fields hidden by instance-level authorization from being disclosed through API formats.
+
 = 4.4.6
 - Execute iframe responses by injecting a nonce-aware script into the parent document, avoiding +eval()+ under a strict Content Security Policy
 - Use RecordSelect's named callback registry for the add-existing subform link when available, avoiding +eval()+ under a strict Content Security Policy while retaining compatibility with older RecordSelect releases.
