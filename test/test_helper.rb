@@ -2,11 +2,7 @@
 
 if ENV['COVERAGE'] == 'true'
   require 'simplecov'
-  require 'simplecov_json_formatter'
-  SimpleCov.formatters = [
-    SimpleCov::Formatter::HTMLFormatter,
-    SimpleCov::Formatter::JSONFormatter
-  ]
+  SimpleCov.start
 end
 
 ENV['RAILS_ENV'] = 'test'

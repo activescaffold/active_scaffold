@@ -112,7 +112,6 @@ GEM
       sass-embedded (~> 1.63)
     date (3.5.1)
     date (3.5.1-java)
-    docile (1.4.1)
     drb (2.2.3)
     erb (6.0.4)
     erb (6.0.4-java)
@@ -324,12 +323,7 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
-    simplecov (0.22.0)
-      docile (~> 1.1)
-      simplecov-html (~> 0.11)
-      simplecov_json_formatter (~> 0.1)
-    simplecov-html (0.13.1)
-    simplecov_json_formatter (0.1.4)
+    simplecov (1.2.0)
     sqlite3 (2.7.2)
       mini_portile2 (~> 2.8.0)
     sqlite3 (2.7.2-aarch64-linux-gnu)
@@ -392,7 +386,7 @@ DEPENDENCIES
   rails (~> 8.0.0)
   rake
   selenium-webdriver (< 4.45)
-  simplecov
+  simplecov (~> 1.2.0)
   sqlite3
 
 BUNDLED WITH

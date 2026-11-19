@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 
-if ENV['CI']
-  SimpleCov.start do
-    add_filter 'test'
-    add_filter '/lib/active_scaffold/test_support/'
-    track_files '{app,lib}/**/*.rb'
-  end
+SimpleCov.configure do
+  skip '/test/'
+  skip '/lib/active_scaffold/test_support/'
+  cover '{app,lib}/**/*.rb'
+  cover %r{\Aapp/views/.*\.erb\z}
+  cover_views 'app/views/**/*.erb'
 end
+
+SimpleCov.formatters = [
+  SimpleCov::Formatter::HTMLFormatter,
+  SimpleCov::Formatter::JSONFormatter
+]
