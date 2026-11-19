@@ -59,7 +59,7 @@ module ActiveScaffold
           case search_ui
           when :boolean, :checkbox
             condition_for_boolean(column, value)
-          when :integer, :decimal, :float
+          when :integer, :decimal, :float, :number
             condition_for_numeric(column, value)
           when :string, :range
             return condition_for_single_value(column, value, like_pattern) unless value.is_a?(Hash)
@@ -103,7 +103,8 @@ module ActiveScaffold
           return value if value.nil?
 
           value = column.number_to_native(value) if column.options[:format] && column.search_ui != :number
-          case column.search_ui || column.column_type
+          search_type = column.search_ui == :number ? column.column_type : column.search_ui || column.column_type
+          case search_type
           when :integer   then ::ActiveRecord::Type::Integer.new.cast(value)
           when :float     then value.to_f
           when :decimal   then ::ActiveRecord::Type::Decimal.new.cast(value)

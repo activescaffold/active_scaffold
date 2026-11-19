@@ -227,6 +227,81 @@ class FinderTest < ActiveSupport::TestCase
     assert_equal ['"people"."adult" = ?', false], ClassWithFinder.condition_for_column(column, '0', :full, {})
   end
 
+  def test_conditions_for_numeric_column
+    column = ActiveScaffold::DataStructures::Column.new('buildings_count', Person)
+
+    assert_equal ['"people"."buildings_count" = ?', 12],
+                 ClassWithFinder.condition_for_column(column, '12', :full, {})
+    assert_equal ['("people"."buildings_count" BETWEEN ? AND ?)', 2, 4],
+                 ClassWithFinder.condition_for_column(column, {opt: 'BETWEEN', from: '2', to: '4'}, :full, {})
+    assert_equal ['"people"."buildings_count" >= ?', 2],
+                 ClassWithFinder.condition_for_column(column, {opt: '>=', from: '2'}, :full, {})
+    assert_equal ['"people"."buildings_count" is null', []],
+                 ClassWithFinder.condition_for_column(column, {opt: 'null'}, :full, {})
+    assert_nil ClassWithFinder.condition_for_column(column, {opt: 'BETWEEN', from: ''}, :full, {})
+    assert_nil ClassWithFinder.condition_for_column(column, {opt: 'LIKE', from: '2'}, :full, {})
+  end
+
+  def test_conditions_for_range_column
+    column = ActiveScaffold::DataStructures::Column.new('first_name', Person)
+
+    assert_equal ['"people"."first_name" LIKE ?', '%Alice%'],
+                 ClassWithFinder.condition_for_column(column, {opt: '%?%', from: 'Alice'}, :full, {})
+    assert_equal ['"people"."first_name" NOT LIKE ?', 'Alice%'],
+                 ClassWithFinder.condition_for_column(column, {opt: 'not_?%', from: 'Alice'}, :full, {})
+    assert_equal ['("people"."first_name" BETWEEN ? AND ?)', 'Alice', 'Bob'],
+                 ClassWithFinder.condition_for_column(column, {opt: 'BETWEEN', from: 'Alice', to: 'Bob'}, :full, {})
+    assert_equal ['"people"."first_name" in (?)', %w[Alice Bob]],
+                 ClassWithFinder.condition_for_column(column, {opt: '=', from: ['Alice', '', 'Bob']}, :full, {})
+    assert_equal ['"people"."first_name" is not null', []],
+                 ClassWithFinder.condition_for_column(column, {opt: 'not_null'}, :full, {})
+  end
+
+  def test_conditions_for_select_and_record_select_columns
+    column = ActiveScaffold::DataStructures::Column.new('first_name', Person)
+    column.search_ui = :select
+
+    assert_equal ['"people"."first_name" in (?)', %w[Alice Bob]],
+                 ClassWithFinder.condition_for_column(column, ['Alice', '', 'Bob'], :full, {})
+    assert_nil ClassWithFinder.condition_for_column(column, [], :full, {})
+    assert_equal ['%<search_sql>s IN (?)', %w[1 2]],
+                 ClassWithFinder.condition_for_record_select_type(column, ['1', '', '2'])
+    assert_equal ['%<search_sql>s = ?', '1'],
+                 ClassWithFinder.condition_for_record_select_type(column, '1')
+  end
+
+  def test_condition_for_column_uses_custom_column_method_with_session
+    column = ActiveScaffold::DataStructures::Column.new('first_name', Person)
+    session = {account_id: 7}
+    ClassWithFinder.define_singleton_method(:condition_for_first_name_column) do |received_column, value, pattern, received_session|
+      [received_column.name, value, pattern, received_session]
+    end
+
+    assert_equal [:first_name, 'Alice', '%?%', session],
+                 ClassWithFinder.condition_for_column(column, 'Alice', :full, session)
+  ensure
+    ClassWithFinder.singleton_class.remove_method(:condition_for_first_name_column)
+  end
+
+  def test_condition_for_column_uses_search_ui_method_and_search_sql_proc
+    column = ActiveScaffold::DataStructures::Column.new('first_name', Person)
+    ClassWithFinder.define_singleton_method(:condition_for_custom_type) do |received_column, value, pattern|
+      ['%<search_sql>s = ?', "#{received_column.name}:#{pattern}:#{value}"]
+    end
+    column.search_ui = :custom
+
+    assert_equal ['"people"."first_name" = ?', 'first_name:%?%:Alice'],
+                 ClassWithFinder.condition_for_column(column, 'Alice', :full, {})
+
+    column.search_ui = nil
+    column.search_sql = proc { |value| [Person.where(first_name: value)] }
+    condition = ClassWithFinder.condition_for_column(column, 'Alice', :full, {})
+    assert_kind_of ActiveRecord::Relation, condition
+    assert_equal({'first_name' => 'Alice'}, condition.where_clause.to_h)
+  ensure
+    ClassWithFinder.singleton_class.remove_method(:condition_for_custom_type)
+  end
+
   def test_condition_value_for_integer
     column = ActiveScaffold::DataStructures::Column.new('buildings_count', Person)
     column.search_ui = :integer
@@ -234,6 +309,37 @@ class FinderTest < ActiveSupport::TestCase
     assert_equal 12, ClassWithFinder.condition_value_for_numeric(column, '12')
     assert_equal 1, ClassWithFinder.condition_value_for_numeric(column, true)
     assert_equal 0, ClassWithFinder.condition_value_for_numeric(column, false)
+  end
+
+  def test_condition_values_for_float_decimal_and_untyped_numeric_columns
+    column = ActiveScaffold::DataStructures::Column.new('buildings_count', Person)
+
+    column.search_ui = :float
+    assert_equal 12.5, ClassWithFinder.condition_value_for_numeric(column, '12.5')
+
+    column.search_ui = :decimal
+    assert_equal BigDecimal('12.5'), ClassWithFinder.condition_value_for_numeric(column, '12.5')
+
+    column.search_ui = :custom
+    assert_equal '12.5', ClassWithFinder.condition_value_for_numeric(column, '12.5')
+  end
+
+  def test_condition_for_non_text_single_value
+    column = ActiveScaffold::DataStructures::Column.new('buildings_count', Person)
+
+    assert_equal ['%<search_sql>s = ?', 2], ClassWithFinder.condition_for_single_value(column, '2')
+  end
+
+  def test_condition_for_column_adds_column_context_to_errors
+    column = ActiveScaffold::DataStructures::Column.new('first_name', Person)
+    column.search_sql = proc { raise ArgumentError, 'invalid search' }
+    ActiveScaffold.expects(:log_exception).with(instance_of(ArgumentError), includes('first_name'))
+
+    error = assert_raises(ArgumentError) do
+      ClassWithFinder.condition_for_column(column, 'Alice', :full, {})
+    end
+
+    assert_includes error.message, 'invalid search -- on the ActiveScaffold column :first_name'
   end
 
   def test_condition_for_polymorphic_column
