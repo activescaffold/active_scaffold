@@ -11,11 +11,7 @@
       <% messages_id = active_scaffold_messages_id(controller_id: current_id) %>
       <%= render 'update_calculations', calculations_id: active_scaffold_calculations_id(controller_id: current_id) %>
     <% elsif render_parent_action == :index %>
-      <% if controller.respond_to?(:render_component_into_view, true) %>
-        <%= escape_javascript(controller.send(:render_component_into_view, render_parent_options)) %>
-      <% else %>
-        ActiveScaffold.reload(<%= javascript_literal(url_for(render_parent_options)) %>);
-      <% end %>
+      ActiveScaffold.reload(<%= javascript_literal(url_for(render_parent_options)) %>);
     <% end %>
   <% elsif active_scaffold_config.delete.refresh_list %>
     <%= render 'refresh_list', no_history: true %>
