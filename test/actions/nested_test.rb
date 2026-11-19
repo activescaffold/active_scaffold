@@ -62,21 +62,20 @@ class NestedActionTest < ActionController::TestCase
   end
 
   test 'beginning of chain uses a configured nested scope' do
-    parent = mock
-    parent.expects(:recent).returns(:relation)
+    @role.expects(:recent).returns(:relation)
     nested = stub(match_model?: false, scope: :recent)
     @controller.stubs(:nested?).returns(true)
     @controller.stubs(:nested).returns(nested)
-    @controller.stubs(:nested_parent_record).returns(parent)
+    @controller.stubs(:nested_parent_record).returns(@role)
 
     assert_equal :relation, @controller.send(:beginning_of_chain)
   end
 
   test 'nested chain handles belongs-to associations' do
-    parent = stub(role_id: @person.id)
+    @role.stubs(:role_id).returns(@person.id)
     association = stub(collection?: false, through?: false, has_one?: false, belongs_to?: true, name: :role_id)
     @controller.stubs(:nested).returns(stub(association: association, child_association: nil))
-    @controller.stubs(:nested_parent_record).returns(parent)
+    @controller.stubs(:nested_parent_record).returns(@role)
 
     relation = @controller.send(:nested_chain_with_association)
 
@@ -84,30 +83,27 @@ class NestedActionTest < ActionController::TestCase
   end
 
   test 'nested chain handles has-one and through associations' do
-    parent = Object.new
     model = mock(primary_key: 'id')
-    model.expects(:where).with(owner: parent).returns(:has_one_relation)
+    model.expects(:where).with(owner: @role).returns(:has_one_relation)
     model.expects(:where).with('id' => @person.id).returns(:through_relation)
     @controller.stubs(:active_scaffold_config).returns(stub(model: model, mongoid?: false))
-    @controller.stubs(:nested_parent_record).returns(parent)
+    @controller.stubs(:nested_parent_record).returns(@role)
 
     has_one = stub(collection?: false, through?: false, has_one?: true, belongs_to?: false)
     @controller.stubs(:nested).returns(stub(association: has_one, child_association: stub(name: :owner)))
     assert_equal :has_one_relation, @controller.send(:nested_chain_with_association)
 
     through = stub(collection?: false, through?: true, has_one?: false, belongs_to?: false, name: :person)
-    parent.define_singleton_method(:person) { @nested_person }
-    parent.instance_variable_set(:@nested_person, @person)
+    @role.stubs(:person).returns(@person)
     @controller.stubs(:nested).returns(stub(association: through, child_association: nil))
     assert_equal :through_relation, @controller.send(:nested_chain_with_association)
   end
 
   test 'associates a record through singular and collection reverse associations' do
-    parent = Object.new
-    @controller.stubs(:nested_parent_record).returns(parent)
+    @controller.stubs(:nested_parent_record).returns(@role)
 
     singular_record = mock
-    singular_record.expects(:contactable=).with(parent)
+    singular_record.expects(:contactable=).with(@role)
     singular_nested = stub(
       create_with_parent?: true,
       match_model?: true,
@@ -127,7 +123,7 @@ class NestedActionTest < ActionController::TestCase
     @controller.stubs(:nested).returns(collection_nested)
     @controller.send(:create_association_with_parent, collection_record, check_match: true)
 
-    assert_equal [parent], collection
+    assert_equal [@role], collection
   end
 
   private
