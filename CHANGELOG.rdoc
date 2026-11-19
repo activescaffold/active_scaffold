@@ -1,4 +1,5 @@
 = Unreleased
+- Drop support for Rails 7.2, Rails 8.0, and Ruby 3.2. Master now requires Rails 8.1 or newer and Ruby 3.3 or newer.
 - Fix opening +field_search+ after a text search when both +search+ and +field_search+ actions are enabled.
 - Encode URLs and JSON values embedded in JavaScript responses as JavaScript literals instead of marking raw output as HTML safe.
 - Remove deprecated inline JavaScript datepicker and TinyMCE settings. Configuration must reference a registered callback name, and other datepicker values must use JSON-compatible data attributes.

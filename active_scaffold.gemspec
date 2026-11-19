@@ -21,13 +21,13 @@ Gem::Specification.new do |s|
   ]
   s.license = 'MIT'
 
-  s.required_ruby_version = '>= 3.2'
+  s.required_ruby_version = '>= 3.3'
 
   # s.add_dependency('dartsass-sprockets', '~> 3.2.0')
   s.add_dependency('html_attrs', '~> 1.1')
   s.add_dependency('ice_nine', '~> 0.11') # Deep Freeze Ruby Objects
   s.add_dependency('method_source', '~> 1.1')
-  s.add_dependency('rails', '>= 7.2.0')
+  s.add_dependency('rails', '>= 8.1.0')
   s.add_dependency('request_store', '~> 1.3')
   s.metadata['rubygems_mfa_required'] = 'true'
 end

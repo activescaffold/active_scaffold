@@ -18,7 +18,7 @@ class DateTimeModel < ActiveRecord::Base
     columns_hash.each do |name, column|
       define_attribute(
         name,
-        Rails.version >= '8.1' ? column.send(:cast_type) : connection.lookup_cast_type_from_column(column),
+        column.send(:cast_type),
         default: column.default
       )
     end

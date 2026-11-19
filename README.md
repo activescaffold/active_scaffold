@@ -8,11 +8,12 @@
 [![Inline docs](https://inch-ci.org/github/activescaffold/active_scaffold.svg?branch=master)](https://inch-ci.org/github/activescaffold/active_scaffold)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control.  Rails >= 7.2.0 is supported, ruby >= 3.2 required.
+ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control. Rails >= 8.1.0 is supported, ruby >= 3.3 required.
 
 ## Branch Details
 
-master supports rails >= 7.2.x and ruby >= 3.2.0  
+master supports rails >= 8.1.x and ruby >= 3.3.0
+4-4-stable supports rails >= 7.2.x and <= 8.1.x, and ruby >= 3.2.0
 4-3-stable supports rails >= 7.2.x and <= 8.1.x, and ruby >= 3.2.0
 
 These versions are not supported anymore:  
@@ -41,7 +42,7 @@ Add jquery-rails to Gemfile, or handle jquery with other tools like webpack or i
 gem 'jquery-rails'
 ```
 
-On supported Rails versions (7.2 and 8.x), the install generator adds the ActiveScaffold route concerns and the lines required to load its JavaScript and stylesheets for the detected asset pipeline. With import maps, this includes both the pins in `config/importmap.rb` and the imports in `app/javascript/application.js`. With Propshaft, it adds the required helpers to the application layout; with Sprockets, it updates the asset manifests instead.
+On supported Rails versions (8.1 and newer), the install generator adds the ActiveScaffold route concerns and the lines required to load its JavaScript and stylesheets for the detected asset pipeline. With import maps, this includes both the pins in `config/importmap.rb` and the imports in `app/javascript/application.js`. With Propshaft, it adds the required helpers to the application layout; with Sprockets, it updates the asset manifests instead.
 
 For Dart Sass, the generator adds the appropriate `@use` line to `app/assets/stylesheets/application.scss`. It can also update an older `application.css` or `application.css.erb` that contains Sprockets require directives. If `jquery-rails` is installed, the generator adds `jquery` and `jquery_ujs` to the same JavaScript setup. The exact lines for each supported setup are described in [Stylesheet Loading](#stylesheet-loading) and [Javascript Loading](#javascript-loading).
 
