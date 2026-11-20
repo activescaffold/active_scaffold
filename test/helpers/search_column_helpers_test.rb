@@ -33,6 +33,17 @@ class SearchColumnHelpersTest < ActionView::TestCase
     assert_dom_equal "<select name=\"search[adult]\"><option value=\"\">- select -</option>\n<option value=\"true\">True</option>\n<option value=\"false\" selected=\"selected\">False</option></select>", active_scaffold_search_boolean(@column, opts)
   end
 
+  def test_boolean_search_ui_for_nullable_column_includes_null
+    @column.stubs(:null?).returns(true)
+
+    fragment = Nokogiri::HTML.fragment(
+      active_scaffold_search_boolean(@column, {name: 'search[adult]', value: 'null'})
+    )
+
+    assert_equal 'null', fragment.at_css('option[value="null"][selected="selected"]')['value']
+    assert_equal ['', 'null', 'true', 'false'], fragment.css('option').pluck('value')
+  end
+
   def test_multi_select_search_uses_explicit_empty_association_conditions
     association = stub
     @column.stubs(:association).returns(association)
@@ -42,6 +53,45 @@ class SearchColumnHelpersTest < ActionView::TestCase
     active_scaffold_search_multi_select(@column, {object: @record, value: nil})
   end
 
+  def test_multi_select_search_renders_nonempty_association_options
+    column = ActiveScaffold::DataStructures::Column.new(:category, Task)
+    selected = Category.new(id: 10, name: 'Selected')
+    available = Category.new(id: 20, name: 'Available')
+    selected.define_singleton_method(:to_label) { name }
+    available.define_singleton_method(:to_label) { name }
+    stubs(:association_helper_method).with(
+      column.association, :sorted_association_options_find
+    ).returns(:sorted_association_options_find)
+    expects(:sorted_association_options_find).with(column.association, {}, instance_of(Task)).returns(
+      [selected, available]
+    )
+
+    html = active_scaffold_search_multi_select(
+      column,
+      {object: Task.new, value: ['10'], name: 'search[category]', id: 'search_category', class: 'category-input'}
+    )
+    fragment = Nokogiri::HTML.fragment(html)
+
+    assert fragment.at_css('input[type="checkbox"][value="10"][checked="checked"]')
+    assert fragment.at_css('input[type="checkbox"][value="20"]')
+    assert_includes fragment.text, 'Selected'
+    assert_includes fragment.text, 'Available'
+  end
+
+  def test_multi_select_search_ui_for_non_association_column
+    column = ActiveScaffold::DataStructures::Column.new(:last_name, Person)
+    column.search_ui = [:multi_select, {options: [%w[Alpha A], %w[Beta B]]}]
+    @field_search_params['last_name'] = ['B']
+    stubs(:active_scaffold_config).returns(stub(field_search: stub(update_columns: false)))
+
+    fragment = Nokogiri::HTML.fragment(active_scaffold_search_for(column))
+
+    assert fragment.at_css('input[type="checkbox"][value="A"]')
+    assert fragment.at_css('input[type="checkbox"][value="B"][checked="checked"]')
+    assert_includes fragment.text, 'Alpha'
+    assert_includes fragment.text, 'Beta'
+  end
+
   def test_select_search_uses_explicit_empty_association_conditions
     association = stub(belongs_to?: false)
     @column.stubs(:association).returns(association)
@@ -49,6 +99,36 @@ class SearchColumnHelpersTest < ActionView::TestCase
     expects(:sorted_association_options_find).with(association, {}, @record).returns([])
 
     active_scaffold_search_select(@column, {object: @record, value: nil}, {}, ui_options: {null_comparators: false})
+  end
+
+  def test_select_search_renders_optgroups_and_null_comparators
+    column = ActiveScaffold::DataStructures::Column.new(:category, Task)
+    first_time = Time.utc(2026, 1, 1)
+    second_time = Time.utc(2026, 2, 1)
+    first = Category.new(id: 10, name: 'First', created_at: first_time)
+    second = Category.new(id: 20, name: 'Second', created_at: second_time)
+    first.define_singleton_method(:to_label) { name }
+    second.define_singleton_method(:to_label) { name }
+    column.options[:optgroup] = :created_at
+    @field_search_params['category'] = {'opt' => 'null', 'from' => '10'}
+    columns = ActiveSupport::HashWithIndifferentAccess.new(category_id: stub(null?: true))
+    stubs(:active_scaffold_config).returns(stub(field_search: stub(update_columns: false), columns: columns))
+    stubs(:active_scaffold_config_for).with(Category).returns(config_for(Category))
+    stubs(:association_helper_method).with(
+      column.association, :sorted_association_options_find
+    ).returns(:sorted_association_options_find)
+    expects(:sorted_association_options_find).with(column.association, {}, instance_of(Task)).returns([first, second])
+
+    fragment = Nokogiri::HTML.fragment(
+      active_scaffold_search_for(
+        column, object: Task.new, name: 'search[category]', id: 'search_category'
+      )
+    )
+
+    assert fragment.at_css('option[value="null"][selected="selected"]')
+    assert fragment.at_css('select[name="search[category][from]"]')
+    assert_equal [first_time.to_s, second_time.to_s], fragment.css('optgroup').pluck('label')
+    assert fragment.at_css('optgroup option[value="10"][selected="selected"]')
   end
 
   def test_field_search_renders_grouping_select
@@ -183,6 +263,14 @@ class SearchColumnHelpersTest < ActionView::TestCase
     assert_equal 'search[buildings_count][from]', input['name']
     assert_equal '2', input['value']
     assert_equal '1', input['step']
+  end
+
+  def test_datetime_trend_units_include_time_and_date_units
+    column = ActiveScaffold::DataStructures::Column.new(:created_at, Person)
+
+    units = active_scaffold_search_datetime_trend_units(column).map(&:last)
+
+    assert_equal ActiveScaffold::Finder::TIME_UNITS + ActiveScaffold::Finder::DATE_UNITS, units
   end
 
   private
