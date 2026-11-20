@@ -41,6 +41,20 @@ module ActiveScaffold
           end
         end
 
+        def column_sort_value(record, column)
+          value = record.send(column.name)
+          return if value.nil?
+
+          case column.column.type
+          when :time, :datetime, Time then value.to_i
+          when :boolean then value ? 1 : 0
+          when :binary then nil
+          when :integer then value
+          when :float, :decimal then (value % 1).zero? ? value.to_i : value
+          else value.to_s
+          end
+        end
+
         def render_list_column(text, column, record)
           if column.link && !skip_action_link?(column.link, record)
             link = column.link

@@ -68,6 +68,7 @@ class PeopleController < ApplicationController
   def configure_request
     active_scaffold_config.list.refresh_with_header = true if params[:refresh_with_header]
     active_scaffold_config.list.always_show_create = true if params[:always_show_create]
+    active_scaffold_config.list.local_sorting = true if params[:local_sorting]
     if params[:grouped_unauthorized_form]
       active_scaffold_config.update.columns = [:first_name]
       active_scaffold_config.update.columns.add_subgroup('Identity') do |group|

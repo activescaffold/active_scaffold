@@ -8,20 +8,6 @@ module ActiveScaffold
           @page&.pager&.number_of_pages == 1 && active_scaffold_config.list.local_sorting
         end
 
-        def column_sort_value(record, column)
-          value = record.send(column.name)
-          return if value.nil?
-
-          case column.column.type
-          when :time, :datetime, Time then value.to_i
-          when :boolean then value ? 1 : 0
-          when :binary then nil
-          when :integer then value
-          when :float, :decimal then (value % 1).zero? ? value.to_i : value
-          else value.to_s
-          end
-        end
-
         # MARK
 
         def all_marked?
