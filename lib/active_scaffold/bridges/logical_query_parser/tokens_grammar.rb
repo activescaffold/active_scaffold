@@ -33,6 +33,8 @@ class ActiveScaffold::Bridges::LogicalQueryParser
     end
 
     module WordNode
+      include ::LogicalQueryParser::LiteralNode
+
       def to_sql(params)
         text = LogicalQueryParser.unquote(word.text_value)
 
@@ -44,6 +46,8 @@ class ActiveScaffold::Bridges::LogicalQueryParser
       private
 
       def build_arel(params, operator, text)
+        return super(params[:root], operator, text) if params[:root]
+
         if params[:columns].is_a?(Hash)
           build_arel_from_hash(params[:model], params[:columns], operator, text)
         else

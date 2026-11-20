@@ -162,6 +162,8 @@ GEM
     language_server-protocol (3.17.0.6)
     lint_roller (1.1.0)
     logger (1.7.0)
+    logical_query_parser (0.7.0)
+      treetop (~> 1.6.8)
     loofah (2.24.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -212,6 +214,7 @@ GEM
     parser (3.3.12.0)
       ast (~> 2.4.1)
       racc
+    polyglot (0.3.5)
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
@@ -331,6 +334,8 @@ GEM
       unicode-display_width (>= 1.1.1, < 4)
     thor (1.4.0)
     timeout (0.6.1)
+    treetop (1.6.18)
+      polyglot (~> 0.3)
     tsort (0.2.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -361,6 +366,7 @@ DEPENDENCIES
   i18n-tasks
   jdbc-sqlite3
   jquery-rails
+  logical_query_parser (~> 0.5)
   minitest-reporters
   mocha
   mongoid (~> 9.1)

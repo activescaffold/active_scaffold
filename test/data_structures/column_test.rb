@@ -106,8 +106,13 @@ class ColumnTest < ActiveSupport::TestCase
 
   def test_searchable
     @column.search_sql = nil
+    @column.logical_search = nil
     assert_not @column.searchable?
     @column.search_sql = true
+    assert @column.searchable?
+
+    @column.search_sql = nil
+    @column.logical_search = [:a]
     assert @column.searchable?
   end
 
