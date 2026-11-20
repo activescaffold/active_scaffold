@@ -4,6 +4,7 @@ require 'test_helper'
 
 class ListColumnHelpersTest < ActionView::TestCase
   include ActiveScaffold::Helpers::ListColumnHelpers
+  include ActiveScaffold::Helpers::FormColumnHelpers
   include ActiveScaffold::Helpers::ViewHelpers
   include ::ERB::Util
 
@@ -19,6 +20,10 @@ class ListColumnHelpersTest < ActionView::TestCase
 
   def model_stub_c_column(record, _column)
     "Override: #{record.c}"
+  end
+
+  def model_stub_c_form_column(_record, _options)
+    'custom form field'
   end
 
   def test_options_for_select_list_ui_for_simple_column
@@ -56,6 +61,31 @@ class ListColumnHelpersTest < ActionView::TestCase
     stubs(:search_group_function).returns('year_month')
 
     assert_equal I18n.l(Date.new(2024, 2, 1), format: :year_month), format_column_value(record, @column)
+  end
+
+  def test_formats_each_grouped_search_function
+    grouped_values = {
+      'year_quarter' => [
+        '20242',
+        I18n.t(:year_quarter, scope: 'date.formats', year: '2024', quarter: '2')
+      ],
+      'quarter' => [3, I18n.t(:quarter, scope: 'date.formats', num: 3)],
+      'month' => [2, I18n.l(Date.new(Time.zone.today.year, 2, 1), format: :month)],
+      'year' => ['2024', 2024],
+      'unsupported' => %w[unchanged unchanged]
+    }
+
+    grouped_values.each do |function, (value, expected)|
+      @search_group_function = function
+      assert_equal expected, format_grouped_search_column(value), function
+    end
+  end
+
+  def test_grouped_search_format_can_be_overridden
+    @search_group_function = 'year_month'
+
+    assert_equal I18n.l(Date.new(2024, 2, 1), format: :short),
+                 format_grouped_search_column('202402', group_format: :short)
   end
 
   def test_reads_grouped_search_results_from_each_grouped_expression
@@ -170,6 +200,25 @@ class ListColumnHelpersTest < ActionView::TestCase
     assert fragment.at_css('input[type="checkbox"][disabled="disabled"][checked="checked"]')
   end
 
+  def test_checkbox_list_ui_renders_enabled_checkbox_inside_inplace_editor
+    column = ActiveScaffold::DataStructures::Column.new(:d, ModelStub)
+    column.list_ui = :checkbox
+    column.inplace_edit = true
+    record = ModelStub.new(id: 42, d: true)
+    stubs(:inplace_edit?).with(record, column).returns(true)
+    stubs(:element_cell_id).returns('model-stubs-update-column---ID---d-cell')
+    stubs(:as_).with(:click_to_edit).returns('Click to edit')
+    stubs(:as_).with(:inplace_edit_handle).returns('Edit')
+
+    value = get_column_value(record, column)
+    fragment = Nokogiri::HTML.fragment(render_list_column(value, column, record))
+    checkbox = fragment.at_css('span.in_place_editor_field[data-ie-id="42"] input[type="checkbox"]')
+
+    assert checkbox
+    assert_nil checkbox['disabled']
+    assert_equal 'checked', checkbox['checked']
+  end
+
   def test_checkboxes_list_ui_labels_non_association_values
     @column.form_ui = :checkboxes
     @column.options[:options] = [%w[First first], %w[Second second]]
@@ -200,6 +249,15 @@ class ListColumnHelpersTest < ActionView::TestCase
     expects(:as_).with(:unknown).returns('Unknown')
 
     assert_equal 'Unknown', get_column_value(stub(a: nil), @column)
+  end
+
+  def test_boolean_list_ui_formats_true_and_false_values
+    @column.list_ui = :boolean
+    expects(:as_).with(true.to_s.to_sym).returns('Yes')
+    expects(:as_).with(false.to_s.to_sym).returns('No')
+
+    assert_equal 'Yes', get_column_value(stub(a: true), @column)
+    assert_equal 'No', get_column_value(stub(a: false), @column)
   end
 
   def test_percentage_list_ui_uses_record_methods_for_slider_values
@@ -234,6 +292,59 @@ class ListColumnHelpersTest < ActionView::TestCase
                      get_column_value(stub(a: '+34 555 123 ext 9'), @column)
   end
 
+  def test_inplace_edit_uses_clone_mode_for_form_override
+    column = ActiveScaffold::DataStructures::Column.new(:c, ModelStub)
+    column.inplace_edit = true
+    stub_inplace_edit_data_dependencies
+    @config.stubs(:model).returns(ModelStub)
+    stubs(:inplace_edit?).with(ModelStub, column).returns(true)
+
+    assert inplace_edit_cloning?(column)
+    assert_equal :clone, inplace_edit_data(column)[:ie_mode]
+    assert_dom_equal '<div style="display:none;" class="as_inplace_pattern">custom form field</div>',
+                     inplace_edit_control(column)
+  end
+
+  def test_inplace_edit_uses_clone_mode_for_form_ui
+    column = ActiveScaffold::DataStructures::Column.new(:d, ModelStub)
+    column.form_ui = :select
+    column.inplace_edit = true
+    column.options[:options] = %w[first second]
+    stub_inplace_edit_data_dependencies
+    @config.stubs(:model).returns(ModelStub)
+    stubs(:inplace_edit?).with(ModelStub, column).returns(true)
+
+    assert inplace_edit_cloning?(column)
+    assert_equal :clone, inplace_edit_data(column)[:ie_mode]
+    control = Nokogiri::HTML.fragment(inplace_edit_control(column))
+    assert control.at_css('div.as_inplace_pattern[style="display:none;"] select.inplace_field')
+  end
+
+  def test_ajax_inplace_edit_loads_its_field_from_render_field
+    column = ActiveScaffold::DataStructures::Column.new(:d, ModelStub)
+    column.inplace_edit = :ajax
+    stub_inplace_edit_data_dependencies
+
+    data = inplace_edit_data(column)
+
+    assert_not inplace_edit_cloning?(column)
+    assert_equal :ajax, data[:ie_mode]
+    assert_equal '/render-field', data[:ie_render_url]
+  end
+
+  def test_string_column_inplace_edit_uses_the_default_inline_editor
+    column = ActiveScaffold::DataStructures::Column.new(:d, ModelStub)
+    column.inplace_edit = true
+    stub_inplace_edit_data_dependencies
+
+    data = inplace_edit_data(column)
+
+    assert_equal :string, column.column_type
+    assert_not inplace_edit_cloning?(column)
+    assert_not_includes data, :ie_mode
+    assert_not_includes data, :ie_render_url
+  end
+
   def test_column_sort_value_uses_values_suitable_for_javascript_sorting
     time = Time.zone.local(2024, 2, 19, 12)
 
@@ -252,6 +363,15 @@ class ListColumnHelpersTest < ActionView::TestCase
 
   def grouped_search?
     false
+  end
+
+  attr_reader :search_group_function
+
+  def stub_inplace_edit_data_dependencies
+    stubs(:action_name).returns('index')
+    stubs(:params_for).returns(controller: 'model_stubs')
+    stubs(:url_for).returns('/render-field')
+    stubs(:as_).returns('label')
   end
 
   def active_scaffold_config

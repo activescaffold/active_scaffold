@@ -81,6 +81,35 @@ class ListRenderingIntegrationTest < ActionDispatch::IntegrationTest
     assert_select 'tfoot .active-scaffold-calculations', text: /Count:\s*2/
   end
 
+  test 'list renders inplace editing for a string column' do
+    car = Car.create!(brand: 'Ford', model: 'Focus')
+
+    get '/cars'
+
+    assert_response :success
+    assert_select 'th.model-column_heading[data-ie-url*="/cars/__id__/update_column"]'
+    assert_select 'td.model-column.in_place_editor_field' do
+      assert_select 'span.handle'
+      assert_select "span.in_place_editor_field[data-ie-id=\"#{car.id}\"]", text: 'Focus'
+    end
+  end
+
+  test 'list heading renders the inplace cloning control for a form ui' do
+    Car.create!(brand: 'Ford', model: 'Focus')
+
+    get '/cars', params: {inplace_form_ui: true}
+
+    assert_response :success
+    assert_select 'th.model-column_heading' do
+      assert_select 'div.as_inplace_pattern[style="display:none;"]' do
+        assert_select 'select.model-input.inplace_field[data-id="record_model_"]' do
+          assert_select 'option[value="Focus"]', text: 'Focus'
+          assert_select 'option[value="Mondeo"]', text: 'Mondeo'
+        end
+      end
+    end
+  end
+
   test 'xhr row refresh updates configured column calculations' do
     car = Car.create!(brand: 'Ford', model: 'Focus')
     Car.create!(brand: 'Ford', model: 'Mondeo')

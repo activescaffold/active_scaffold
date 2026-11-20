@@ -18,6 +18,12 @@ class CarsController < ApplicationController
   end
 
   def configure_request
+    if params[:inplace_form_ui]
+      active_scaffold_config.columns.override(:model) do |column|
+        column.form_ui = [:select, {options: %w[Focus Mondeo]}]
+      end
+    end
+
     return unless params[:inplace_edit_update]
 
     active_scaffold_config.columns.override(:model) do |column|
