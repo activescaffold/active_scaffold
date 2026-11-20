@@ -22,7 +22,7 @@ module ActiveScaffold
         active_storage = record.send(column.name.to_s)
         existing = active_storage.map do |file|
           content = hidden_field_tag(options[:name], file.signed_id) <<
-                    link_for_attachment(file, column, ui_options: ui_options) << ERB::Util.html_escape(' | ')
+                    link_for_attachment(file, column, ui_options: ui_options) << h(' | ')
           active_scaffold_file_with_remove_link(content, options, 'active_storage_controls', :remove)
         end
         safe_join existing << hidden_field_tag(options[:name]) << file_field(:record, column.name, options)

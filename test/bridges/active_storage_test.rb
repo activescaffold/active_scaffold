@@ -10,6 +10,7 @@ class ActiveStorageProject < Project
 end
 
 class ActiveStorageTest < ActionView::TestCase
+  include ERB::Util
   include ActiveScaffold::Helpers::ViewHelpers
 
   def test_bridge_configures_real_active_storage_attachments

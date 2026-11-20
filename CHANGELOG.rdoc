@@ -1,4 +1,5 @@
 = Unreleased
+- Fix DatePicker date-only formats containing a numeric month so +mm+ is not incorrectly treated as the beginning of a time format.
 - Remove the Semantic Attributes bridge. The archived +semantic_attributes+ gem cannot load on the supported Ruby and Rails versions.
 - Remove the obsolete FileColumn bridge. FileColumn is not compatible with the supported Rails and Ruby versions.
 - Fix nullable boolean field search to preserve the null option instead of casting it to true.
