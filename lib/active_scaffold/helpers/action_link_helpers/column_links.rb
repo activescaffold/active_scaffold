@@ -25,7 +25,7 @@ module ActiveScaffold
             return link unless link.crud_type == :update
 
             # if action is edit and is not authorized, fallback to an enabled read action
-            actions -= [:new, :edit]
+            actions -= %i[new edit]
             link = configure_column_link(link, record, associated, actions) if actions.present?
           end
           link
