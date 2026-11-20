@@ -5,11 +5,11 @@ require 'test_helper'
 class ActionsMutationIntegrationTest < ActionDispatch::IntegrationTest
   setup do
     RequestStore.clear!
-    [Address, Contact, Building, Person, Car, Category, Role].each(&:delete_all)
+    [Address, Contact, Floor, Building, Person, Car, Category, Role].each(&:delete_all)
   end
 
   teardown do
-    [Address, Contact, Building, Person, Car, Category, Role].each(&:delete_all)
+    [Address, Contact, Floor, Building, Person, Car, Category, Role].each(&:delete_all)
     RequestStore.clear!
   end
 
@@ -165,6 +165,35 @@ class ActionsMutationIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'After'
   end
 
+  test 'xhr update closes the form and refreshes a singular nested parent' do
+    person = Person.create!(first_name: 'Alice')
+    car = person.create_car!(brand: 'Ford', model: 'Focus')
+
+    patch "/cars/#{car.id}.js", params: {
+      parent_scaffold: 'people', association: 'car', person_id: person.id, eid: 'people',
+      record: {model: 'Mondeo'}
+    }, xhr: true
+
+    assert_response :success
+    assert_equal 'Mondeo', car.reload.model
+    assert_includes response.body, 'action_link.close(true)'
+    assert_not_includes response.body, 'ActiveScaffold.update_row'
+  end
+
+  test 'xhr update removes a row that no longer matches the list conditions' do
+    person = Person.create!(first_name: 'Alice', last_name: 'Example')
+
+    patch "/people/#{person.id}.js", params: {
+      visible_first_name: 'Alice', record: {first_name: 'Bob'}
+    }, xhr: true
+
+    assert_response :success
+    assert_equal 'Bob', person.reload.first_name
+    assert_includes response.body, 'action_link.close()'
+    assert_includes response.body, 'ActiveScaffold.delete_record_row'
+    assert_includes response.body, "people-list-#{person.id}-row"
+  end
+
   test 'xhr update replaces the form when validation fails' do
     category = Category.create!(name: 'Valid category')
 
@@ -204,14 +233,44 @@ class ActionsMutationIntegrationTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'edit can render a vertical subform through request configuration' do
-    person = Person.create!(first_name: 'Alice', last_name: 'Example')
-    person.buildings.create!(name: 'Tower')
+  test 'xhr update renders validation errors from a subform record' do
+    building = Building.create!(name: 'Tower')
 
-    get "/people/#{person.id}/edit", params: {vertical_subform: true}
+    patch "/buildings/#{building.id}.js", params: {
+      record: {
+        name: 'Tower',
+        floors: {'new-floor' => {number: '', number_required: '1'}}
+      }
+    }, xhr: true
 
     assert_response :success
-    assert_select '.buildings-sub-form .sub-form-record > ol', minimum: 1
+    assert_equal 0, building.reload.floors.count
+    assert_includes response.body, 'association-record-errors'
+    assert_includes response.body, 'Number can&#39;t be blank'
+  end
+
+  test 'positionless xhr action updates its row without opening a form' do
+    person = Person.create!(first_name: 'Alice', adult: false)
+
+    post "/people/#{person.id}/activate.js", xhr: true
+
+    assert_response :success
+    assert_predicate person.reload, :adult?
+    assert_includes response.body, 'ActiveScaffold.update_row'
+    assert_includes response.body, "people-list-#{person.id}-row"
+    assert_not_includes response.body, 'ActiveScaffold.find_action_link'
+  end
+
+  test 'failed positionless xhr action renders list messages' do
+    person = Person.create!(first_name: 'Alice', adult: false)
+
+    post "/people/#{person.id}/activate.js", params: {force_action_failure: true}, xhr: true
+
+    assert_response :success
+    assert_not person.reload.adult?
+    assert_includes response.body, 'ActiveScaffold.replace_html'
+    assert_includes response.body, 'The activation failed'
+    assert_not_includes response.body, 'ActiveScaffold.enable_form'
   end
 
   test 'destroy removes the record and redirects to the list' do

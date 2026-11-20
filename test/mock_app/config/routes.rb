@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   end
   resources :people do
     post :archive, on: :member
+    post :activate, on: :member
     get :refresh_row, on: :member
     concerns :active_scaffold, except: %i[mark]
   end

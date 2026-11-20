@@ -11,6 +11,7 @@ class PeopleController < ApplicationController
     conf.columns[:roles].associated_limit = 0
     conf.create.columns.exclude :address, :home
     conf.action_links.add 'archive', label: 'Archive', type: :member, method: :post, position: :after
+    conf.action_links.add 'activate', label: 'Activate', type: :member, method: :post, position: false
     conf.action_links.add 'index', label: 'Back to list', type: :member, position: false, parameters: {id: nil},
                                     security_method: :nested_index_authorized?
   end
@@ -30,6 +31,17 @@ class PeopleController < ApplicationController
 
       record.errors.add(:base, 'The custom action failed')
       self.successful = false
+    end
+  end
+
+  def activate
+    process_action_link_action do |record|
+      if params[:force_action_failure]
+        record.errors.add(:base, 'The activation failed')
+        self.successful = false
+      else
+        record.update!(adult: true)
+      end
     end
   end
 
@@ -54,6 +66,13 @@ class PeopleController < ApplicationController
       end
     end
 
+    if params[:multiple_form]
+      columns = active_scaffold_config.create.override_columns
+      columns.layout = :multiple
+      columns[0] = %i[first_name last_name]
+      columns[1] = %i[adult roles]
+    end
+
     return unless params[:update_columns] || params[:nested_update_columns] || params[:hash_update_columns]
 
     active_scaffold_config.columns.override(:first_name) do |column|
@@ -74,6 +93,12 @@ class PeopleController < ApplicationController
 
     record.errors.add(:base, 'The forced destroy failed')
     self.successful = false
+  end
+
+  def beginning_of_chain
+    scope = super
+    scope = scope.where(first_name: params[:visible_first_name]) if params[:visible_first_name]
+    scope
   end
 
   def do_add_existing

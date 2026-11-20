@@ -77,7 +77,7 @@ module ActiveScaffold::Actions
       # if record doesn't fullfil current conditions remove it from list
       get_row
     rescue ActiveRecord::RecordNotFound
-      nil
+      @record = nil
     end
 
     def update_respond_to_js

@@ -162,6 +162,19 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, 'ActiveScaffold.add_to_history'
   end
 
+  test 'xhr paginated list on page two renders a previous-page link' do
+    Person.create!(first_name: 'Alice', last_name: 'Example')
+    Person.create!(first_name: 'Bob', last_name: 'Example')
+    Person.create!(first_name: 'Carol', last_name: 'Example')
+
+    get '/people.js', params: {limit: 1, page: 2}, xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'previous'
+    assert_includes response.body, 'page=1'
+    assert_includes response.body, 'Bob'
+  end
+
   test 'embedded loading renders the list without the application layout' do
     Person.create!(first_name: 'Alice', last_name: 'Example')
 
@@ -290,6 +303,19 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
       assert_select '[name^=?]', 'search[first_name]'
       assert_select '[name^=?]', 'search[last_name]'
       assert_select '[name^=?]', 'search[birthday]'
+    end
+  end
+
+  test 'field search supports multiple layout with optional columns' do
+    get '/contacts/show_search', params: {kind: 'field_search', multiple_field_search: true}
+
+    assert_response :success
+    assert_select '.search-view .form-columns' do
+      assert_select '> ol.form', count: 2
+      assert_select '[name^=?]', 'search[first_name]'
+      assert_select '[name^=?]', 'search[last_name]'
+      assert_select '[name^=?]', 'search[birthday]'
+      assert_select '.sub-section', minimum: 2
     end
   end
 
@@ -501,5 +527,33 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     get "/categories/#{category.id}/edit"
     assert_response :success
     assert_select 'input[name=?][value=?]', 'record[name]', 'Example'
+  end
+
+  test 'edit renders a vertical subform with a subgroup and add-existing footer' do
+    person = Person.create!(first_name: 'Alice', last_name: 'Example')
+    person.buildings.create!(name: 'Tower')
+    Building.create!(name: 'Available building')
+
+    get "/people/#{person.id}/edit", params: {vertical_subform: true}
+
+    assert_response :success
+    assert_select '.buildings-sub-form .sub-form-record > ol', minimum: 1
+    assert_select '.buildings-sub-form .associated-record .floors_count-input'
+    assert_select '.buildings-sub-form .footer-wrapper' do
+      assert_select 'select[name=?]', 'associated_id'
+      assert_select 'a.as_add_existing'
+    end
+  end
+
+  test 'create form supports multiple column layout' do
+    get '/people/new', params: {multiple_form: true}
+
+    assert_response :success
+    assert_select '.create-view .form-columns' do
+      assert_select '> ol.form', count: 2
+      assert_select 'input[name=?]', 'record[first_name]'
+      assert_select 'input[name=?]', 'record[last_name]'
+      assert_select 'input[name=?]', 'record[adult]'
+    end
   end
 end
