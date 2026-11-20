@@ -13,15 +13,6 @@ class BridgeTest < ActiveSupport::TestCase
     assert_nothing_raised { ActiveScaffold::Bridges.run_all }
   end
 
-  def test__file_column_bridge
-    ConstMocker.mock('FileColumn') do |cm|
-      cm.remove
-      assert_not(bridge_will_be_installed?('FileColumn'))
-      cm.declare
-      assert(bridge_will_be_installed?('FileColumn'))
-    end
-  end
-
   def test__paperclip_bridge
     ConstMocker.mock('Paperclip') do |cm|
       cm.remove
@@ -43,15 +34,6 @@ class BridgeTest < ActiveSupport::TestCase
           assert(bridge_will_be_installed?('DatePicker'))
         end
       end
-    end
-  end
-
-  def test__semantic_attributes_bridge
-    ConstMocker.mock('SemanticAttributes') do |cm|
-      cm.remove
-      assert_not(bridge_will_be_installed?('SemanticAttributes'))
-      cm.declare
-      assert(bridge_will_be_installed?('SemanticAttributes'))
     end
   end
 

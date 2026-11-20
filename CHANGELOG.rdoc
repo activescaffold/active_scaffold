@@ -1,4 +1,6 @@
 = Unreleased
+- Remove the Semantic Attributes bridge. The archived +semantic_attributes+ gem cannot load on the supported Ruby and Rails versions.
+- Remove the obsolete FileColumn bridge. FileColumn is not compatible with the supported Rails and Ruby versions.
 - Fix nullable boolean field search to preserve the null option instead of casting it to true.
 - Fix numerical constraints for odd and even validations to set the step and adjust the minimum from validation bounds.
 - Fix select form UIs on nested through associations by comparing wrapped association reflections correctly.
