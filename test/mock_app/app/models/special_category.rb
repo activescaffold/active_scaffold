@@ -1,0 +1,2 @@
+class SpecialCategory < Category
+end

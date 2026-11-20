@@ -1,0 +1,2 @@
+class SpecialPerson < Person
+end
