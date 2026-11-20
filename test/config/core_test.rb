@@ -65,5 +65,77 @@ module Config
       assert_equal 'Create Model stub', @config.action_links[:new].label
       assert_equal 'config/core_test/model_stubs', @config.action_links[:new].parameters[:parent_sti]
     end
+
+    def test_add_active_scaffold_path_adds_path_before_active_scaffold_views
+      original_view_paths = ModelStubsController.view_paths
+      active_scaffold_path = File.realpath(
+        File.join(ActiveScaffold::Config::Core.plugin_directory, 'app', 'views')
+      )
+      plugin_path = Rails.root.join('plugin/app/views').to_s
+
+      ModelStubsController.add_active_scaffold_path(plugin_path)
+
+      paths = ModelStubsController.view_paths.map(&:to_s)
+      assert_operator paths.index(plugin_path), :<, paths.index(active_scaffold_path)
+    ensure
+      ModelStubsController.view_paths = original_view_paths
+    end
+
+    def test_link_for_association_as_scope
+      link = ModelStubsController.link_for_association_as_scope(:recent, position: :before)
+
+      assert_equal 'index', link.action
+      assert_equal 'Recent', link.label
+      assert_equal :before, link.position
+      assert_equal :member, link.type
+      assert_equal ModelStubsController.controller_path, link.controller
+      assert_equal({named_scope: :recent}, link.parameters)
+    end
+
+    def test_after_config_callback_as_proc_runs_in_controller_context
+      callback_context = nil
+      callback = proc { callback_context = self }
+      ActiveScaffold::Config::Core.after_config_callbacks << callback
+
+      ModelStubsController.send(:_run_after_config_callbacks)
+
+      assert_same ModelStubsController, callback_context
+    ensure
+      ActiveScaffold::Config::Core.after_config_callbacks.delete(callback)
+    end
+
+    def test_load_action_module_adds_array_of_links
+      links = [
+        ActiveScaffold::DataStructures::ActionLink.new(:first, type: :collection),
+        ActiveScaffold::DataStructures::ActionLink.new(:second, type: :collection)
+      ]
+      @config.actions = [:create]
+      @config.create.link = links
+
+      ModelStubsController.send(:_load_action_modules)
+
+      assert_same links.first, @config.action_links[:first]
+      assert_same links.second, @config.action_links[:second]
+    end
+
+    def test_column_type_cast_for_active_model_attribute
+      model = Class.new(ModelStub) do
+        attribute :virtual_count, :integer
+      end
+      column = ActiveScaffold::DataStructures::Column.new(:virtual_count, model)
+
+      assert_kind_of ActiveModel::Attribute, column.column
+      assert_equal 12, ActiveScaffold::Core.column_type_cast('12', column.column, model)
+    end
+
+    def test_column_type_cast_for_mongoid_field
+      model = Class.new do
+        include Mongoid::Document
+
+        field :virtual_count, type: Integer
+      end
+
+      assert_equal 12, ActiveScaffold::Core.column_type_cast('12', model.fields['virtual_count'], model)
+    end
   end
 end

@@ -175,6 +175,22 @@ class ColumnTest < ActiveSupport::TestCase
     assert_equal @column.label, @column.link.label
   end
 
+  def test_action_link_from_proc_on_frozen_column
+    calls = 0
+    link = ActiveScaffold::DataStructures::ActionLink.new('hello_world')
+    @column.set_link(proc do |column|
+      calls += 1
+      assert_same @column, column
+      link
+    end)
+    @column.deep_freeze!
+
+    assert_same link, @column.link
+    assert_same link, @column.link
+    assert_equal 1, calls
+    assert_predicate link, :frozen?
+  end
+
   def test_includes
     assert_nil @column.includes
 
