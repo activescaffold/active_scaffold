@@ -185,9 +185,15 @@ class NestedActionTest < ActionController::TestCase
   test 'does not associate a record when the nested model does not match' do
     nested = stub(create_with_parent?: true, match_model?: false)
     @controller.stubs(:nested).returns(nested)
-    @controller.expects(:nested_parent_record).never
+    nested_parent_record_calls = 0
+    role = @role
+    @controller.define_singleton_method(:nested_parent_record) do
+      nested_parent_record_calls += 1
+      role
+    end
 
     assert_not @controller.send(:create_association_with_parent?, check_match: true)
+    assert_equal 0, nested_parent_record_calls
   end
 
   private
