@@ -10,7 +10,6 @@ class ActiveStorageProject < Project
 end
 
 class ActiveStorageTest < ActionView::TestCase
-  include ERB::Util
   include ActiveScaffold::Helpers::ViewHelpers
 
   def test_bridge_configures_real_active_storage_attachments
@@ -93,10 +92,10 @@ class ActiveStorageTest < ActionView::TestCase
     first = stub(signed_id: 'first-signed-id', variable?: false, filename: 'first.png')
     second = stub(signed_id: 'second-signed-id', variable?: false, filename: 'second.png')
     record = stub(images: [first, second])
-    stubs(:rails_blob_url).with(first, disposition: 'attachment').returns('/first.png')
-    stubs(:rails_blob_url).with(second, disposition: 'attachment').returns('/second.png')
+    _view.stubs(:rails_blob_url).with(first, disposition: 'attachment').returns('/first.png')
+    _view.stubs(:rails_blob_url).with(second, disposition: 'attachment').returns('/second.png')
 
-    html = active_scaffold_input_active_storage_has_many(
+    html = _view.active_scaffold_input_active_storage_has_many(
       column,
       {name: 'record[images]', id: 'record_images', object: record}
     )
