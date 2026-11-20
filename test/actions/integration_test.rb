@@ -465,7 +465,8 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_select '.tab-content .tab-pane', count: 2
     assert_select '.tasks-view table' do
       assert_select 'td.name-column', text: /Build API|Build UI/, count: 2
-      assert_select 'td.priority-column', text: /High|Medium/, count: 2
+      assert_select 'tbody > tr', count: 4
+      assert_select 'td[colspan]', text: /High|Medium/, count: 2
     end
     assert_select '.milestones-view table td.name-column', text: 'First release'
   ensure
@@ -537,8 +538,10 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     get "/people/#{person.id}/edit", params: {vertical_subform: true}
 
     assert_response :success
-    assert_select '.buildings-sub-form .sub-form-record > ol', minimum: 1
-    assert_select '.buildings-sub-form .associated-record .floors_count-input'
+    assert_select '.buildings-sub-form.vertical-sub-form' do
+      assert_select '.sub-form-record > ol.association-record', minimum: 1
+      assert_select '.sub-form-record > ol.associated-record > li .floors_count-input', minimum: 1
+    end
     assert_select '.buildings-sub-form .footer-wrapper' do
       assert_select 'select[name=?]', 'associated_id'
       assert_select 'a.as_add_existing'

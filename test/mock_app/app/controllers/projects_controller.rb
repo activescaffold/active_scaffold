@@ -12,7 +12,7 @@ class ProjectsController < ApplicationController
     end
     # milestones use :section (belongs_to :section, class_name: 'Category') instead of :category
     conf.columns[:milestones].options[:tabbed_by] = :section
-    conf.columns[:tasks].show_ui = [:horizontal, {subform_columns: %i[name priority]}]
+    conf.columns[:tasks].show_ui = :horizontal
     conf.columns[:milestones].show_ui = [:horizontal, {subform_columns: [:name]}]
   end
 end
