@@ -448,13 +448,12 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'show renders a tabbed subgroup with horizontal association UIs' do
+  test 'show filters a horizontal association by the subgroup tab' do
     backend = Category.create!(name: 'Backend')
     frontend = Category.create!(name: 'Frontend')
     project = Project.create!(name: 'Application')
     project.tasks.create!(name: 'Build API', priority: 'high', category: backend)
     project.tasks.create!(name: 'Build UI', priority: 'medium', category: frontend)
-    project.milestones.create!(name: 'First release', section: backend)
 
     get "/projects/#{project.id}"
 
@@ -462,15 +461,47 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_select 'dt', text: 'Assignments'
     assert_select '.nav-tabs .nav-link', text: 'Backend'
     assert_select '.nav-tabs .nav-link', text: 'Frontend'
-    assert_select '.tab-content .tab-pane', count: 2
-    assert_select '.tasks-view table' do
-      assert_select 'td.name-column', text: /Build API|Build UI/, count: 2
-      assert_select 'tbody > tr', count: 4
-      assert_select 'td[colspan]', text: /High|Medium/, count: 2
+    backend_tab = css_select('.nav-tabs .nav-link').find { |tab| tab.text.strip == 'Backend' }
+    frontend_tab = css_select('.nav-tabs .nav-link').find { |tab| tab.text.strip == 'Frontend' }
+    assert_select backend_tab['href'] do
+      assert_select '.tasks-view td.name-column', text: 'Build API'
+      assert_select '.tasks-view td.name-column', text: 'Build UI', count: 0
+      assert_select '.tasks-view td[colspan]', text: 'High'
     end
-    assert_select '.milestones-view table td.name-column', text: 'First release'
+    assert_select frontend_tab['href'] do
+      assert_select '.tasks-view td.name-column', text: 'Build UI'
+      assert_select '.tasks-view td.name-column', text: 'Build API', count: 0
+      assert_select '.tasks-view td[colspan]', text: 'Medium'
+    end
   ensure
     Task.delete_all
+    Project.delete_all
+  end
+
+  test 'show filters an association by its tabbed-by override' do
+    backend = Category.create!(name: 'Backend')
+    frontend = Category.create!(name: 'Frontend')
+    project = Project.create!(name: 'Application')
+    project.milestones.create!(name: 'API release', section: backend)
+    project.milestones.create!(name: 'UI release', section: frontend)
+
+    get "/projects/#{project.id}"
+
+    assert_response :success
+    assert_select '.nav-tabs .nav-link', text: 'Backend'
+    assert_select '.nav-tabs .nav-link', text: 'Frontend'
+    assert_select '.tab-content .tab-pane', count: 2
+    backend_tab = css_select('.nav-tabs .nav-link').find { |tab| tab.text.strip == 'Backend' }
+    frontend_tab = css_select('.nav-tabs .nav-link').find { |tab| tab.text.strip == 'Frontend' }
+    assert_select backend_tab['href'] do
+      assert_select '.milestones-view td.name-column', text: 'API release'
+      assert_select '.milestones-view td.name-column', text: 'UI release', count: 0
+    end
+    assert_select frontend_tab['href'] do
+      assert_select '.milestones-view td.name-column', text: 'UI release'
+      assert_select '.milestones-view td.name-column', text: 'API release', count: 0
+    end
+  ensure
     Milestone.delete_all
     Project.delete_all
   end
