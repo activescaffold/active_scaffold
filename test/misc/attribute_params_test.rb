@@ -41,6 +41,122 @@ class AttributeParamsTest < ActiveSupport::TestCase
     assert_equal Date.new(1599, 6, 6), model.birthday
   end
 
+  def test_saving_locking_column
+    category = Category.create!(name: 'Original')
+
+    model = update_record_from_params(
+      category,
+      :update,
+      :name,
+      name: 'Updated',
+      lock_version: category.lock_version.to_s
+    )
+
+    assert_equal 'Updated', model.name
+    assert_equal category.lock_version, model.lock_version
+    assert model.save
+    assert_equal category.lock_version + 1, model.lock_version
+  end
+
+  def test_saving_has_many_through_singular_association
+    person = Person.create!(first_name: 'Resident')
+    building = Building.create!(name: 'Home', owner: person)
+    original_floor = Floor.create!(number: 1, building: building)
+    selected_floors = [Floor.create!(number: 2), Floor.create!(number: 3)]
+
+    model = update_record_from_params(
+      person,
+      :update,
+      :primary_building_floors,
+      primary_building_floors: ['', *selected_floors.map { |floor| floor.id.to_s }]
+    )
+
+    assert_equal selected_floors.map(&:id), model.reload.primary_building_floors.map(&:id)
+    assigned_building_ids = selected_floors.map { |floor| floor.reload.building_id }
+    assert_equal [building.id, building.id], assigned_building_ids
+    assert_not Floor.exists?(original_floor.id)
+  end
+
+  def test_saving_datetime_and_invalid_datetime
+    config = ActiveScaffold::Config::Core.new(Task)
+    config.columns[:created_at].form_ui = :datetime
+    @controller.stubs(:active_scaffold_config_for).with(Task).returns(config)
+
+    model = update_record_from_params(
+      Task.new,
+      :create,
+      :created_at,
+      created_at: '2026-11-20 14:30'
+    )
+
+    assert_equal Time.zone.local(2026, 11, 20, 14, 30), model.created_at
+
+    invalid_model = update_record_from_params(
+      Task.new,
+      :create,
+      :created_at,
+      created_at: 'not a datetime'
+    )
+    assert_nil invalid_model.created_at
+    assert_includes invalid_model.errors[:created_at], 'is invalid'
+  end
+
+  def test_saving_month_form_ui_to_date_column
+    config = ActiveScaffold::Config::Core.new(Contact)
+    config.columns[:birthday].form_ui = :month
+    @controller.stubs(:active_scaffold_config_for).with(Contact).returns(config)
+
+    model = update_record_from_params(Contact.new, :create, :birthday, birthday: '2026-11')
+
+    assert_equal Date.new(2026, 11, 1), model.birthday
+  end
+
+  def test_non_association_multiple_inputs_remove_blank_values
+    column = @controller.active_scaffold_config_for(ModelStub).columns[:a]
+
+    %i[select_multiple checkboxes].each do |form_ui|
+      column.form_ui = form_ui
+      model = update_record_from_params(
+        ModelStub.new,
+        :create,
+        :a,
+        a: ['', 'first', nil, 'second']
+      )
+
+      assert_equal %w[first second], model.a, form_ui
+    end
+  ensure
+    column.form_ui = nil
+  end
+
+  def test_attribute_is_empty_recurses_into_hashes_and_arrays
+    assert @controller.send(
+      :attribute_is_empty?, 'first_name', Person, {'last_name' => '', 'adult' => '0'}
+    )
+    assert_not @controller.send(
+      :attribute_is_empty?, 'first_name', Person, {'last_name' => 'Lovelace'}
+    )
+    assert @controller.send(:attribute_is_empty?, 'first_name', Person, ['', nil])
+    assert_not @controller.send(:attribute_is_empty?, 'first_name', Person, ['', 'Ada'])
+  end
+
+  def test_date_select_multipart_values_are_ignored_when_checking_empty_nested_attributes
+    html = ApplicationController.helpers.date_select(:record, :birthday)
+    names = Nokogiri::HTML.fragment(html).css('select').pluck('name')
+
+    assert_equal(
+      %w[record[birthday(1i)] record[birthday(2i)] record[birthday(3i)]],
+      names
+    )
+    assert @controller.send(:mulitpart_ignored?, 'birthday(1i)', Contact)
+    assert_not @controller.send(:mulitpart_ignored?, 'first_name(1i)', Contact)
+    assert @controller.send(
+      :attributes_hash_is_empty?,
+      {'birthday(1i)' => '2026', 'birthday(2i)' => '11', 'birthday(3i)' => '20'},
+      Contact
+    )
+  end
+
   def test_saving_has_many_select
     buildings = Array.new(2) { Building.create }
     model = update_record_from_params(Person.new, :create, :first_name, :last_name, :buildings, first_name: 'First', last_name: '', buildings: ['', *buildings.map { |b| b.id.to_s }]) # checkbox_list always add a hidden tag with empty value
@@ -447,6 +563,7 @@ class Controller
 
   include ActiveScaffold::Core
   include ActiveScaffold::Helpers::ControllerHelpers
+  include ActiveScaffold::Finder
   include ActiveScaffold::AttributeParams
 
   public :update_record_from_params
