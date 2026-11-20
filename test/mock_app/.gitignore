@@ -4,3 +4,4 @@ db/*.sqlite3
 app/assets/builds/*
 !app/assets/builds/.keep
 app/assets/stylesheets/active_scaffold/deps.scss
+app/assets/stylesheets/active_scaffold/jquery-ui/theme.css

@@ -14,6 +14,7 @@ require 'rake/testtask'
 require 'rdoc/task'
 
 INSTALLED_BRIDGE_TESTS = 'test/bridges/installed/**/*_test.rb'
+INSTALLED_BRIDGES_RUNNER = 'test/bridges/installed/runner.rb'
 
 begin
   load 'rails/perftest/railties/testing.tasks'
@@ -36,15 +37,14 @@ Rake::Task[:test].enhance(['mock_app:assets'])
 
 namespace :test do
   desc 'Test bridges against their installed gems.'
-  task :installed_bridges do # rubocop:disable Rails/RakeEnvironment -- each test boots an isolated environment
+  task :installed_bridges do # rubocop:disable Rails/RakeEnvironment -- runner boots an isolated environment
     expected_gemfile = File.expand_path('gemfiles/Gemfile.bridges', __dir__)
     current_gemfile = File.expand_path(Bundler.default_gemfile.to_s)
     abort "Run with BUNDLE_GEMFILE=#{expected_gemfile}" unless current_gemfile == expected_gemfile
 
-    installed_bridge_tests = FileList[INSTALLED_BRIDGE_TESTS]
-    abort "No installed bridge tests found in #{INSTALLED_BRIDGE_TESTS}" if installed_bridge_tests.empty?
+    abort "No installed bridge tests found in #{INSTALLED_BRIDGE_TESTS}" if FileList[INSTALLED_BRIDGE_TESTS].empty?
 
-    installed_bridge_tests.each { |test_file| ruby '-Ilib:test', test_file }
+    ruby '-Ilib:test', INSTALLED_BRIDGES_RUNNER
   end # rubocop:enable Rails/RakeEnvironment
 end
 

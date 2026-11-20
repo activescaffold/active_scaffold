@@ -20,6 +20,7 @@ require 'record_select'
 require 'tinymce-rails'
 
 require_relative '../../test_helper'
+require 'class_with_finder'
 
 # ActiveScaffold installs bridges lazily on the first `active_scaffold` call.
 # Run the same installation step explicitly so this suite can inspect every
@@ -53,4 +54,15 @@ module InstalledBridgeAssertions
     assert_predicate bridge, :install?, "#{bridge_name} did not detect #{gem_name}"
     bridge
   end
+end
+
+class InstalledBridgeTestCase < ActionView::TestCase
+  ASSETS_PATH = File.expand_path('../../../app/assets/javascripts/active_scaffold', __dir__)
+
+  include InstalledBridgeAssertions
+  include ActiveScaffold::Helpers::ViewHelpers
+
+  private
+
+  attr_reader :active_scaffold_config
 end
