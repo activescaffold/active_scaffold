@@ -17,5 +17,11 @@ class CarsController < ApplicationController
       column.inplace_edit_update = params.expect(:inplace_edit_update).to_sym
       column.update_columns = [:brand] if column.inplace_edit_update == :columns
     end
+
+    return unless params[:chained_update_columns]
+
+    active_scaffold_config.columns.override(:brand) do |column|
+      column.update_columns = [:person]
+    end
   end
 end

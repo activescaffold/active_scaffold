@@ -422,6 +422,32 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'show renders a tabbed subgroup with horizontal association UIs' do
+    backend = Category.create!(name: 'Backend')
+    frontend = Category.create!(name: 'Frontend')
+    project = Project.create!(name: 'Application')
+    project.tasks.create!(name: 'Build API', priority: 'high', category: backend)
+    project.tasks.create!(name: 'Build UI', priority: 'medium', category: frontend)
+    project.milestones.create!(name: 'First release', section: backend)
+
+    get "/projects/#{project.id}"
+
+    assert_response :success
+    assert_select 'dt', text: 'Assignments'
+    assert_select '.nav-tabs .nav-link', text: 'Backend'
+    assert_select '.nav-tabs .nav-link', text: 'Frontend'
+    assert_select '.tab-content .tab-pane', count: 2
+    assert_select '.tasks-view table' do
+      assert_select 'td.name-column', text: /Build API|Build UI/, count: 2
+      assert_select 'td.priority-column', text: /High|Medium/, count: 2
+    end
+    assert_select '.milestones-view table td.name-column', text: 'First release'
+  ensure
+    Task.delete_all
+    Milestone.delete_all
+    Project.delete_all
+  end
+
   test 'list filters render and restrict records' do
     Person.create!(first_name: 'Alice', adult: true)
     Person.create!(first_name: 'Bob', adult: false)

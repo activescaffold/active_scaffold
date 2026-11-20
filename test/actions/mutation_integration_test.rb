@@ -107,6 +107,22 @@ class ActionsMutationIntegrationTest < ActionDispatch::IntegrationTest
     assert_redirected_to '/people/new'
   end
 
+  test 'xhr create with dont_close inserts the record and replaces the create form' do
+    assert_difference('Person.count') do
+      post '/people.js', params: {
+        dont_close: true,
+        record: {first_name: 'Alice', last_name: 'Example'}
+      }, xhr: true
+    end
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.create_record_row'
+    assert_includes response.body, 'ActiveScaffold.replace'
+    assert_includes response.body, 'people-create--form'
+    assert_includes response.body, 'ActiveScaffold.focus_first_element_of_form'
+    assert_not_includes response.body, 'action_link.close()'
+  end
+
   test 'update persists configured attributes and redirects to the list' do
     person = Person.create!(first_name: 'Before', last_name: 'Example')
 
@@ -183,7 +199,9 @@ class ActionsMutationIntegrationTest < ActionDispatch::IntegrationTest
     get "/people/#{person.id}/edit", params: {nested_links: true}
 
     assert_response :success
-    assert_select '.update-view > .active-scaffold-header .actions'
+    assert_select '.update-view > .active-scaffold-header .actions' do
+      assert_select 'a.index', text: 'Back to list'
+    end
   end
 
   test 'edit can render a vertical subform through request configuration' do
@@ -231,6 +249,34 @@ class ActionsMutationIntegrationTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, 'ActiveScaffold.delete_record_row'
     assert_includes response.body, "as_people-#{person.id}-contacts-list-#{contact.id}-row"
+  end
+
+  test 'failed xhr destroy keeps the record and renders its errors' do
+    person = Person.create!(first_name: 'Alice')
+
+    assert_no_difference('Person.count') do
+      delete "/people/#{person.id}.js", params: {force_destroy_failure: true}, xhr: true
+    end
+
+    assert_response :success
+    assert_includes response.body, 'The forced destroy failed'
+    assert_not_includes response.body, 'ActiveScaffold.delete_record_row'
+  end
+
+  test 'xhr destroy of a singular nested record renders its parent row' do
+    person = Person.create!(first_name: 'Alice')
+    car = person.create_car!(brand: 'Ford', model: 'Focus')
+
+    assert_difference('Car.count', -1) do
+      delete "/cars/#{car.id}.js", params: {
+        parent_scaffold: 'people', association: 'car', person_id: person.id, eid: 'people'
+      }, xhr: true
+    end
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.delete_record_row'
+    assert_includes response.body, "as_people-list-#{car.id}-row"
+    assert_includes response.body, '/people.js'
   end
 
   test 'json list returns serialized records' do
@@ -293,6 +339,24 @@ class ActionsMutationIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'Ford'
   end
 
+  test 'inline update recursively refreshes chained dependent columns' do
+    person = Person.create!(first_name: 'Alice', last_name: 'Example')
+    car = person.create_car!(brand: 'Ford', model: 'Focus')
+
+    post "/cars/#{car.id}/update_column.js", params: {
+      column: 'model',
+      value: 'Mondeo',
+      inplace_edit_update: 'columns',
+      chained_update_columns: true
+    }, xhr: true
+
+    assert_response :success
+    assert_equal 'Mondeo', car.reload.model
+    assert_includes response.body, '.brand-column'
+    assert_includes response.body, '.person-column'
+    assert_includes response.body, "/people/#{person.id}/edit"
+  end
+
   test 'render field supports inplace editing requests' do
     car = Car.create!(brand: 'Ford', model: 'Focus')
 
@@ -336,6 +400,24 @@ class ActionsMutationIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'ActiveScaffold.render_form_field'
     assert_includes response.body, 'last_name-input'
     assert_includes response.body, 'Lovelace'
+  end
+
+  test 'render field traverses an association hash in update columns' do
+    post '/people/render_field.js', params: {
+      hash_update_columns: true,
+      column: 'first_name',
+      source_id: 'person_first_name',
+      record: {
+        first_name: 'Ada',
+        contacts: {'new-contact' => {first_name: 'Grace', last_name: 'Hopper'}}
+      }
+    }, xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.render_form_field'
+    assert_includes response.body, 'contacts-sub-form'
+    assert_includes response.body, 'last_name-input'
+    assert_includes response.body, 'Hopper'
   end
 
   test 'render field adds a tab for a tabbed association' do

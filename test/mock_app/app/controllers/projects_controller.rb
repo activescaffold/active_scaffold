@@ -4,7 +4,7 @@
 #    but milestones use a different FK column name (:section instead of :category)
 class ProjectsController < ApplicationController
   active_scaffold do |conf|
-    %i[create update].each do |action|
+    %i[create update show].each do |action|
       conf.send(action).columns.add_subgroup('Assignments') do |group|
         group.add :tasks, :milestones
         group.tabbed_by = :category
@@ -12,5 +12,7 @@ class ProjectsController < ApplicationController
     end
     # milestones use :section (belongs_to :section, class_name: 'Category') instead of :category
     conf.columns[:milestones].options[:tabbed_by] = :section
+    conf.columns[:tasks].show_ui = [:horizontal, {subform_columns: %i[name priority]}]
+    conf.columns[:milestones].show_ui = [:horizontal, {subform_columns: [:name]}]
   end
 end

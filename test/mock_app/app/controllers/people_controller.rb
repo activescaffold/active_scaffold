@@ -11,6 +11,8 @@ class PeopleController < ApplicationController
     conf.columns[:roles].associated_limit = 0
     conf.create.columns.exclude :address, :home
     conf.action_links.add 'archive', label: 'Archive', type: :member, method: :post, position: :after
+    conf.action_links.add 'index', label: 'Back to list', type: :member, position: false, parameters: {id: nil},
+                                    security_method: :nested_index_authorized?
   end
 
   def forbidden
@@ -33,6 +35,10 @@ class PeopleController < ApplicationController
 
   protected
 
+  def nested_index_authorized?(_record = nil)
+    true
+  end
+
   def configure_request
     active_scaffold_config.list.refresh_with_header = true if params[:refresh_with_header]
     active_scaffold_config.list.always_show_create = true if params[:always_show_create]
@@ -48,16 +54,26 @@ class PeopleController < ApplicationController
       end
     end
 
-    return unless params[:update_columns] || params[:nested_update_columns]
+    return unless params[:update_columns] || params[:nested_update_columns] || params[:hash_update_columns]
 
     active_scaffold_config.columns.override(:first_name) do |column|
-      if params[:nested_update_columns]
+      if params[:hash_update_columns]
+        column.update_columns = [{contacts: [:last_name]}]
+        column.send_form_on_update_column = true
+      elsif params[:nested_update_columns]
         column.update_columns = [{__root__: [:last_name]}]
         column.send_form_on_update_column = true
       else
         column.update_columns = [:last_name]
       end
     end
+  end
+
+  def do_destroy(record)
+    return super unless params[:force_destroy_failure]
+
+    record.errors.add(:base, 'The forced destroy failed')
+    self.successful = false
   end
 
   def do_add_existing

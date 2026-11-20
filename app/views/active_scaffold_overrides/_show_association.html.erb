@@ -4,7 +4,10 @@
   end
   associated = parent_record.send(column.name)
   associated = column.association.singular? ? [associated].compact : associated.to_a
-  associated = associated.select { |record| record.send(tabbed_by) == tab_value } if local_assigns[:tabbed_by]
+  if local_assigns[:tabbed_by]
+    tabbed_by = column.options[:tabbed_by] || tabbed_by
+    associated = associated.select { |record| record.send(tabbed_by) == tab_value }
+  end
 %>
 <% if associated.present? %>
   <%= render "show_association_#{show_partial}", columns: columns, column: column, parent_record: parent_record,
