@@ -8,7 +8,12 @@ module ActiveScaffold::DataStructures::Association
 
     attr_writer :reverse
 
-    delegate :name, :foreign_key, :==, to: :@association
+    delegate :name, :foreign_key, to: :@association
+
+    def ==(other)
+      other = other.instance_variable_get(:@association) if other.is_a?(Abstract)
+      @association == other
+    end
 
     def allow_join?
       !polymorphic?
