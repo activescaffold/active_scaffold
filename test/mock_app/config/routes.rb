@@ -24,10 +24,12 @@ Rails.application.routes.draw do
   resources :integration_people do
     concerns :active_scaffold, except: %i[mark]
   end
+  resources :special_people, concerns: :active_scaffold
   resources :standalone_people, only: %i[show edit update]
 
   # Tabs test models
   resources :categories, concerns: :active_scaffold
+  resources :special_categories, concerns: :active_scaffold
   resources :tasks, concerns: :active_scaffold
   resources :milestones, concerns: :active_scaffold
   # tabs by belongs_to association + shared tabs with different FK column names

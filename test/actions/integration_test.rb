@@ -162,6 +162,28 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, 'ActiveScaffold.add_to_history'
   end
 
+  test 'xhr auto pagination hides its indicator after the last page' do
+    Person.create!(first_name: 'Alice', last_name: 'Example')
+    Person.create!(first_name: 'Bob', last_name: 'Example')
+
+    get '/people.js', params: {auto_pagination: true, limit: 1, page: 2}, xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.append'
+    assert_includes response.body, 'ActiveScaffold.hide'
+    assert_includes response.body, 'Bob'
+    assert_not_includes response.body, 'ActiveScaffold.auto_load_page'
+  end
+
+  test 'xhr auto pagination hides its indicator when the page is empty' do
+    get '/people.js', params: {auto_pagination: true, limit: 1, page: 1}, xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.hide'
+    assert_not_includes response.body, 'ActiveScaffold.append'
+    assert_not_includes response.body, 'ActiveScaffold.add_to_history'
+  end
+
   test 'xhr paginated list on page two renders a previous-page link' do
     Person.create!(first_name: 'Alice', last_name: 'Example')
     Person.create!(first_name: 'Bob', last_name: 'Example')

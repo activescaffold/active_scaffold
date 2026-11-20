@@ -9,6 +9,7 @@ class PeopleController < ApplicationController
     conf.columns[:buildings].associated_limit = 0
     conf.columns[:roles].includes = nil
     conf.columns[:roles].associated_limit = 0
+    conf.sti_children = [:special_person]
     conf.create.columns.exclude :address, :home
     conf.update.show_unauthorized_columns = true
     conf.action_links.add 'archive', label: 'Archive', type: :member, method: :post, position: :after

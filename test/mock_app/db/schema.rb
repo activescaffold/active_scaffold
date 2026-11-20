@@ -1,6 +1,7 @@
 # rubocop:disable Metrics/BlockLength
 ActiveRecord::Schema.define do
   create_table 'categories' do |t|
+    t.string 'type'
     t.string 'name'
     t.datetime 'created_at'
     t.datetime 'updated_at'
@@ -73,6 +74,7 @@ ActiveRecord::Schema.define do
   end
 
   create_table 'people' do |t|
+    t.string 'type'
     t.string 'first_name'
     t.string 'last_name'
     t.integer 'buildings_count', :null => false, :default => 0
