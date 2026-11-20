@@ -57,6 +57,21 @@ module ActiveScaffold
         column.label
       end
 
+      def show_columns_group(column, record)
+        locals = {columns: column, record: record}
+        return render 'show_columns', locals unless column.tabbed_by
+
+        locals[:tabbed_by] = column.tabbed_by
+        subsection_id = sub_section_id(sub_section: column.label)
+        tab_options = send(override_helper_per_model(:active_scaffold_tab_options, record.class), column, record)
+        used_tabs = send(override_helper_per_model(:active_scaffold_current_tabs, record.class), column, record,
+                         tab_options)
+        tabs = active_scaffold_tabs_for(column, record, subsection_id, tab_options, used_tabs) do |tab_value, tab_id|
+          render 'show_columns', locals.merge(tab_id: tab_id, tab_value: tab_value)
+        end
+        content_tag(:div, tabs)
+      end
+
       def show_column_override(column)
         override_helper column, 'show_column'
       end

@@ -10,9 +10,9 @@
       next
     end
     columns_length += 1
+    column_class = "#{column.name}-column #{:numeric if column.number?}"
   %>
-  <%= content_tag :td, content_tag(:span, show_column_value(record, column)),
-                  class: "#{column.name}-column #{:numeric if column.number?}" %>
+  <%= content_tag :td, content_tag(:span, show_column_value(record, column)), class: column_class %>
 <% end -%>
 </tr>
 <% columns_groups.each do |columns_group| %>
