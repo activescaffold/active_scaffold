@@ -8,9 +8,15 @@ class SearchColumnHelpersTest < ActionView::TestCase
   include ActiveScaffold::Helpers::ViewHelpers
 
   def setup
+    RequestStore.clear!
     @column = ActiveScaffold::DataStructures::Column.new(:adult, Person)
     @record = Person.new
     @field_search_params = {}
+  end
+
+  def teardown
+    RequestStore.clear!
+    super
   end
 
   def adult_search_column(_record, _options)

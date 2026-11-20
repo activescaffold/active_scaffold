@@ -100,15 +100,27 @@ class NestedActionTest < ActionController::TestCase
   end
 
   test 'nested label identifies a belongs-to parent and escapes its label' do
-    @controller.stubs(:nested).returns(stub(belongs_to?: true))
-    @controller.stubs(:nested_parent_record).returns(stub(to_label: '<Editor>'))
-    @controller.expects(:as_).with(
-      :nested_of_model,
-      nested_model: 'Person',
-      parent_model: '&lt;Editor&gt;'
-    ).returns('nested label')
+    parent = Contact.create!(first_name: 'Editor')
+    parent.define_singleton_method(:to_label) { '<Editor>' }
+    nested = ActiveScaffold::DataStructures::NestedInfo.get(
+      Person,
+      parent_scaffold: 'contacts', association: 'contactable', contact_id: parent.id
+    )
+    translation_calls = []
+    @controller.unstub(:nested)
+    @controller.unstub(:nested_parent_record)
+    @controller.define_singleton_method(:nested) { nested }
+    @controller.define_singleton_method(:nested_parent_record) { parent }
+    @controller.define_singleton_method(:as_) do |key, **options|
+      translation_calls << [key, options]
+      'nested label'
+    end
 
     assert_equal 'nested label', @controller.send(:nested_label)
+    assert_equal [
+      :nested_of_model,
+      {nested_model: 'Person', parent_model: '&lt;Editor&gt;'}
+    ], translation_calls.first
   end
 
   test 'nested chain handles belongs-to associations' do
