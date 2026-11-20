@@ -312,7 +312,7 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
-    simplecov (1.2.0)
+    simplecov (1.3.2)
     sqlite3 (2.9.0)
       mini_portile2 (~> 2.8.0)
     sqlite3 (2.9.0-aarch64-linux-gnu)
@@ -370,7 +370,7 @@ DEPENDENCIES
   rails (~> 8.1.0)
   rake
   selenium-webdriver (< 4.45)
-  simplecov (~> 1.2.0)
+  simplecov (~> 1.3.0)
   sqlite3
 
 BUNDLED WITH

@@ -11,6 +11,7 @@ class ContactsController < ApplicationController
     conf.field_search.default_params = proc do
       {first_name: {opt: '%?%', from: 'Alice'}} if params[:apply_default_search]
     end
+    conf.columns[:last_name].update_columns = [:first_name]
   end
 
   protected

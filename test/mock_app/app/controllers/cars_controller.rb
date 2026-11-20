@@ -10,6 +10,13 @@ class CarsController < ApplicationController
 
   protected
 
+  def before_update_save(record)
+    return super unless params[:force_inplace_failure]
+
+    record.errors.add(:model, 'cannot be changed')
+    record.define_singleton_method(:save) { false }
+  end
+
   def configure_request
     return unless params[:inplace_edit_update]
 

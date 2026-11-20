@@ -9,4 +9,8 @@ class Person < ActiveRecord::Base
   has_and_belongs_to_many :roles
 
   has_many :files, :dependent => :destroy, :class_name => 'FileModel'
+
+  def last_name_authorized_for_update?
+    last_name != 'Restricted'
+  end
 end

@@ -29,7 +29,7 @@ group :test do
   gem 'mongoid', '~> 9.1', require: false
   gem 'selenium-webdriver', '< 4.45'
   # Code coverage for Ruby 1.9+ with a powerful configuration library and automatic merging of coverage across test suites
-  gem 'simplecov', '~> 1.2.0', require: false
+  gem 'simplecov', '~> 1.3.0', require: false
 
   platforms :jruby do
     # This module allows Ruby programs to interface with the SQLite3 database engine

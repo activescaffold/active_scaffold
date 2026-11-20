@@ -5,7 +5,12 @@
     traverse ||= []
     column.each do |assoc_name, columns|
       if assoc_name == :__root__
-        config = params[:parent_controller] ? active_scaffold_config_for(params[:parent_controller].singularize.camelize) : controller.active_scaffold_config
+        config =
+          if params[:parent_controller]
+            active_scaffold_config_for(params[:parent_controller].singularize.camelize)
+          else
+            controller.active_scaffold_config
+          end
         value = @form_record
       else
         next if traverse.blank? && @main_columns.exclude?(assoc_name)
@@ -32,7 +37,8 @@
     end
   else
     column = active_scaffold_config.columns[column] unless column.is_a? ActiveScaffold::DataStructures::Column
-    return if column.nil? # using hash may include __root__ to update parent columns when used as subform, and fail if it can be in different model's form, or when edited without subform
+    # A hash may include __root__ for a parent column which does not exist in every form using the subform.
+    return if column.nil?
     return if local_assigns[:traverse].nil? && @main_columns.exclude?(column.name)
     rendered = (@rendered ||= {})[record] ||= Set.new
     return if rendered.include? column.name
@@ -51,15 +57,23 @@
       if renders_as == :subform
         active_scaffold_subform_attributes(column, column_css_class)
       else
-        as_element_attributes(:form_element, class: "form-element #{:required if column.required?(@form_action)} #{form_ui_class column.form_ui} #{column_css_class}", id: '')
+        form_element_class = [
+          'form-element', (:required if column.required?(@form_action)),
+          form_ui_class(column.form_ui), column_css_class
+        ].compact.join(' ')
+        as_element_attributes(:form_element, class: form_element_class, id: '')
       end
     options[:traverse] = traverse if local_assigns[:traverse]
     html =
       if scope
         readonly = record.readonly? || !record.authorized_for?(crud_type: :update)
-        crud_type = record.id.nil? ? :create : (readonly ? :read : :update) # don't use new_record?, it's always true in render_field action
+        # Do not use new_record? here; copied records are always new records in the render_field action.
+        crud_type = record.id.nil? ? :create : (readonly ? :read : :update)
         # subform.columns.to_a.include? so it doesn't check inside subgroups
-        active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class: active_scaffold_config.subform.columns.to_a.exclude?(column.name), record: record)
+        add_class = active_scaffold_config.subform.columns.to_a.exclude?(column.name)
+        active_scaffold_render_subform_column(
+          column, scope, crud_type, readonly, add_class: add_class, record: record
+        )
       elsif @form_action == :field_search
         search_attribute(column, record)
       else
@@ -67,8 +81,12 @@
       end
 -%>
 
-ActiveScaffold.render_form_field('<%= source_id %>','<%= escape_javascript(html) %>', <%= javascript_literal(options) %>);
-<% if column.update_columns.present? %>
-  <%= render partial: 'render_field', collection: column.update_columns, as: :column, locals: local_assigns %>
-<% end %>
+ActiveScaffold.render_form_field(
+  '<%= source_id %>',
+  '<%= escape_javascript(html) %>',
+  <%= javascript_literal(options) %>
+);
+<% updates = column.update_columns %>
+<%# Moved to keep Ruby coverage attached to the render expression. %>
+<%= render partial: 'render_field', collection: updates, as: :column, locals: local_assigns if updates.present? %>
 <% end %>

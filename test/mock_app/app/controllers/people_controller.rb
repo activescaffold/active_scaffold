@@ -10,8 +10,10 @@ class PeopleController < ApplicationController
     conf.columns[:roles].includes = nil
     conf.columns[:roles].associated_limit = 0
     conf.create.columns.exclude :address, :home
+    conf.update.show_unauthorized_columns = true
     conf.action_links.add 'archive', label: 'Archive', type: :member, method: :post, position: :after
     conf.action_links.add 'activate', label: 'Activate', type: :member, method: :post, position: false
+    conf.action_links.add 'activate_all', label: 'Activate all', type: :collection, method: :post
     conf.action_links.add 'index', label: 'Back to list', type: :member, position: false, parameters: {id: nil},
                                     security_method: :nested_index_authorized?
   end
@@ -45,6 +47,12 @@ class PeopleController < ApplicationController
     end
   end
 
+  def activate_all
+    process_action_link_action do
+      Person.update_all(adult: true)
+    end
+  end
+
   protected
 
   def nested_index_authorized?(_record = nil)
@@ -54,6 +62,13 @@ class PeopleController < ApplicationController
   def configure_request
     active_scaffold_config.list.refresh_with_header = true if params[:refresh_with_header]
     active_scaffold_config.list.always_show_create = true if params[:always_show_create]
+    if params[:grouped_unauthorized_form]
+      active_scaffold_config.update.columns = [:first_name]
+      active_scaffold_config.update.columns.add_subgroup('Identity') do |group|
+        group.add :last_name
+      end
+    end
+
     if params[:nested_links]
       active_scaffold_config.update.nested_links = true
       active_scaffold_config.update.columns = %i[first_name last_name]
@@ -73,10 +88,14 @@ class PeopleController < ApplicationController
       columns[1] = %i[adult roles]
     end
 
-    return unless params[:update_columns] || params[:nested_update_columns] || params[:hash_update_columns]
+    return unless params[:update_columns] || params[:nested_update_columns] || params[:hash_update_columns] ||
+                  params[:chained_hash_update_columns]
 
     active_scaffold_config.columns.override(:first_name) do |column|
-      if params[:hash_update_columns]
+      if params[:chained_hash_update_columns]
+        column.update_columns = [{contacts: [:last_name]}, :buildings]
+        column.send_form_on_update_column = true
+      elsif params[:hash_update_columns]
         column.update_columns = [{contacts: [:last_name]}]
         column.send_form_on_update_column = true
       elsif params[:nested_update_columns]

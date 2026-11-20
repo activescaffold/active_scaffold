@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   resources :buildings, except: :index do
     concerns :active_scaffold, except: %i[mark add_existing new_existing destroy_existing]
   end
+  post 'cars/create_nested', to: 'cars#create'
   resources :cars, only: %i[index edit update destroy] do
     concerns :active_scaffold, association: false, except: [:mark]
   end
@@ -16,6 +17,7 @@ Rails.application.routes.draw do
   resources :people do
     post :archive, on: :member
     post :activate, on: :member
+    post :activate_all, on: :collection
     get :refresh_row, on: :member
     concerns :active_scaffold, except: %i[mark]
   end

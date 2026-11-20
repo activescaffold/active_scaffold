@@ -561,6 +561,21 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_select 'input[name=?][value=?]', 'record[name]', 'Example'
   end
 
+  test 'edit renders a subgroup and unauthorized columns as readonly values' do
+    person = Person.create!(first_name: 'Alice', last_name: 'Restricted')
+
+    get "/people/#{person.id}/edit", params: {grouped_unauthorized_form: true}
+
+    assert_response :success
+    assert_select 'input[name=?][value=?]', 'record[first_name]', 'Alice'
+    assert_select '.sub-section' do
+      assert_select 'h5', text: /Identity/
+      assert_select 'input[type=?][name=?][value=?]', 'hidden', 'record[last_name]', 'Restricted'
+      assert_select 'input[name=?]:not([type=hidden])', 'record[last_name]', count: 0
+      assert_select '.last_name-input', text: 'Restricted'
+    end
+  end
+
   test 'edit renders a vertical subform with a subgroup and add-existing footer' do
     person = Person.create!(first_name: 'Alice', last_name: 'Example')
     person.buildings.create!(name: 'Tower')

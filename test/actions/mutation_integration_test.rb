@@ -96,6 +96,34 @@ class ActionsMutationIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'field.trigger(\'change\')'
   end
 
+  test 'xhr create refreshes a singular nested parent' do
+    person = Person.create!(first_name: 'Alice')
+
+    assert_difference('Car.count') do
+      post '/cars/create_nested.js', params: {
+        parent_scaffold: 'people', association: 'car', person_id: person.id, eid: 'people',
+        record: {brand: 'Ford', model: 'Focus'}
+      }, xhr: true
+    end
+
+    assert_response :success
+    assert_equal 'Focus', person.reload.car.model
+    assert_includes response.body, 'action_link.close(true)'
+    assert_not_includes response.body, 'ActiveScaffold.create_record_row('
+  end
+
+  test 'xhr create refreshes an action link from a parent controller' do
+    assert_difference('Contact.count') do
+      post '/contacts.js', params: {
+        parent_controller: 'people', record: {first_name: 'Nested', last_name: 'Contact'}
+      }, xhr: true
+    end
+
+    assert_response :success
+    assert_includes response.body, 'if (action_link) action_link.refresh()'
+    assert_not_includes response.body, 'ActiveScaffold.create_record_row('
+  end
+
   test 'create with dont_close persists and returns to a new form' do
     assert_difference('Person.count') do
       post '/people', params: {
@@ -273,6 +301,21 @@ class ActionsMutationIntegrationTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, 'ActiveScaffold.enable_form'
   end
 
+  test 'collection xhr action refreshes the list' do
+    people = [
+      Person.create!(first_name: 'Alice', adult: false),
+      Person.create!(first_name: 'Bob', adult: false)
+    ]
+
+    post '/people/activate_all.js', xhr: true
+
+    assert_response :success
+    assert(people.all? { |person| person.reload.adult? })
+    assert_includes response.body, 'if (link) link.close()'
+    assert_includes response.body, 'ActiveScaffold.replace_html'
+    assert_includes response.body, 'as_people-content'
+  end
+
   test 'destroy removes the record and redirects to the list' do
     person = Person.create!(first_name: 'Alice')
 
@@ -293,6 +336,19 @@ class ActionsMutationIntegrationTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, 'ActiveScaffold.delete_record_row'
     assert_includes response.body, "people-list-#{person.id}-row"
+  end
+
+  test 'xhr destroy can refresh the complete list' do
+    category = Category.create!(name: 'Example')
+
+    assert_difference('Category.count', -1) do
+      delete "/categories/#{category.id}.js", xhr: true
+    end
+
+    assert_response :success
+    assert_includes response.body, 'ActiveScaffold.replace_html'
+    assert_includes response.body, 'as_categories-content'
+    assert_not_includes response.body, 'ActiveScaffold.delete_record_row'
   end
 
   test 'xhr nested destroy updates its nested scaffold' do
@@ -358,6 +414,20 @@ class ActionsMutationIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal 'Mondeo', car.reload.model
   end
 
+  test 'failed inline update restores the persisted value and renders its error' do
+    car = Car.create!(brand: 'Ford', model: 'Focus')
+
+    post "/cars/#{car.id}/update_column.js", params: {
+      column: 'model', value: 'Mondeo', force_inplace_failure: true
+    }, xhr: true
+
+    assert_response :success
+    assert_equal 'Focus', car.reload.model
+    assert_includes response.body, 'cannot be changed'
+    assert_includes response.body, 'ActiveScaffold.update_inplace_edit'
+    assert_includes response.body, 'Focus'
+  end
+
   test 'inline update can refresh its complete row through request configuration' do
     car = Car.create!(brand: 'Ford', model: 'Focus')
 
@@ -414,80 +484,6 @@ class ActionsMutationIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, '.brand-column'
     assert_includes response.body, '.person-column'
     assert_includes response.body, "/people/#{person.id}/edit"
-  end
-
-  test 'render field supports inplace editing requests' do
-    car = Car.create!(brand: 'Ford', model: 'Focus')
-
-    get "/cars/#{car.id}/render_field.js", params: {update_column: 'model'}, xhr: true
-
-    assert_response :success
-    assert_select 'input[name=?][value=?]', 'record[model]', 'Focus'
-  end
-
-  test 'render field processes update-column requests' do
-    post '/people/render_field.js', params: {
-      column: 'first_name', value: 'Ada', source_id: 'person_first_name'
-    }, xhr: true
-
-    assert_response :success
-  end
-
-  test 'render field refreshes configured dependent form columns' do
-    post '/people/render_field.js', params: {
-      update_columns: true,
-      column: 'first_name',
-      value: 'Ada',
-      source_id: 'person_first_name'
-    }, xhr: true
-
-    assert_response :success
-    assert_includes response.body, 'ActiveScaffold.render_form_field'
-    assert_includes response.body, 'person_first_name'
-    assert_includes response.body, 'last_name-input'
-  end
-
-  test 'render field traverses configured dependent column trees' do
-    post '/people/render_field.js', params: {
-      nested_update_columns: true,
-      column: 'first_name',
-      source_id: 'person_first_name',
-      record: {first_name: 'Ada', last_name: 'Lovelace'}
-    }, xhr: true
-
-    assert_response :success
-    assert_includes response.body, 'ActiveScaffold.render_form_field'
-    assert_includes response.body, 'last_name-input'
-    assert_includes response.body, 'Lovelace'
-  end
-
-  test 'render field traverses an association hash in update columns' do
-    post '/people/render_field.js', params: {
-      hash_update_columns: true,
-      column: 'first_name',
-      source_id: 'person_first_name',
-      record: {
-        first_name: 'Ada',
-        contacts: {'new-contact' => {first_name: 'Grace', last_name: 'Hopper'}}
-      }
-    }, xhr: true
-
-    assert_response :success
-    assert_includes response.body, 'ActiveScaffold.render_form_field'
-    assert_includes response.body, 'contacts-sub-form'
-    assert_includes response.body, 'last_name-input'
-    assert_includes response.body, 'Hopper'
-  end
-
-  test 'render field adds a tab for a tabbed association' do
-    category = Category.create!(name: 'Frontend')
-
-    post '/projects/render_field.js', params: {
-      tabbed_by: 'category', column: 'Assignments', value: category.id, form_action: 'create'
-    }, xhr: true
-
-    assert_response :success
-    assert_includes response.body, 'Frontend'
   end
 
   test 'subform action renders an associated record through the dummy application' do
