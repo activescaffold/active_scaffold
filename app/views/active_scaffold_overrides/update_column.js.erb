@@ -3,25 +3,21 @@
   <%= render 'update_messages' %>
   <% @record.reload -%>
 <% end -%>
-<% if @column.inplace_edit
-     ipe_update = @column.inplace_edit_update if successful? -%>
-  <% case ipe_update
-     when :row -%>
-       ActiveScaffold.update_row('<%= element_row_id(action: :list) %>', '<%= escape_javascript render('row', record: @record) %>');
-  <% when :table -%>
-       ActiveScaffold.replace_html('<%= active_scaffold_content_id %>', '<%= escape_javascript(render('list')) %>');
-  <% else
-       formatted_value = get_column_value(@record, @column) -%>
-       ActiveScaffold.update_inplace_edit('<%= @column_span_id %>','<%= escape_javascript(formatted_value) %>', <%= column_empty?(formatted_value).to_json %>);
-    <% if ipe_update == :columns && @column.update_columns && !@column.update_columns.empty?
-         @rendered = Set.new([@column.name]) -%>
-         <%= render partial: 'update_column',
-                    collection: @column.update_columns & active_scaffold_config.list.columns.visible_columns_names,
-                    locals: {row_id: element_row_id(action: :list, id: @record.id)} %>
-    <% end %>
+<% ipe_update = @column.inplace_edit_update if successful? -%>
+<% case ipe_update
+   when :row -%>
+     ActiveScaffold.update_row('<%= element_row_id(action: :list) %>', '<%= escape_javascript render('row', record: @record) %>');
+<% when :table -%>
+     ActiveScaffold.replace_html('<%= active_scaffold_content_id %>', '<%= escape_javascript(render('list')) %>');
+<% else
+     formatted_value = get_column_value(@record, @column) -%>
+     ActiveScaffold.update_inplace_edit('<%= @column_span_id %>','<%= escape_javascript(formatted_value) %>', <%= column_empty?(formatted_value).to_json %>);
+  <% if ipe_update == :columns && @column.update_columns && !@column.update_columns.empty?
+       @rendered = Set.new([@column.name]) -%>
+       <%= render partial: 'update_column',
+                  collection: @column.update_columns & active_scaffold_config.list.columns.visible_columns_names,
+                  locals: {row_id: element_row_id(action: :list, id: @record.id)} %>
   <% end -%>
-<% else -%>
-  ActiveScaffold.replace_html('<%= @column_span_id %>','<%= escape_javascript(get_column_value(@record, @column)) %>');
 <% end -%>
 <% if @column.calculation? -%>
   ActiveScaffold.replace_html('<%= active_scaffold_calculations_id(column: @column) %>', '<%= escape_javascript(render_column_calculation(@column, id_condition: false)) %>');
