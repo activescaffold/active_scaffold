@@ -86,7 +86,11 @@ search:
 ## Do not consider these keys missing:
 ignore_missing:
   # translations from rails i18n are used
+  - date.abbr_day_names
+  - date.abbr_month_names
+  - date.day_names
   - date.formats.default
+  - date.month_names
   - number.currency.format
   - number.format
   - number.human.format
