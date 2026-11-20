@@ -29,7 +29,7 @@ class PeopleController < ApplicationController
   end
 
   def archive
-    if request.get?
+    if request.get? || request.head?
       @record = find_if_allowed(params[:id], :read)
       return render :archive
     end

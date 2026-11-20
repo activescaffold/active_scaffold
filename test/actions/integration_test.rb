@@ -37,6 +37,15 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'custom action handles HEAD like GET' do
+    person = Person.create!(first_name: 'Alice', last_name: 'Example')
+
+    head "/people/#{person.id}/archive"
+
+    assert_response :success
+    assert_empty response.body
+  end
+
   test 'successful xhr action link closes with the updated row' do
     person = Person.create!(first_name: 'Alice', last_name: 'Example')
 
