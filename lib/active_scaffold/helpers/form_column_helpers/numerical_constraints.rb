@@ -63,11 +63,13 @@ module ActiveScaffold
         end
 
         def _as_add_integer_step_constraint(constraints, options, only_odd_valid, only_even_valid)
-          return unless options[:min].respond_to?(:even?) && (only_odd_valid || only_even_valid)
+          minimum = options[:min] || constraints[:min]
+          return unless minimum.respond_to?(:even?) && (only_odd_valid || only_even_valid)
 
           constraints[:step] = 2
-          constraints[:min] += 1 if only_odd_valid && options[:min].even?
-          constraints[:min] += 1 if only_even_valid && options[:min].odd?
+          constraints[:min] = minimum
+          constraints[:min] += 1 if only_odd_valid && minimum.even?
+          constraints[:min] += 1 if only_even_valid && minimum.odd?
         end
         private :_as_numerical_validators_for, :_as_integer_constraints?, :_as_numerical_constraint_bounds,
                 :_as_add_numerical_step_constraint, :_as_add_integer_step_constraint
