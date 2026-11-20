@@ -54,5 +54,48 @@ module Config
       assert_equal :read, link.crud_type
       assert_equal :nested_authorized?, link.security_method
     end
+
+    def test_add_new_link
+      assert_raises(ArgumentError) { @config.nested.add_new_link :assoc_1 }
+      config = @config
+      ModelStubsController.class_eval do
+        config.configure { nested.add_new_link :other_models }
+      end
+      link = @config.action_links['new']
+      assert_equal 'Add Model stub', link.label
+      assert_equal 'new', link.action
+      assert_equal :after, link.position
+      assert_not link.page?
+      assert_not link.popup?
+      assert_not link.confirm?
+      assert link.inline?
+      assert_not link.refresh_on_close
+      assert_equal :other_models, link.parameters[:association]
+      assert_equal 'config/nested_test/model_stubs', link.parameters[:parent_controller]
+      assert_equal :get, link.method
+      assert_equal :member, link.type
+      assert_equal :read, link.crud_type
+      assert_equal :nested_authorized?, link.security_method
+    end
+
+    def test_add_scoped_link
+      config = @config
+      ModelStubsController.class_eval do
+        config.configure { nested.add_scoped_link :a_is_defined }
+      end
+      link = @config.action_links['index']
+      assert_equal 'A Is Defined', link.label
+      assert_equal 'index', link.action
+      assert_equal :after, link.position
+      assert_not link.page?
+      assert_not link.popup?
+      assert_not link.confirm?
+      assert link.inline?
+      assert_equal :a_is_defined, link.parameters[:named_scope]
+      assert_equal :get, link.method
+      assert_equal :member, link.type
+      assert_equal :read, link.crud_type
+      assert_equal 'config/nested_test/model_stubs', link.controller
+    end
   end
 end
