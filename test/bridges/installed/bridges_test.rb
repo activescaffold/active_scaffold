@@ -455,6 +455,93 @@ class InstalledBridgesTest < ActionView::TestCase
     assert_equal '<record-select autocomplete>', html
   end
 
+  def test_record_select_bridge_renders_singular_associations_with_add_new
+    assert_installed_bridge(:record_select)
+    column = ActiveScaffold::Config::Core.new(:task).columns[:project]
+    project = Project.new(name: 'Existing')
+    task = Task.new(project: project)
+    options = {name: 'record[project]', id: 'record_project', class: 'project-input', object: task}
+    ui_options = {controller: 'available_projects', add_new: {mode: :popup}}
+    stubs(:active_scaffold_controller_for).with(Project).returns(stub(controller_path: 'projects'))
+    expects(:record_select_field)
+      .with(
+        'record[project]', project,
+        {
+          name: 'record[project]', id: 'record_project', class: 'project-input text-input', autocomplete: 'off',
+          controller: 'available_projects'
+        }
+      )
+      .returns('<input class="record-select">'.html_safe)
+    expects(:active_scaffold_add_new)
+      .with(
+        column, task,
+        {
+          name: 'record[project]', id: 'record_project', class: 'project-input text-input', autocomplete: 'off'
+        },
+        ui_options: ui_options
+      )
+      .returns(content_tag(:a, 'Create project', href: '/projects/new'))
+
+    html = active_scaffold_input_record_select(column, options, ui_options: ui_options)
+    fragment = Nokogiri::HTML.fragment(html)
+
+    assert fragment.at_css('div.select-field input.record-select')
+    assert_equal '/projects/new', fragment.at_css('a')['href']
+  end
+
+  def test_record_select_bridge_builds_single_and_multiple_fields
+    project = Project.new
+    options = {controller: 'projects', required: true}
+    stubs(:record_select_field).with('record[project]', project, options).returns(:single)
+    stubs(:record_multi_select_field)
+      .with('record[tasks]', [], {controller: 'tasks'})
+      .returns(:multiple)
+
+    assert_equal :single, record_select_field_for('record[project]', project, Project, false, options)
+    assert_equal :multiple, record_select_field_for('record[tasks]', nil, Task, true, options.merge(controller: 'tasks'))
+  end
+
+  def test_record_select_bridge_handles_unavailable_association_classes
+    record = Project.new
+    association = mock
+    association.stubs(:klass).with(record).returns(nil)
+    column = stub(association: association, options: {})
+
+    html = active_scaffold_record_select(
+      record, column, {name: 'record[attachable]', class: 'attachable-input'}, nil, false
+    )
+
+    assert_equal '<span class="attachable-input"></span>', html
+  end
+
+  def test_record_select_bridge_restores_single_and_blank_search_values
+    column = ActiveScaffold::Config::Core.new(:task).columns[:project]
+    project = Project.create!(name: 'Found')
+
+    assert_nil field_search_record_select_value(column, '')
+    assert_equal project, field_search_record_select_value(column, project.id.to_s)
+
+    error = assert_raises ActiveRecord::RecordNotFound do
+      field_search_record_select_value(column, (project.id + 100_000).to_s)
+    end
+    assert_includes error.message, 'Attempted to restore search values to search fields :project'
+    assert_includes error.message, ' in '
+  end
+
+  def test_record_select_bridge_renders_restored_search_values
+    column = ActiveScaffold::Config::Core.new(:task).columns[:project]
+    project = Project.create!(name: 'Search result')
+    task = Task.new
+    options = {name: 'search[project]', object: task, value: project.id.to_s}
+    ui_options = {multiple: false, controller: 'projects'}
+    expects(:active_scaffold_record_select)
+      .with(task, column, options.except(:value), project, false, ui_options: ui_options)
+      .returns('<record-select search>')
+
+    assert_equal '<record-select search>',
+                 active_scaffold_search_record_select(column, options, ui_options: ui_options)
+  end
+
   def test_record_select_bridge_configures_column_ui_and_conditions
     association_column = ActiveScaffold::Config::Core.new(:project).columns[:tasks]
     association_column.form_ui = :record_select
