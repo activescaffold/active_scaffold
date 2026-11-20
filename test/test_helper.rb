@@ -15,6 +15,7 @@ Mongoid.configure do |config|
   }
 end
 require 'mock_app/config/environment'
+require_relative 'view_coverage' if ENV['COVERAGE'] == 'true'
 require 'rails/test_help'
 require 'minitest/autorun'
 require 'mocha/minitest'
