@@ -11,7 +11,6 @@ ActiveScaffold by itself comes alone so you decide what to use or how to integra
 - [dragonfly](https://github.com/markevans/dragonfly) Images & files support
 - [paperclip](https://github.com/thoughtbot/paperclip) Images & files support
 - [carrierwave](https://github.com/jnicklas/carrierwave) Images & files support
-- [file_column](https://github.com/tekin/file_column) Images & files support
 - [active scaffold batch](https://github.com/activescaffold/active_scaffold_batch) Mass data handling
 - [active scaffold duplicate](https://github.com/activescaffold/active_scaffold_duplicate) Clone record gem for Activescaffold
 - [paper_trail](/doc/paper_trail/) Track versions and changes

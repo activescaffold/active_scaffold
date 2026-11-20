@@ -458,12 +458,6 @@ conf.columns[:avatar].form_ui = :dragonfly, {thumb: '30x30>'} # use to display a
 
 The UI looks similar to the one for `:active_storage_has_one`.
 
-### :file_column
-
-This requires the [file_column](https://github.com/tekin/file_column) gem, when the gem is installed, it's used for columns using file_column by default. It renders an input with type file, and when the association has value, it show the file as the column in the list, and a link to remove the file.
-
-The UI looks similar to the one for `:active_storage_has_one`.
-
 ### :paperclip
 
 This requires the [paperclip](https://github.com/thoughtbot/paperclip) gem, when the gem is installed, it's used for paperclip columns by default. It renders an input with type file, and when the association has value, it show the file as the column in the list, and a link to remove the file, which will show an input file so user can upload another file. If the paperclip column has a style, it can be used to display an image instead of the filename, it defaults to use :thumbnail style, but can be changed with `ActiveScaffold::Bridges::Paperclip::PaperclipBridgeHelpers.thumbnail_style` in an initializer.

@@ -150,7 +150,7 @@ the UI-specific options through `ui_options:`. A `<column>_column` method still
 takes precedence when one column needs different handling.
 
 The default presenter already returns structured attachment metadata for
-Active Storage, Paperclip, CarrierWave, Dragonfly, and file-column fields.
+Active Storage, Paperclip, CarrierWave, and Dragonfly fields.
 Depending on the backend, the result can contain `filename`, `content_type`,
 `byte_size`, and `updated_at`; missing attachments are returned as `null`.
 

@@ -180,14 +180,6 @@ Added by [carrierwave](https://github.com/carrierwaveuploader/carrierwave) gem, 
 
 It requires [country_select](https://github.com/countries/country_select) gem. The column saves the country code, which is used to find the country in `ISO3166::Country` and display the translation from current locale, or `country.name`.
 
-### :download_link
-
-This requires the [file_column](https://github.com/tekin/file_column) gem. It renders a link with `Download` text to download the file.
-
-### :download_link_with_filename
-
-This requires the [file_column](https://github.com/tekin/file_column) gem, when the gem is installed, it's used for columns using file_column by default if they don't have `thumb` image version. It renders a link with the filename to download the file.
-
 ### :dragonfly
 
 It requires the [dragonfly](https://github.com/markevans/dragonfly) gem. When the gem is installed, it's used for dragonfly accessors by default. If it has an attachment, and it's an image, it displays the image by calling `thumb` method with the thumbnail style, set in `:thumb` UI option (or Column#options hash), or default thumbnail style if not set. The default is `'x30>'`, but can be changed with `ActiveScaffold::Bridges::Dragonfly::DragonflyBridgeHelpers.thumbnail_style` in an initializer. If the file is not an image, it will display the filename. The image or filename will be a link to download the file, it will use `remote_url` method to get the url, or `url` method if `:private_store` is set in UI options (or Column#options hash).
@@ -201,7 +193,3 @@ conf.columns[:avatar].form_ui = :dragonfly, {thumb: '30x30>'} # use to display a
 ### :paperclip
 
 This requires the [paperclip](https://github.com/thoughtbot/paperclip) gem, when the gem is installed, it's used for paperclip columns by default. If it has an attachment, it displays the image using default thumbnail style, if the paperclip column has a style with the same name. The default is `:thumbnail` style, but can be changed with `ActiveScaffold::Bridges::Paperclip::PaperclipBridgeHelpers.thumbnail_style` in an initializer. If the thumbnail style is not defined, it will display the filename. The image or filename will be a link to download the file.
-
-### :thumbnail
-
-This requires the [file_column](https://github.com/tekin/file_column) gem, when the gem is installed, it's used for columns using file_column by default if they don't have `thumb` image version. It renders a link with the filename to download the file.

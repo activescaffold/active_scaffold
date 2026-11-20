@@ -41,7 +41,7 @@ Perfect. We want you to go beyond the built-in behavior, too. ActiveScaffold giv
 
 ### Field Overrides
 
-You can override how stuff gets displayed in the List. Maybe you want to display dates in a different format. Maybe you want to take that file column and display a thumbnail of the actual image, instead of the boring filename. Maybe you want to add some color to the display, highlighting a number in red if it’s below zero. Or maybe you want to add inline editing so people don’t always have to open up a form to change stuff around.
+You can override how stuff gets displayed in the List. Maybe you want to display dates in a different format. Maybe you want to take that attachment column and display a thumbnail of the actual image, instead of the boring filename. Maybe you want to add some color to the display, highlighting a number in red if it’s below zero. Or maybe you want to add inline editing so people don’t always have to open up a form to change stuff around.
 
 Field overrides are the way. You can define a method with a conventional name and place it in your helper file, and ActiveScaffold will pick it up and use it to replace its default field rendering behavior.
 
