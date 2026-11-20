@@ -1,0 +1,54 @@
+<%
+  column = active_scaffold_config.columns[column] unless column.is_a? ActiveScaffold::DataStructures::Column
+  # A hash may include __root__ for a parent column which does not exist in every form using the subform.
+  return if column.nil?
+  return if local_assigns[:traverse].nil? && @main_columns.exclude?(column.name)
+  rendered = (@rendered ||= {})[record] ||= Set.new
+  return if rendered.include? column.name
+  rendered << column.name
+  if @form_action == :field_search
+    form_ui = column.search_ui
+  else
+    renders_as = column_renders_as(column)
+    form_ui = column.form_ui
+  end
+
+  column_css_class = column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
+  options = {field_class: "#{column.name}-input", hidden: form_ui == :hidden}
+  options[:subform_class] = "#{column.name}-sub-form" if column.association
+  options[:attrs] =
+    if renders_as == :subform
+      active_scaffold_subform_attributes(column, column_css_class)
+    else
+      form_element_class = [
+        'form-element', (:required if column.required?(@form_action)),
+        form_ui_class(column.form_ui), column_css_class
+      ].compact.join(' ')
+      as_element_attributes(:form_element, class: form_element_class, id: '')
+    end
+  options[:traverse] = traverse if local_assigns[:traverse]
+  html =
+    if scope
+      readonly = record.readonly? || !record.authorized_for?(crud_type: :update)
+      # Do not use new_record? here; copied records are always new records in the render_field action.
+      crud_type = record.id.nil? ? :create : (readonly ? :read : :update)
+      # subform.columns.to_a.include? so it doesn't check inside subgroups
+      add_class = active_scaffold_config.subform.columns.to_a.exclude?(column.name)
+      active_scaffold_render_subform_column(
+        column, scope, crud_type, readonly, add_class: add_class, record: record
+      )
+    elsif @form_action == :field_search
+      search_attribute(column, record)
+    else
+      render_column(column, record, renders_as, scope)
+    end
+-%>
+
+ActiveScaffold.render_form_field(
+  '<%= source_id %>',
+  '<%= escape_javascript(html) %>',
+  <%= javascript_literal(options) %>
+);
+<% updates = column.update_columns %>
+<%# Moved to keep Ruby coverage attached to the render expression. %>
+<%= render partial: 'render_field', collection: updates, as: :column, locals: local_assigns if updates.present? %>
