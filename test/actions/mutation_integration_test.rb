@@ -33,6 +33,17 @@ class ActionsMutationIntegrationTest < ActionDispatch::IntegrationTest
     assert_select 'input[name=?][value=?]', 'record[name]', 'After category'
   end
 
+  test 'update uses the generic form label when the record label is nil' do
+    person = Person.create!(first_name: 'Before', last_name: 'Example')
+    Person.any_instance.stubs(:to_label).returns(nil)
+
+    patch "/standalone_people/#{person.id}", params: {dont_close: true, record: {first_name: 'After'}}
+
+    assert_response :success
+    assert_equal 'After', person.reload.first_name
+    assert_select 'form.as_form.update h4', text: 'Person'
+  end
+
   test 'invalid update renders errors without changing the record' do
     category = Category.create!(name: 'Valid category')
 
@@ -121,6 +132,18 @@ class ActionsMutationIntegrationTest < ActionDispatch::IntegrationTest
     assert_select '.update-view > .active-scaffold-header .actions' do
       assert_select 'a.index', text: 'Back to list'
     end
+  end
+
+  test 'xhr edit can render a multipart form with its locking column' do
+    category = Category.create!(name: 'Example')
+
+    get "/categories/#{category.id}/edit.js", params: {multipart_form: true}, xhr: true
+
+    assert_response :success
+    assert_includes response.body, 'as_remote_upload'
+    assert_includes response.body, 'multipart/form-data'
+    assert_includes response.body, 'iframe=true'
+    assert_includes response.body, 'record[lock_version]'
   end
 
   test 'xhr update renders validation errors from a subform record' do

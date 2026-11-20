@@ -29,6 +29,11 @@ class PeopleController < ApplicationController
   end
 
   def archive
+    if request.get?
+      @record = find_if_allowed(params[:id], :read)
+      return render :archive
+    end
+
     process_action_link_action do |record|
       next unless params[:force_action_failure]
 

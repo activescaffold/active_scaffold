@@ -46,6 +46,19 @@ class ActionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'Alice'
   end
 
+  test 'custom action can render a base form with its own body partial' do
+    person = Person.create!(first_name: 'Alice', last_name: 'Example')
+
+    get "/people/#{person.id}/archive"
+
+    assert_response :success
+    assert_select 'form.as_form.archive[action=?][method=?]', "/people/#{person.id}/archive", 'post' do
+      assert_select 'h4', text: 'Archive person'
+      assert_select '.archive-fields', text: 'Archive Alice?'
+      assert_select 'a.as_cancel'
+    end
+  end
+
   test 'successful xhr action link closes with the updated row' do
     person = Person.create!(first_name: 'Alice', last_name: 'Example')
 

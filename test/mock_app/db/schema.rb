@@ -3,6 +3,7 @@ ActiveRecord::Schema.define do
   create_table 'categories' do |t|
     t.string 'type'
     t.string 'name'
+    t.integer 'lock_version', :null => false, :default => 0
     t.datetime 'created_at'
     t.datetime 'updated_at'
   end

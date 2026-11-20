@@ -45,6 +45,19 @@ class CreateIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'if (action_link) action_link.close();'
   end
 
+  test 'xhr create opens the configured action after creating the record' do
+    assert_difference('SpecialPerson.count') do
+      post '/special_people.js', params: {
+        record: {first_name: 'Alice', last_name: 'Example'}
+      }, xhr: true
+    end
+
+    person = SpecialPerson.order(:id).last
+    assert_response :success
+    assert_includes response.body, "special_people-edit-#{person.id}-link"
+    assert_includes response.body, 'if (link) link.open()'
+  end
+
   test 'xhr create replaces the form when validation fails' do
     assert_no_difference('Category.count') do
       post '/categories.js', params: {record: {name: 'x'}}, xhr: true
