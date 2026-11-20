@@ -371,9 +371,9 @@ class FinderTest < ActiveSupport::TestCase
                  ClassWithFinder.condition_for_column(column, {opt: 'not_null'}, :full, {})
   end
 
-  def test_conditions_for_select_and_record_select_columns
+  def test_conditions_for_select_columns
     column = ActiveScaffold::DataStructures::Column.new('first_name', Person)
-    %i[select select_multiple draggable multi_select country usa_state chosen multi_chosen choices multi_choices].each do |search_ui|
+    %i[select select_multiple draggable multi_select usa_state choices multi_choices].each do |search_ui|
       column.search_ui = search_ui
 
       assert_equal ['"people"."first_name" in (?)', %w[Alice Bob]],
@@ -382,37 +382,6 @@ class FinderTest < ActiveSupport::TestCase
                    ClassWithFinder.condition_for_column(column, {opt: '>=', from: 'M'}, :full, {}), search_ui
       assert_nil ClassWithFinder.condition_for_column(column, [], :full, {}), search_ui
     end
-    assert_equal ['%<search_sql>s IN (?)', %w[1 2]],
-                 ClassWithFinder.condition_for_record_select_type(column, ['1', '', '2'])
-    assert_equal ['%<search_sql>s = ?', '1'],
-                 ClassWithFinder.condition_for_record_select_type(column, '1')
-  end
-
-  def test_logical_comparators_filter_select_columns_with_real_parser
-    ActiveScaffold::Bridges.run_all
-    column = ActiveScaffold::DataStructures::Column.new('first_name', Person)
-    column.search_ui = :select
-    column.logical_search = %i[first_name last_name]
-    ada_lovelace = Person.create!(first_name: 'Ada', last_name: 'Lovelace')
-    ada_byron = Person.create!(first_name: 'Ada', last_name: 'Byron')
-    grace_hopper = Person.create!(first_name: 'Grace', last_name: 'Hopper')
-
-    all_tokens = ClassWithFinder.condition_for_column(
-      column, {opt: 'all_tokens', from: 'Ada Lovelace'}, :full, {}
-    )
-    any_token = ClassWithFinder.condition_for_column(
-      column, {opt: 'any_token', from: 'Byron Grace'}, :full, {}
-    )
-    logical = ClassWithFinder.condition_for_column(
-      column, {opt: 'logical', from: 'Ada AND NOT Byron'}, :full, {}
-    )
-
-    assert_equal %w[all_tokens any_token logical], ActiveScaffold::Finder.logical_comparators
-    assert_equal [ada_lovelace.id], all_tokens.pluck(:id)
-    assert_equal [ada_byron.id, grace_hopper.id].sort, any_token.pluck(:id).sort
-    assert_equal [ada_lovelace.id], logical.pluck(:id)
-  ensure
-    Person.delete_all
   end
 
   def test_condition_for_column_uses_custom_column_method_with_session

@@ -18,8 +18,6 @@ end
 group :test do
   # Browser support for the reusable plugin JavaScript test application.
   gem 'capybara'
-  # Exercise the optional logical-search bridge.
-  gem 'logical_query_parser', '~> 0.5'
   # Mocking and stubbing library with JMock/SchMock syntax, which allows mocking and stubbing of methods on real (non-mock) classes
   gem 'mocha'
   # Ruby on Rails is a full-stack web framework optimized for programmer happiness and sustainable productivity.

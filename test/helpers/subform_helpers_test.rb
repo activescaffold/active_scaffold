@@ -78,29 +78,4 @@ class SubformHelpersTest < ActionView::TestCase
     assert_nil polymorphic_column.association.reverse
     assert_not in_subform?(polymorphic_column, parent_record, parent_column)
   end
-
-  def test_add_existing_uses_record_select_controller
-    record_select_config = stub(model: Person)
-    controller.singleton_class.define_method(:record_select_config) { record_select_config }
-    controller.singleton_class.send(:private, :record_select_config)
-    stubs(:record_select_config).returns(record_select_config)
-    stubs(:active_scaffold_controller_for).with(Person).returns(stub(controller_path: 'people'))
-    captured = nil
-    define_singleton_method(:record_select_field) do |name, value, options|
-      captured = [name, value, options]
-      '<input class="record-select">'.html_safe
-    end
-
-    html = active_scaffold_add_existing_input(name: 'associated_id', object: Person.new)
-
-    assert_equal '<input class="record-select">', html
-    assert_equal 'associated_id', captured[0]
-    assert_nil captured[1]
-    assert_equal 'people', captured[2][:controller]
-    assert_equal 'off', captured[2][:autocomplete]
-    assert_equal 'text-input', captured[2][:class]
-    assert_equal 'Person', active_scaffold_add_existing_label
-  ensure
-    controller.singleton_class.send(:remove_method, :record_select_config)
-  end
 end

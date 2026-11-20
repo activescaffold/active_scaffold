@@ -34,68 +34,18 @@ class JavascriptLoadTest < ActiveSupport::TestCase
     assert_operator registry, :<, core
     assert_equal 'active_scaffold/callback_registry', ActiveScaffold::Assets.active_scaffold_javascripts(:core).first
     assert_includes registry_source, 'ActiveScaffold.datepickerCallbacks'
-    assert_includes registry_source, 'ActiveScaffold.tinymceCallbacks'
     assert_not_includes registry_source, 'eval('
     assert_not_includes registry_source, 'DEPRECATION WARNING'
   end
 
-  def test_bridges_do_not_evaluate_inline_settings_directly
+  def test_date_picker_does_not_evaluate_inline_settings_directly
     datepicker = File.read(File.join(ASSETS_PATH, 'date_picker_bridge.js'))
-    tinymce = File.read(File.join(ASSETS_PATH, 'tiny_mce_bridge.js'))
     timepicker = File.read(File.expand_path('../../vendor/assets/javascripts/jquery-ui-timepicker-addon.js', __dir__))
 
     assert_not_includes datepicker, 'eval('
-    assert_not_includes tinymce, 'eval('
     assert_not_includes timepicker, 'eval('
     assert_includes datepicker, 'ActiveScaffold.resolveDatepickerSetting'
-    assert_includes tinymce, "ActiveScaffold.resolveCallback('tinymceCallbacks'"
     assert_includes timepicker, 'ActiveScaffold.resolveDatepickerSetting'
-    assert_not_includes tinymce, 'majorVersion'
-    assert_not_includes tinymce, 'userInit'
-  end
-
-  def test_record_select_bridge_registers_add_existing_callback
-    bridge = File.read(File.join(ASSETS_PATH, 'record_select_bridge.js'))
-    bridge_class = ActiveScaffold::Bridges::RecordSelect
-    singleton_class = bridge_class.singleton_class
-    callback_registry = singleton_class.instance_method(:callback_registry?)
-
-    singleton_class.define_method(:callback_registry?) { true }
-    assert_equal ['record_select', 'active_scaffold/record_select_bridge'], bridge_class.javascripts
-    singleton_class.define_method(:callback_registry?) { false }
-    assert_equal ['record_select'], bridge_class.javascripts
-    assert_includes bridge, "RecordSelect.registerCallback('active_scaffold.add_existing'"
-    assert_includes bridge, "this.obj.attr('data-edit-associated-url')"
-    assert_includes bridge, "this.obj.attr('data-active-scaffold-id')"
-    assert_not_includes bridge, 'eval('
-  ensure
-    singleton_class&.define_method(:callback_registry?, callback_registry) if callback_registry
-  end
-
-  def test_add_existing_uses_registry_only_when_record_select_supports_it
-    bridge_class = ActiveScaffold::Bridges::RecordSelect
-    singleton_class = bridge_class.singleton_class
-    callback_registry = singleton_class.instance_method(:callback_registry?)
-    helper = Object.new.extend(ActiveScaffold::Helpers::AssociationHelpers)
-    helper.define_singleton_method(:url_for) { |_options| '/projects/--ID--' }
-    helper.define_singleton_method(:active_scaffold_id) { 'as_projects' }
-
-    singleton_class.define_method(:callback_registry?) { true }
-    assert_equal(
-      {
-        onselect: 'active_scaffold.add_existing',
-        html: {data: {edit_associated_url: '/projects/--ID--', active_scaffold_id: 'as_projects'}}
-      },
-      helper.record_select_params_for_add_existing(nil, {}, nil)
-    )
-
-    singleton_class.define_method(:callback_registry?) { false }
-    assert_equal(
-      {onselect: 'ActiveScaffold.record_select_onselect("/projects/--ID--", "as_projects", id);'},
-      helper.record_select_params_for_add_existing(nil, {}, nil)
-    )
-  ensure
-    singleton_class&.define_method(:callback_registry?, callback_registry) if callback_registry
   end
 
   def test_plugin_ready_callbacks_run_before_initial_setup

@@ -265,17 +265,6 @@ class SearchColumnHelpersTest < ActionView::TestCase
     assert_equal '1', input['step']
   end
 
-  def test_string_range_includes_logical_query_comparators
-    ActiveScaffold::Bridges.run_all
-    column = ActiveScaffold::DataStructures::Column.new(:first_name, Person)
-
-    comparators = active_scaffold_search_range_comparator_options(column).to_h.invert
-
-    assert_equal 'All keywords', comparators['all_tokens']
-    assert_equal 'Any keyword', comparators['any_token']
-    assert_equal 'Logical', comparators['logical']
-  end
-
   def test_datetime_trend_units_include_time_and_date_units
     column = ActiveScaffold::DataStructures::Column.new(:created_at, Person)
 

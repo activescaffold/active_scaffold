@@ -76,6 +76,7 @@ Metrics/PerceivedComplexity:
 Naming/FileName:
   Exclude:
     - Gemfile
+    - 'gemfiles/Gemfile.*'
     - Rakefile
     - test/mock_app/Rakefile
     - vendor/assets/stylesheets/jquery-ui-theme.css.erb

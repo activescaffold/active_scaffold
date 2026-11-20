@@ -93,15 +93,11 @@ class ColumnTest < ActiveSupport::TestCase
     assert_equal :calendar, @column.list_ui
     assert_equal :calendar, @column.search_ui
 
-    @association_col.form_ui = :record_select
-    assert_equal :record_select, @association_col.form_ui
-    assert_equal :record_select, @association_col.search_ui
-
-    @column.search_ui = :record_select
+    @column.search_ui = :text
     @column.list_ui = :checkbox
     assert_equal :calendar, @column.form_ui
     assert_equal :checkbox, @column.list_ui
-    assert_equal :record_select, @column.search_ui
+    assert_equal :text, @column.search_ui
   end
 
   def test_searchable
@@ -109,10 +105,6 @@ class ColumnTest < ActiveSupport::TestCase
     @column.logical_search = nil
     assert_not @column.searchable?
     @column.search_sql = true
-    assert @column.searchable?
-
-    @column.search_sql = nil
-    @column.logical_search = [:a]
     assert @column.searchable?
   end
 

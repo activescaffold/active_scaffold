@@ -15,7 +15,7 @@ class ActiveScaffold::Bridges::Chosen
     module FormColumnHelpers
       # requires RecordSelect plugin to be installed and configured.
       def active_scaffold_input_chosen(column, html_options, ui_options: column.options)
-        html_options[:class] << ' chosen'
+        html_options[:class] = "#{html_options[:class]} chosen".strip
         if column.association&.collection?
           active_scaffold_input_plural_chosen(column, html_options, ui_options)
         else
@@ -54,12 +54,12 @@ class ActiveScaffold::Bridges::Chosen
 
     module SearchColumnHelpers
       def active_scaffold_search_chosen(column, options, ui_options: column.options)
-        options[:class] << ' chosen'
+        options[:class] = "#{options[:class]} chosen".strip
         active_scaffold_search_select(column, options, ui_options: ui_options)
       end
 
       def active_scaffold_search_multi_chosen(column, options, ui_options: column.options)
-        options[:class] << ' chosen'
+        options[:class] = "#{options[:class]} chosen".strip
         options[:multiple] = true
         options[:'data-placeholder'] = ui_options[:placeholder] || as_(:_select_)
         active_scaffold_search_select(column, options, ui_options: ui_options)

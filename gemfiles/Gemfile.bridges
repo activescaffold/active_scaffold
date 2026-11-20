@@ -1,0 +1,19 @@
+# frozen_string_literal: true
+
+eval_gemfile File.expand_path('Gemfile.rails-8.1.x', __dir__)
+
+group :test do
+  gem 'ancestry', require: false
+  gem 'bitfields', require: false
+  gem 'cancancan', require: false
+  gem 'carrierwave', require: false
+  gem 'chosen-rails', require: false
+  gem 'country_select', require: false
+  gem 'dragonfly', require: false
+  gem 'jquery-ui-rails', require: false
+  gem 'kt-paperclip', require: false
+  gem 'logical_query_parser', '~> 0.5', require: false
+  gem 'paper_trail', require: false
+  gem 'recordselect', require: false
+  gem 'tinymce-rails', require: false
+end

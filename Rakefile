@@ -12,6 +12,9 @@ end
 Bundler::GemHelper.install_tasks
 require 'rake/testtask'
 require 'rdoc/task'
+
+INSTALLED_BRIDGE_TESTS = 'test/bridges/installed/**/*_test.rb'
+
 begin
   load 'rails/perftest/railties/testing.tasks'
 rescue LoadError => e # it's failing in Gitlab CI
@@ -21,12 +24,29 @@ end
 desc 'Test ActiveScaffold.'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib' << 'test'
-  t.test_files = FileList['test/**/*_test.rb'].exclude('test/performance/**/*')
+  t.test_files =
+    FileList['test/**/*_test.rb']
+      .exclude('test/performance/**/*')
+      .exclude(INSTALLED_BRIDGE_TESTS)
   t.verbose = true
   t.warning = false
 end
 
 Rake::Task[:test].enhance(['mock_app:assets'])
+
+namespace :test do
+  desc 'Test bridges against their installed gems.'
+  task :installed_bridges do # rubocop:disable Rails/RakeEnvironment -- each test boots an isolated environment
+    expected_gemfile = File.expand_path('gemfiles/Gemfile.bridges', __dir__)
+    current_gemfile = File.expand_path(Bundler.default_gemfile.to_s)
+    abort "Run with BUNDLE_GEMFILE=#{expected_gemfile}" unless current_gemfile == expected_gemfile
+
+    installed_bridge_tests = FileList[INSTALLED_BRIDGE_TESTS]
+    abort "No installed bridge tests found in #{INSTALLED_BRIDGE_TESTS}" if installed_bridge_tests.empty?
+
+    installed_bridge_tests.each { |test_file| ruby '-Ilib:test', test_file }
+  end # rubocop:enable Rails/RakeEnvironment
+end
 
 desc 'Generate documentation for ActiveScaffold.'
 Rake::RDocTask.new(:rdoc) do |rdoc|

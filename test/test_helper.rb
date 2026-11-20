@@ -2,6 +2,8 @@
 
 if ENV['COVERAGE'] == 'true'
   require 'simplecov'
+  SimpleCov.command_name ENV.fetch('COVERAGE_COMMAND_NAME', 'test')
+  SimpleCov.merge_timeout 3600
   SimpleCov.start 'rails'
 end
 

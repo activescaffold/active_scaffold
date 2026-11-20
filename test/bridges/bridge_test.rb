@@ -13,15 +13,6 @@ class BridgeTest < ActiveSupport::TestCase
     assert_nothing_raised { ActiveScaffold::Bridges.run_all }
   end
 
-  def test__paperclip_bridge
-    ConstMocker.mock('Paperclip') do |cm|
-      cm.remove
-      assert_not(bridge_will_be_installed?('Paperclip'))
-      cm.declare
-      assert(bridge_will_be_installed?('Paperclip'))
-    end
-  end
-
   def test__date_picker_bridge
     ConstMocker.mock('Jquery') do |jquery|
       jquery.declare
@@ -37,13 +28,12 @@ class BridgeTest < ActiveSupport::TestCase
     end
   end
 
-  def test__paper_trail_bridge
-    ConstMocker.mock('PaperTrail') do |cm|
-      cm.remove
-      assert_not(bridge_will_be_installed?('PaperTrail'))
-      cm.declare
-      assert(bridge_will_be_installed?('PaperTrail'))
-    end
+  def test__date_picker_bridge_can_be_forced_for_cdn_assets
+    ActiveScaffold.jquery_ui_loaded = true
+
+    assert bridge_will_be_installed?('DatePicker')
+  ensure
+    ActiveScaffold.jquery_ui_loaded = false
   end
 
   protected
