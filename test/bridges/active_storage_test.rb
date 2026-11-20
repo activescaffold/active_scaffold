@@ -41,6 +41,7 @@ class ActiveStorageTest < ActionView::TestCase
   end
 
   def test_delete_helpers_purge_only_truthy_values
+    ActiveScaffold::Config::Core.new(:active_storage_project)
     record = ActiveStorageProject.new
     document = mock
     images = mock
