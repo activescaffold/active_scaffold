@@ -185,6 +185,31 @@ def authorized_for_delete?
 end  
 {%- endhighlight %}
 
+## Signed Return Destinations {#signed-return-destinations}
+
+`return_to` controls Close and Cancel links and redirects after an action. ActiveScaffold requires a matching detached signature in `return_to_signature`; unsigned or altered destinations are rejected with HTTP 400 before the action runs. A valid signature authorizes the application-defined destination, including an external URL.
+
+ActiveScaffold signs destinations at URL generation, after overridable option-building methods return. An existing override such as this continues to work without adding a signature itself:
+
+{% highlight ruby -%}
+def action_link_url_options(link, record)
+  options = super
+  options[:return_to] = request.path if action_name == 'show' && params[:_colorbox] && link.page?
+  options
+end
+{%- endhighlight %}
+
+The final URL generator signs the returned destination. If an override removes `return_to`, it does not need to remove a signature too. Verified destinations propagate through ActiveScaffold forms and links; incoming unsigned destinations are rejected rather than signed during propagation.
+
+Application links built outside ActiveScaffold's URL generators must explicitly sign their options. `signed_return_to_options` is available in controllers and views and returns a new options hash:
+
+{% highlight ruby -%}
+options = params[:_colorbox] ? signed_return_to_options(return_to: request.path) : {}
+link_to 'View client', polymorphic_path(record.entity, options), class: 'colorbox'
+{%- endhighlight %}
+
+Call the helper after all destination changes and before calling the route helper. Use it only for destinations chosen by trusted application code; do not use it to sign an unverified `params[:return_to]`. If the URL also includes embedded options, use `signed_url_options` to sign both kinds of parameters.
+
 ## What Does NOT Happen
 
 We have tried to design these security methods in a way that lets us spin them off into a new plugin at some future date. The reason they are not a separate plugin yet is because they function passively. That is, they only function when ActiveScaffold is polite enough to care! So please be aware: you can still mess up your data with these security methods in place if you bypass ActiveScaffold (with script/console, for example).
