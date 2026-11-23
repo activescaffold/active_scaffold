@@ -42,7 +42,8 @@ module ActiveScaffold::Actions
     end
 
     def find_associated_record
-      @column.association.klass.find(params[:associated_id]).tap do |record|
+      scope = associated_record_scope(@column.association.klass, column: @column)
+      find_if_allowed(params[:associated_id], :read, scope).tap do |record|
         save_record_to_association(record, @column.association.reverse_association, @parent_record, @column.association)
       end
     end

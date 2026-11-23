@@ -441,6 +441,12 @@ module ActiveScaffold::Actions
       active_scaffold_config.model
     end
 
+    # Override to scope existing records that can be selected for an association.
+    # The column belongs to the parent scaffold, which may use a different model.
+    def associated_record_scope(klass, column: nil)
+      klass
+    end
+
     # Builds search conditions from query parameters whose names match columns.
     # For example, `contacts/list?company_id=5` matches records with company_id 5.
     # Append `!` to a column name to negate the condition, as in `company_id!=5`.
