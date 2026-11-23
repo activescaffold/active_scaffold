@@ -187,7 +187,7 @@ end
 
 ## Signed Return Destinations {#signed-return-destinations}
 
-`return_to` controls Close and Cancel links and redirects after an action. ActiveScaffold requires a matching detached signature in `return_to_signature`; unsigned or altered destinations are rejected with HTTP 400 before the action runs. A valid signature authorizes the application-defined destination, including an external URL.
+`return_to` controls Close and Cancel links and redirects after an action. ActiveScaffold requires a matching detached signature in `return_to_signature`; unsigned or altered destinations are rejected with HTTP 400 before the action runs. A valid signature authenticates the application-defined destination, including an external URL. Signing does not change Rails' external-redirect policy: applications that permit redirects to another host must opt in through their own redirect handling, such as passing `allow_other_host: true`.
 
 ActiveScaffold signs destinations at URL generation, after overridable option-building methods return. An existing override such as this continues to work without adding a signature itself:
 
