@@ -7,7 +7,7 @@ module ActiveScaffold
 
       # Builds conditions from query parameters whose names match configured columns.
       def conditions_from_params
-        return [{}] if active_scaffold_config.conditions_from_params_columns == []
+        return [{}] if active_scaffold_config.conditions_from_params_allowed_columns == []
 
         @conditions_from_params ||= begin
           conditions = [{}]
@@ -34,7 +34,7 @@ module ActiveScaffold
 
       def parameter_filter_columns
         columns = active_scaffold_config._columns_hash
-        allowed_columns = active_scaffold_config.conditions_from_params_columns
+        allowed_columns = active_scaffold_config.conditions_from_params_allowed_columns
         columns = columns.slice(*allowed_columns.map(&:to_s)) if allowed_columns
         columns.except(*active_scaffold_config.conditions_from_params_excluded_columns.map(&:to_s))
       end

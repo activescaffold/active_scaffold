@@ -14,7 +14,7 @@ class ParameterFilterTest < ActiveSupport::TestCase
   end
 
   test 'empty allowlist disables parameter filtering' do
-    @config.conditions_from_params_columns = []
+    @config.conditions_from_params_allowed_columns = []
     @controller.expects(:params).never
     @config.expects(:conditions_from_params_excluded_columns).never
 
@@ -22,7 +22,7 @@ class ParameterFilterTest < ActiveSupport::TestCase
   end
 
   test 'allowlist accepts both string and symbol names' do
-    @config.conditions_from_params_columns = [:first_name, 'adult']
+    @config.conditions_from_params_allowed_columns = [:first_name, 'adult']
 
     assert_equal [{first_name: 'Visible', adult: true}], conditions(first_name: 'Visible', adult: 'true', last_name: 'Secret')
   end
@@ -34,14 +34,14 @@ class ParameterFilterTest < ActiveSupport::TestCase
   end
 
   test 'exclusions win over explicit allowances and cover negated ranges and arrays' do
-    @config.conditions_from_params_columns = %i[first_name last_name created_at]
+    @config.conditions_from_params_allowed_columns = %i[first_name last_name created_at]
     @config.conditions_from_params_excluded_columns = [:last_name, 'created_at']
 
     assert_equal [{first_name: 'Visible'}], conditions(first_name: 'Visible', 'last_name!' => ['Secret'], created_at: '..2026-01-01')
   end
 
   test 'allowed filters retain range array and negation behavior' do
-    @config.conditions_from_params_columns = %i[first_name created_at adult]
+    @config.conditions_from_params_allowed_columns = %i[first_name created_at adult]
 
     result = conditions(first_name: %w[A B], created_at: '2026-01-01..2026-12-31', 'adult!' => 'true')
 
