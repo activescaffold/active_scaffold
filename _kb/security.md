@@ -201,7 +201,7 @@ end
 
 The final URL generator signs the returned destination. If an override removes `return_to`, it does not need to remove a signature too. Verified destinations propagate through ActiveScaffold forms and links; incoming unsigned destinations are rejected rather than signed during propagation.
 
-Application links built outside ActiveScaffold's URL generators must explicitly sign their options. `signed_return_to_options` is available in controllers and views and returns a new options hash:
+Application links built outside ActiveScaffold's URL generators must explicitly sign their options. `signed_return_to_options` is available in controllers and views and does not modify the input hash. It returns the original hash when no signature needs to be added or removed:
 
 {% highlight ruby -%}
 options = params[:_colorbox] ? signed_return_to_options(return_to: request.path) : {}
