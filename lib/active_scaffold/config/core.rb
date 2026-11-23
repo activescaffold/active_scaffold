@@ -48,8 +48,8 @@ module ActiveScaffold::Config
     @@default_formats = %i[html js json xml]
 
     # nil allows filtering on all database columns; an empty array disables it
-    cattr_accessor :conditions_from_params_columns, instance_accessor: false
-    @@conditions_from_params_columns = nil
+    cattr_accessor :conditions_from_params_allowed_columns, instance_accessor: false
+    @@conditions_from_params_allowed_columns = nil
 
     # columns excluded from parameter filtering, even when explicitly allowed
     cattr_accessor :conditions_from_params_excluded_columns, instance_accessor: false
@@ -153,7 +153,7 @@ module ActiveScaffold::Config
     # override the default response formats for a specific controller
     attr_accessor :default_formats
 
-    attr_accessor :conditions_from_params_columns, :conditions_from_params_excluded_columns
+    attr_accessor :conditions_from_params_allowed_columns, :conditions_from_params_excluded_columns
 
     # lets you specify whether add a create link for each sti child for a specific controller
     attr_accessor :sti_create_links
@@ -215,7 +215,7 @@ module ActiveScaffold::Config
       @conditional_get_support = self.class.conditional_get_support
       @store_user_settings = self.class.store_user_settings
       @default_formats = self.class.default_formats.dup
-      @conditions_from_params_columns = self.class.conditions_from_params_columns&.dup
+      @conditions_from_params_allowed_columns = self.class.conditions_from_params_allowed_columns&.dup
       @conditions_from_params_excluded_columns = self.class.conditions_from_params_excluded_columns.dup
       @sti_create_links = self.class.sti_create_links
 
