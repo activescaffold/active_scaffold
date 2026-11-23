@@ -179,6 +179,45 @@ class UserController < ApplicationController
 end
 {%- endhighlight %}
 
+## conditions_from_params_columns <small><em>global local</em></small> {#conditions_from_params_columns}
+
+Restricts the database columns accepted by `conditions_from_params`, which builds filters from top-level URL parameters such as `?company_id=5`. The default is `nil`, preserving filtering on all database columns. An empty array disables this filtering. An array of string or symbol column names permits only those columns.
+
+{% highlight ruby -%}
+# Allow only these URL filters in this controller.
+active_scaffold do |config|
+  config.conditions_from_params_columns = %i[name company_id]
+end
+
+# Disable top-level parameter filtering throughout the application.
+ActiveScaffold.defaults do |config|
+  config.conditions_from_params_columns = []
+end
+{%- endhighlight %}
+
+List the underlying column names, without the `!` suffix used for negated filters. The same rules cover equality, arrays, ranges, and negation. This setting does not configure the separate search and field-search forms.
+
+Columns in [`conditions_from_params_excluded_columns`](#conditions_from_params_excluded_columns) are rejected even when explicitly allowed here.
+
+## conditions_from_params_excluded_columns <small><em>global local</em></small> {#conditions_from_params_excluded_columns}
+
+Excludes database columns from top-level URL filtering. The default is an empty array. Entries may be strings or symbols, and exclusions take precedence over `conditions_from_params_columns`.
+
+Use this setting to prevent filtering on hidden sensitive values without listing every permitted column:
+
+{% highlight ruby -%}
+ActiveScaffold.defaults do |config|
+  config.conditions_from_params_excluded_columns = %i[salary reset_password_token]
+end
+
+# Override the exclusions for one controller.
+active_scaffold do |config|
+  config.conditions_from_params_excluded_columns = %i[salary internal_score]
+end
+{%- endhighlight %}
+
+The global lists are copied into each controller configuration. A controller assignment replaces its inherited list; include any global exclusions that should still apply.
+
 ## custom_modules <small><em>global local v4.2+</em></small>
 
 Custom modules are included in the controllers using ActiveScaffold, after all other ActiveScaffold modules are included (`Finder`, `AttributeParams`, action modules, ...). It can be used to override ActiveScaffold methods in every controller, using the global config in `defaults`, as concerns do but without requiring to include the module in every controller manually. It works to override methods added to controllers with ActiveScaffold modules, after the active_scaffold block runs, because overriding them in ApplicationController doesn't work.
