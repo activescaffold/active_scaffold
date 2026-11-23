@@ -146,6 +146,11 @@ module ActiveScaffold::Actions
     def add_tab
       process_render_field_params
       @column = @main_columns.find_by_name(params[:column])
+      unless @column.is_a?(ActiveScaffold::DataStructures::ActionColumns) && @column.tabbed_by.present? &&
+             @column.tabbed_by.to_s == params[:tabbed_by]
+        raise ::ActionController::BadRequest, 'Invalid tab group'
+      end
+
       @record = updated_record_with_form(@main_columns, {}, @scope)
     end
 

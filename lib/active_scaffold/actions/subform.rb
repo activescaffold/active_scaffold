@@ -21,6 +21,7 @@ module ActiveScaffold::Actions
     end
 
     def do_edit_associated
+      verify_tab_selection_parameters
       @scope = params[:scope]
       @parent_record = params[:id].nil? ? new_parent_record : find_if_allowed(params[:id], :update)
       @column = active_scaffold_config.columns[params[:child_association]]
@@ -32,6 +33,18 @@ module ActiveScaffold::Actions
                     assign_tabbed_by(blank_record, @column, params.delete(:tabbed_by), @tab_id, params.delete(:value_type))
                   end
                 end
+    end
+
+    def verify_tab_selection_parameters
+      return unless params.key?(:tabbed_by) || params.key?(:value_type) || params.key?(:tab_signature)
+
+      payload = ActiveScaffold::ParameterSigning.tab_selection_payload(params, controller: controller_path)
+      unless params[:tabbed_by].is_a?(String) && params[:value].is_a?(String) &&
+             ActiveScaffold::ParameterSigning.valid_signature?(payload, params[:tab_signature], purpose: :tab_selection)
+        raise ::ActionController::BadRequest, 'Invalid tab selection signature'
+      end
+
+      params.delete(:tab_signature)
     end
 
     def assign_tabbed_by(record, parent_column, tabbed_by, value, value_type)

@@ -13,7 +13,8 @@ module ActiveScaffold
                         :main_form_controller, :build_associated,
                         :generate_temporary_id, :generated_id,
                         :active_scaffold_config_for, :tabbed_by_association,
-                        :signed_embedded_options, :signed_return_to_options, :signed_url_options
+                        :signed_embedded_options, :signed_return_to_options, :signed_url_options,
+                        :signed_tab_selection_options
         end
       end
 
@@ -40,6 +41,17 @@ module ActiveScaffold
         return options unless options.is_a?(Hash)
 
         signed_return_to_options(signed_embedded_options(options))
+      end
+
+      # Only sign tab selections constructed by application code, not parameters
+      # inherited from the current request through params_for.
+      def signed_tab_selection_options(options)
+        options = options.symbolize_keys if options.key?('tabbed_by') || options.key?('controller')
+        return options unless options[:tabbed_by]
+
+        target = options[:controller] ? controller_requested(options[:controller]) : controller_path
+        payload = ActiveScaffold::ParameterSigning.tab_selection_payload(options, controller: target)
+        options.merge(tab_signature: ActiveScaffold::ParameterSigning.signature(payload, purpose: :tab_selection))
       end
 
       # Call after overridable URL-option builders, immediately before generating a URL.
