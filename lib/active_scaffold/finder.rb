@@ -443,15 +443,18 @@ module ActiveScaffold
       end
 
       def datetime_from_to_for_trend(column, value)
+        unit = value['unit'].to_s.downcase.pluralize
+        return [nil, nil] unless DATE_UNITS.include?(unit.upcase) || TIME_UNITS.include?(unit.upcase)
+
         case value['opt']
         when 'PAST'
           trend_number = [value['number'].to_i, 1].max
           now = datetime_now
           if datetime_column_date?(column)
-            from = now.beginning_of_day.ago(trend_number.send(value['unit'].downcase.singularize.to_sym))
+            from = now.beginning_of_day.ago(trend_number.public_send(unit))
             to = now.end_of_day
           else
-            from = now.ago(trend_number.send(value['unit'].downcase.singularize.to_sym))
+            from = now.ago(trend_number.public_send(unit))
             to = now
           end
           [from, to]
@@ -460,10 +463,10 @@ module ActiveScaffold
           now = datetime_now
           if datetime_column_date?(column)
             from = now.beginning_of_day
-            to = now.end_of_day.in(trend_number.send(value['unit'].downcase.singularize.to_sym))
+            to = now.end_of_day.in(trend_number.public_send(unit))
           else
             from = now
-            to = now.in(trend_number.send(value['unit'].downcase.singularize.to_sym))
+            to = now.in(trend_number.public_send(unit))
           end
           [from, to]
         end
