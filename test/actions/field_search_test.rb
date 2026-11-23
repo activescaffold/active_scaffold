@@ -6,6 +6,7 @@ class FieldSearchActionTest < ActionController::TestCase
   tests ContactsController
 
   test 'parses the grouped field and calculation function' do
+    @controller.active_scaffold_config.field_search.stubs(:group_options).returns([['Month', 'birthday#year_month']])
     @controller.stubs(:search_params).returns('active_scaffold_group' => 'birthday#year_month')
 
     assert @controller.send(:grouped_search?)

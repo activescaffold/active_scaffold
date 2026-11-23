@@ -196,7 +196,8 @@ class ListRenderingIntegrationTest < ActionDispatch::IntegrationTest
   test 'embedded loading renders the list without the application layout' do
     Person.create!(first_name: 'Alice', last_name: 'Example')
 
-    get '/people', params: {embedded: {loading: true}}
+    options = PeopleController.new.signed_embedded_options(embedded: {loading: true})
+    get '/people', params: options
 
     assert_response :success
     assert_not_includes response.body, 'ActiveScaffold test app'

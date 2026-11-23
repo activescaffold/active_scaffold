@@ -8,6 +8,8 @@ class ListColumnHelpersTest < ActionView::TestCase
   include ActiveScaffold::Helpers::ViewHelpers
   include ::ERB::Util
 
+  delegate :signed_url_options, to: :controller
+
   def setup
     RequestStore.clear!
     @column = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)

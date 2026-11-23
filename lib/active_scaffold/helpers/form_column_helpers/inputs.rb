@@ -144,7 +144,7 @@ module ActiveScaffold
 
         def _as_add_update_columns_options(options, column, url_params)
           options[:class] = "#{options[:class]} update_form".strip
-          options['data-update_url'] = url_for(url_params)
+          options['data-update_url'] = url_for(signed_url_options(url_params))
           options['data-update_send_form'] = column.update_columns&.any?(Hash) || column.send_form_on_update_column
           if column.options[:send_form_selector]
             options['data-update_send_form_selector'] = column.options[:send_form_selector]

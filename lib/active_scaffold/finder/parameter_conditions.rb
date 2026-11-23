@@ -7,11 +7,14 @@ module ActiveScaffold
 
       # Builds conditions from query parameters whose names match configured columns.
       def conditions_from_params
+        return [{}] if active_scaffold_config.conditions_from_params_columns == []
+
         @conditions_from_params ||= begin
           conditions = [{}]
+          columns = parameter_filter_columns
           params.except(:controller, :action, :page, :sort, :sort_direction, :format, :id).each do |key, value|
             distinct = key.match?(/!$/)
-            column = active_scaffold_config._columns_hash[key.to_s[0..(distinct ? -2 : -1)]]
+            column = columns[key.to_s[0..(distinct ? -2 : -1)]]
             next unless column
 
             key = column.name.to_sym
@@ -27,6 +30,13 @@ module ActiveScaffold
           end
           conditions
         end
+      end
+
+      def parameter_filter_columns
+        columns = active_scaffold_config._columns_hash
+        allowed_columns = active_scaffold_config.conditions_from_params_columns
+        columns = columns.slice(*allowed_columns.map(&:to_s)) if allowed_columns
+        columns.except(*active_scaffold_config.conditions_from_params_excluded_columns.map(&:to_s))
       end
 
       def distinct_condition(key, value)

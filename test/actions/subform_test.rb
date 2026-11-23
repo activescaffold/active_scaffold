@@ -26,15 +26,16 @@ class SubformActionTest < ActionController::TestCase
 
   test 'builds an associated record with its requested tab' do
     category = Category.create!(name: 'Backend')
-    @controller.params = ActionController::Parameters.new(
+    options = @controller.signed_tab_selection_options(
       child_association: 'tasks', generated_id: 'new-project',
-      tabbed_by: 'category', value: category.id
+      tabbed_by: 'category', value: category.id.to_s
     )
 
+    @controller.params = ActionController::Parameters.new(options)
     @controller.send(:do_edit_associated)
 
     task = @controller.instance_variable_get(:@record)
     assert_equal category, task.category
-    assert_equal category.id, @controller.instance_variable_get(:@tab_id)
+    assert_equal category.id.to_s, @controller.instance_variable_get(:@tab_id)
   end
 end

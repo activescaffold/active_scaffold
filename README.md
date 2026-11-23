@@ -245,6 +245,22 @@ Configuration
 -------------
 See Wiki for instructions on customising ActiveScaffold and to find the full API details.
 
+The default response formats are `html`, `js`, `json`, and `xml`. To change them for the application, configure the defaults in an initializer before controllers are loaded:
+
+```ruby
+ActiveScaffold::Config::Core.default_formats = %i[html js]
+```
+
+Override these defaults for an individual controller inside its `active_scaffold` block:
+
+```ruby
+active_scaffold do |config|
+  config.default_formats = %i[html js]
+end
+```
+
+The existing `config.formats` and action settings such as `config.list.formats` add formats to these defaults. Removing a format from `default_formats` does not disable it if it is explicitly added elsewhere. Actions with a fixed set of formats, such as JavaScript subform rendering, keep their own formats.
+
 Credits
 -------
 ActiveScaffold grew out of a project named Ajaxscaffold dating back to 2006. It has had numerous contributors including:

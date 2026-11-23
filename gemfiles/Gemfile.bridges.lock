@@ -6,7 +6,7 @@ GIT
 PATH
   remote: ..
   specs:
-    active_scaffold (4.4.6)
+    active_scaffold (4.4.7)
       html_attrs (~> 1.1)
       ice_nine (~> 0.11)
       method_source (~> 1.1)
@@ -524,7 +524,7 @@ CHECKSUMS
   actionpack (8.1.4.1) sha256=8c6f2e7cbd2653ef0539bde1ff20eb3e2e264e366affe56f0ba7f06d3670cb4b
   actiontext (8.1.4.1) sha256=fb59611dc16e2b6bbfcec66793acfae6cdd64b1e35ef3f9175424f31e62c38da
   actionview (8.1.4.1) sha256=d25b4d9cf8d0c0195ffcfe8b2cf3fcbe6fea54fd7c17f1a9cb8182881463f12b
-  active_scaffold (4.4.6)
+  active_scaffold (4.4.7)
   activejob (8.1.4.1) sha256=82c4c9311ea1016d5f7f134a0c5f9b6527cad5a6237f5f3f60aa17984ef36229
   activemodel (8.1.4.1) sha256=063caf105372fbc98b2d789e4be23de63ac5c043f7d9330f04e2caddb7012805
   activerecord (8.1.4.1) sha256=bd65599ca0b5d210937f835d42c7aff69d271741c75aab022730be6cbce67e87

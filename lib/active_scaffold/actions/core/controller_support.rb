@@ -44,7 +44,21 @@ module ActiveScaffold::Actions
       end
 
       def active_scaffold_embedded_params
-        params[:embedded] || {}
+        @active_scaffold_embedded_params ||= begin
+          embedded = params[:embedded]
+          if embedded.nil?
+            {}
+          else
+            raise ActionController::BadRequest, 'Invalid embedded parameters' unless embedded.is_a?(ActionController::Parameters)
+
+            payload = ActiveScaffold::ParameterSigning.embedded_payload(embedded, controller: controller_path)
+            unless ActiveScaffold::ParameterSigning.valid_signature?(payload, params[:eid], purpose: :embedded)
+              raise ActionController::BadRequest, 'Invalid embedded signature'
+            end
+
+            embedded
+          end
+        end
       end
 
       def clear_storage

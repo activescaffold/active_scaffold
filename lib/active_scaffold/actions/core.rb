@@ -10,6 +10,7 @@ module ActiveScaffold::Actions
   module Core
     def self.included(base)
       base.class_eval do
+        before_action :verify_return_to_parameter
         before_action :set_vary_accept_header
         before_action :check_input_device
         before_action :register_constraints_with_action_columns, unless: :nested?
@@ -46,6 +47,10 @@ module ActiveScaffold::Actions
     # Override this method on the controller to provide a model with named scopes.
     def beginning_of_chain
       active_scaffold_config.model
+    end
+
+    def associated_record_scope(klass, column: nil)
+      klass
     end
 
     private

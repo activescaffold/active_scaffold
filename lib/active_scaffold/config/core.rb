@@ -41,6 +41,15 @@ module ActiveScaffold::Config
     # enable saving user settings in session (per_page, limit, page, sort, search params)
     cattr_accessor :store_user_settings, instance_accessor: false, default: true
 
+    # Response formats enabled by default, before additional core and action formats.
+    cattr_accessor :default_formats, instance_accessor: false, default: %i[html js json xml]
+
+    # nil allows filtering on all database columns; an empty array disables it.
+    cattr_accessor :conditions_from_params_columns, instance_accessor: false, default: nil
+
+    # Columns excluded from parameter filtering, even when explicitly allowed.
+    cattr_accessor :conditions_from_params_excluded_columns, instance_accessor: false, default: []
+
     # action links are used by actions to tie together. you can use them, too! this is a collection of
     # ActiveScaffold::DataStructures::ActionLink objects.
     cattr_reader :action_links, instance_reader: false, default: ActiveScaffold::DataStructures::ActionLinks.new
@@ -134,12 +143,26 @@ module ActiveScaffold::Config
     # enable saving user settings in session (per_page, limit, page, sort, search params)
     attr_accessor :store_user_settings
 
+    # override the default response formats for a specific controller
+    attr_accessor :default_formats
+
+    attr_accessor :conditions_from_params_columns, :conditions_from_params_excluded_columns
+
     # lets you specify whether add a create link for each sti child for a specific controller
     attr_accessor :sti_create_links
 
     def add_sti_create_links?
       sti_create_links && !sti_children.nil?
     end
+
+    # Response formats enabled by default, before additional core and action formats.
+    cattr_accessor :default_formats, instance_accessor: false, default: %i[html js json xml]
+
+    # nil allows filtering on all database columns; an empty array disables it.
+    cattr_accessor :conditions_from_params_columns, instance_accessor: false, default: nil
+
+    # Columns excluded from parameter filtering, even when explicitly allowed.
+    cattr_accessor :conditions_from_params_excluded_columns, instance_accessor: false, default: []
 
     # action links are used by actions to tie together. they appear as links for each record, or general links for the
     # ActiveScaffold.
@@ -202,6 +225,9 @@ module ActiveScaffold::Config
       @cache_association_options = self.class.cache_association_options
       @conditional_get_support = self.class.conditional_get_support
       @store_user_settings = self.class.store_user_settings
+      @default_formats = self.class.default_formats.dup
+      @conditions_from_params_columns = self.class.conditions_from_params_columns&.dup
+      @conditions_from_params_excluded_columns = self.class.conditions_from_params_excluded_columns.dup
       @sti_create_links = self.class.sti_create_links
       @action_links = self.class.action_links.clone # inherit from the global set of action links
       @timestamped_messages = self.class.timestamped_messages

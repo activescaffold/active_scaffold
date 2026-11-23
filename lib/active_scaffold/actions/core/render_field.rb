@@ -23,13 +23,25 @@ module ActiveScaffold::Actions
       protected
 
       def render_field_for_inplace_editing
-        @column = active_scaffold_config.columns[params[:update_column]]
+        @column = inplace_edit_column(params[:update_column])
         @record = find_if_allowed(params[:id], crud_type: :update, column: params[:update_column])
+      end
+
+      def inplace_edit_column(name)
+        column = active_scaffold_config.columns[name] if name.present?
+        raise ActiveScaffold::ActionNotAllowed unless column&.inplace_edit
+
+        column
       end
 
       def add_tab
         process_render_field_params
         @column = @main_columns.find_by_name(params[:column])
+        unless @column.is_a?(ActiveScaffold::DataStructures::ActionColumns) && @column.tabbed_by.present? &&
+               @column.tabbed_by.to_s == params[:tabbed_by]
+          raise ::ActionController::BadRequest, 'Invalid tab group'
+        end
+
         @record = updated_record_with_form(@main_columns, {}, @scope)
       end
 

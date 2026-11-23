@@ -70,7 +70,7 @@ module ActiveScaffold
 
         def _as_inplace_edit_default_data(column)
           {
-            ie_url: url_for(params_for(action: 'update_column', column: column.name, id: '__id__')),
+            ie_url: url_for(signed_url_options(params_for(action: 'update_column', column: column.name, id: '__id__'))),
             ie_cancel_text: column.options[:cancel_text] || as_(:cancel),
             ie_loading_text: column.options[:loading_text] || as_(:loading),
             ie_save_text: column.options[:save_text] || as_(:update),
@@ -91,8 +91,9 @@ module ActiveScaffold
           elsif inplace_edit_cloning?(column)
             data[:ie_mode] = :clone
           elsif column.inplace_edit == :ajax
-            url = url_for(params_for(controller: params_for[:controller], action: 'render_field', id: '__id__',
-                                     update_column: column.name))
+            url_options = params_for(controller: params_for[:controller], action: 'render_field', id: '__id__',
+                                     update_column: column.name)
+            url = url_for(signed_url_options(url_options))
             plural = column.association&.collection? && !override_form_field?(column) &&
                      INPLACE_EDIT_PLURAL_FORM_UI.include?(column.form_ui)
             data[:ie_render_url] = url

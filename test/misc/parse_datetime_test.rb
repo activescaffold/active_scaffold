@@ -50,6 +50,42 @@ class ParseDatetimeTest < ActiveSupport::TestCase
     @config = config_for('date_time_model')
   end
 
+  def test_trend_rejects_unsupported_units_without_dispatching_them
+    Integer.any_instance.expects(:exit!).never
+    Integer.any_instance.expects(:sleep).never
+    column = @config.columns[:run_at]
+    units = ['exit!', 'sleep', 'send', 'to_s', '', nil, ['DAYS']]
+    %w[PAST FUTURE].each do |direction|
+      units.each do |unit|
+        assert_nil self.class.condition_for_column(column, {'opt' => direction, 'number' => '1', 'unit' => unit}, :full, {})
+      end
+    end
+  end
+
+  def test_trend_supports_date_and_time_units
+    now = Time.zone.local(2026, 11, 23, 12)
+    self.class.stubs(:datetime_now).returns(now)
+    column = @config.columns[:run_at]
+    directions = %w[PAST FUTURE]
+
+    (ActiveScaffold::Finder::DATE_UNITS + ActiveScaffold::Finder::TIME_UNITS).each do |unit|
+      duration = 2.public_send(unit.downcase)
+      directions.each do |direction|
+        expected = direction == 'PAST' ? [now.ago(duration), now] : [now, now.in(duration)]
+        assert_equal expected, self.class.datetime_from_to_for_trend(column, {'opt' => direction, 'number' => '2', 'unit' => unit})
+      end
+    end
+  end
+
+  def test_trend_preserves_singular_and_lowercase_units
+    column = @config.columns[:run_at]
+    value = {'opt' => 'PAST', 'number' => '1'}
+    self.class.stubs(:datetime_now).returns(Time.zone.local(2026, 11, 23, 12))
+
+    assert_equal self.class.datetime_from_to_for_trend(column, value.merge('unit' => 'DAYS')),
+                 self.class.datetime_from_to_for_trend(column, value.merge('unit' => 'day'))
+  end
+
   def test_translate_to_english
     I18n.with_locale :es do
       assert_equal 'Mon, 03 Apr 2017 16:30:26', translate_datetime('Lun, 03 Abr 2017 16:30:26')

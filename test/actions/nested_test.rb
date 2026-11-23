@@ -9,7 +9,7 @@ class NestedActionTest < ActionController::TestCase
     @person = Person.create!(first_name: 'Alice')
     @role = Role.create!(name: 'Editor')
     @association = Role.reflect_on_association(:people)
-    @nested = stub(association: @association, habtm?: true)
+    @nested = stub(association: @association, habtm?: true, parent_scaffold: RolesController)
     @controller.stubs(:nested).returns(@nested)
     @controller.stubs(:nested_parent_record).returns(@role)
   end

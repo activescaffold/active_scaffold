@@ -15,8 +15,9 @@ module ActiveScaffold
         input_helper = override_helper_per_model(:active_scaffold_input_for_tabbed, record.class)
         safe_join([
                     send(input_helper, column, record, subsection_id, tab_options, used_tabs.map { |v, _| v }),
-                    active_scaffold_refresh_link(nil, {'data-update_url' => url_for(add_tab_url)}, record,
-                                                 refresh_opts),
+                    active_scaffold_refresh_link(
+                      nil, {'data-update_url' => url_for(signed_url_options(add_tab_url))}, record, refresh_opts
+                    ),
                     active_scaffold_tabs_for(column, record, subsection_id, tab_options, used_tabs, &)
                   ])
       end

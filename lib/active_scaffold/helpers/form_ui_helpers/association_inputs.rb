@@ -140,7 +140,7 @@ module ActiveScaffold
           attributes = as_element_attributes(
             :field_add_new_popup, remote: true, data: {position: :popup}, class: 'as_action'
           )
-          link_to(link_text, url_options, attributes)
+          link_to(link_text, signed_url_options(url_options), attributes)
         end
 
         def _as_new_record_popup_authorized?(klass, options)

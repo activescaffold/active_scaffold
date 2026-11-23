@@ -253,7 +253,9 @@ module ActiveScaffold::Actions
       # The actual "add_existing" algorithm
       def do_add_existing
         parent_record = nested_parent_record(:update)
-        @record = active_scaffold_config.model.find(params[:associated_id])
+        column = nested.parent_scaffold.active_scaffold_config.columns[nested.association.name]
+        scope = associated_record_scope(active_scaffold_config.model, column: column)
+        @record = find_if_allowed(params[:associated_id], :read, scope)
         return false unless parent_record && @record
 
         association = parent_record.send(nested.association.name)

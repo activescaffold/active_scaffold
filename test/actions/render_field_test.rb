@@ -79,14 +79,15 @@ class RenderFieldTest < ActionController::TestCase
 
   test 'add tab prepares the selected column and record' do
     columns = stub
-    column = stub
+    column = ActiveScaffold::DataStructures::ActionColumns.new
+    column.tabbed_by = :status
     record = stub
     @controller.instance_variable_set(:@main_columns, columns)
     @controller.instance_variable_set(:@scope, '[tasks]')
     @controller.expects(:process_render_field_params)
     columns.expects(:find_by_name).with('status').returns(column)
     @controller.expects(:updated_record_with_form).with(columns, {}, '[tasks]').returns(record)
-    assign_params column: 'status'
+    assign_params column: 'status', tabbed_by: 'status'
 
     @controller.send(:add_tab)
 

@@ -49,6 +49,7 @@ options = as_element_attributes(
   data: {loading: defined?(loading) ? loading : true}
 )
 
+url_options = signed_url_options(url_options)
 if xhr && multipart # file_uploads
   form_remote_upload_tag url_options.merge(iframe: true), options
 else
@@ -76,7 +77,7 @@ end
   <%= as_element :form_footer, class: 'form-footer' do %>
     <%= submit_tag as_(submit_text), as_element_attributes(:form_submit) if !persistent || persistent == :optional %>
     <%= submit_tag as_(apply_text), as_element_attributes(:form_apply, name: 'dont_close') if persistent %>
-    <%= link_to as_(cancel_text), cancel_url, as_element_attributes(:form_cancel, **cancel_options) if cancel_link %>
+    <%= link_to as_(cancel_text), signed_url_options(cancel_url), as_element_attributes(:form_cancel, **cancel_options) if cancel_link %>
     <%= loading_indicator_tag action: form_action, id: @record&.id %>
     <%= render footer_extension, form_action: form_action if footer_extension %>
   <% end %>

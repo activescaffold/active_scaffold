@@ -137,7 +137,7 @@ module ActiveScaffold
           when 'RANGE'
             datetime_from_to_for_range(column, value).map(&conversion)
           when 'PAST', 'FUTURE'
-            datetime_from_to_for_trend(column, value).map(&conversion)
+            datetime_from_to_for_trend(column, value).map { |date| date&.public_send(conversion) }
           else
             %w[from to].collect { |field| condition_value_for_datetime(column, value[field], conversion) }
           end
@@ -148,8 +148,11 @@ module ActiveScaffold
         end
 
         def datetime_from_to_for_trend(column, value)
+          unit = value['unit'].to_s.downcase.pluralize
+          return [nil, nil] unless DATE_UNITS.include?(unit.upcase) || TIME_UNITS.include?(unit.upcase)
+
           trend_number = [value['number'].to_i, 1].max
-          duration = trend_number.send(value['unit'].downcase.singularize.to_sym)
+          duration = trend_number.public_send(unit)
           now = datetime_now
           case value['opt']
           when 'PAST'

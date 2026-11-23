@@ -12,7 +12,9 @@ module ActiveScaffold
                         :render_parent_action, :nested_singular_association?,
                         :main_form_controller, :build_associated,
                         :generate_temporary_id, :generated_id,
-                        :active_scaffold_config_for, :tabbed_by_association
+                        :active_scaffold_config_for, :tabbed_by_association,
+                        :signed_embedded_options, :signed_return_to_options, :signed_url_options,
+                        :signed_tab_selection_options
         end
       end
 
@@ -21,6 +23,64 @@ module ActiveScaffold
       def active_scaffold_config_for(klass)
         config = self.class.active_scaffold_config_for(klass)
         config.user || config.new_user_settings({}, {})
+      end
+
+      # Sign only embedded options supplied by application code, before URL generation.
+      def signed_embedded_options(options)
+        if options.key?('embedded') || (options[:embedded] && options.key?('controller'))
+          options = options.symbolize_keys
+        end
+        return options unless options[:embedded]
+
+        target = options[:controller] ? controller_requested(options[:controller]) : controller_path
+        payload = ActiveScaffold::ParameterSigning.embedded_payload(options[:embedded], controller: target)
+        options.merge(eid: ActiveScaffold::ParameterSigning.signature(payload, purpose: :embedded))
+      end
+
+      def signed_url_options(options)
+        return options unless options.is_a?(Hash)
+
+        signed_return_to_options(signed_embedded_options(options))
+      end
+
+      # Only sign tab selections constructed by application code, not parameters
+      # inherited from the current request through params_for.
+      def signed_tab_selection_options(options)
+        options = options.symbolize_keys if options.key?('tabbed_by') || options.key?('controller')
+        return options unless options[:tabbed_by]
+
+        target = options[:controller] ? controller_requested(options[:controller]) : controller_path
+        payload = ActiveScaffold::ParameterSigning.tab_selection_payload(options, controller: target)
+        options.merge(tab_signature: ActiveScaffold::ParameterSigning.signature(payload, purpose: :tab_selection))
+      end
+
+      # Call after overridable URL-option builders, immediately before generating a URL.
+      def signed_return_to_options(options)
+        return options unless options.is_a?(Hash)
+
+        options = options.symbolize_keys if options.key?('return_to') || options.key?('return_to_signature')
+        if options[:return_to]
+          unless options[:return_to].is_a?(String)
+            raise ArgumentError, 'return_to must be a URL string'
+          end
+
+          options.merge(return_to_signature: ActiveScaffold::ParameterSigning.signature(options[:return_to],
+                                                                                        purpose: :return_to))
+        elsif options.key?(:return_to_signature)
+          options.except(:return_to_signature)
+        else
+          options
+        end
+      end
+
+      def verify_return_to_parameter
+        return if params[:return_to].nil?
+
+        unless params[:return_to].is_a?(String) &&
+               ActiveScaffold::ParameterSigning.valid_signature?(params[:return_to], params[:return_to_signature],
+                                                                 purpose: :return_to)
+          raise ::ActionController::BadRequest, 'Invalid return_to signature'
+        end
       end
 
       def generate_temporary_id(record = nil, generated_id = nil)
@@ -61,9 +121,13 @@ module ActiveScaffold
                             iframe associated_id authenticity_token _added _removed _popstate _].freeze
 
       def params_for(options = {})
+        verify_return_to_parameter
+        active_scaffold_embedded_params if params[:embedded]
         url_options = base_params_for.merge(options.slice(:controller))
         add_user_settings_to_params(url_options)
-        url_options.merge(options)
+        url_options.merge!(options)
+        url_options.delete(:return_to_signature) unless url_options[:return_to]
+        url_options
       end
 
       def base_params_for
@@ -118,6 +182,7 @@ module ActiveScaffold
       # Parameters to generate url to the main page (override if the ActiveScaffold is used as a component on another
       # controllers page)
       def main_path_to_return
+        verify_return_to_parameter
         if params[:return_to]
           params[:return_to]
         else

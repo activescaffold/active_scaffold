@@ -13,7 +13,7 @@
 
     <% if @page.pager.infinite? || @page.number < @page.pager.number_of_pages -%>
       ActiveScaffold.auto_load_page(
-        <%= javascript_literal(url_for(main_path_to_return)) %>,
+        <%= javascript_literal(url_for(signed_url_options(main_path_to_return))) %>,
         {auto_pagination: true, page: <%= @page.number + 1 %>}
       );
     <% else %>

@@ -39,7 +39,8 @@ class ControllerHelpersTest < ActiveSupport::TestCase
   end
 
   def test_main_path_to_return_uses_an_explicit_return_location
-    stubs(:params).returns(ActionController::Parameters.new(return_to: '/dashboard'))
+    options = signed_return_to_options(return_to: '/dashboard')
+    stubs(:params).returns(ActionController::Parameters.new(options))
 
     assert_equal '/dashboard', main_path_to_return
   end

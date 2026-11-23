@@ -6,6 +6,8 @@ class FormUiHelpersTest < ActionView::TestCase # rubocop:disable Metrics/ClassLe
   include ActiveScaffold::Helpers::FormColumnHelpers
   include ActiveScaffold::Helpers::ViewHelpers
 
+  delegate :signed_url_options, to: :controller
+
   def setup
     @column = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
     @record = ModelStub.new(a: nil)

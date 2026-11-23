@@ -10,6 +10,7 @@
     data: {loading: true},
     method: :get
   )
+  url_options = signed_url_options(url_options)
 
   hidden_params = url_options.except(:controller, :action, :id, :search).to_query.split(Rack::Utils::DEFAULT_SEP)
 -%>

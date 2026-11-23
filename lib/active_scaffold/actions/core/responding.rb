@@ -80,7 +80,7 @@ module ActiveScaffold::Actions
       end
 
       def default_formats
-        %i[html js json xml]
+        active_scaffold_config.default_formats
       end
 
       # Returns true if the client accepts one of the MIME types passed to it
@@ -145,7 +145,7 @@ module ActiveScaffold::Actions
         options = main_path_to_return
         # use url_for in case main_path_to_return returns Hash with status param,
         # which would be interpreted as status option to redirect_to instead of url param
-        redirect_to options.is_a?(Hash) ? url_for(options) : options
+        redirect_to options.is_a?(Hash) ? url_for(signed_url_options(options)) : options
       end
 
       def objects_for_etag

@@ -21,29 +21,75 @@ module ActiveScaffold::Actions
     end
 
     def do_edit_associated
+      verify_tab_selection_parameters
       @scope = params[:scope]
       @parent_record = params[:id].nil? ? new_parent_record : find_if_allowed(params[:id], :update)
       @column = active_scaffold_config.columns[params[:child_association]]
 
       @record = (find_associated_record if params[:associated_id]) ||
-                build_associated(@column.association, @parent_record) do |blank_record|
-                  if params[:tabbed_by] && params[:value]
-                    @tab_id = params.delete(:value)
-                    assign_tabbed_by(blank_record, @column, params.delete(:tabbed_by), @tab_id,
-                                     params.delete(:value_type))
-                  end
-                end
+                build_associated(@column.association, @parent_record)
+      if params[:tabbed_by] && params[:value]
+        @tab_id = params.delete(:value)
+        assign_tabbed_by(@record, @column, params.delete(:tabbed_by), @tab_id, params.delete(:value_type))
+      end
+      @record
+    end
+
+    def verify_tab_selection_parameters
+      return unless params.key?(:tabbed_by) || params.key?(:value_type) || params.key?(:tab_signature)
+
+      payload = ActiveScaffold::ParameterSigning.tab_selection_payload(params, controller: controller_path)
+      unless params[:tabbed_by].is_a?(String) && params[:value].is_a?(String) &&
+             ActiveScaffold::ParameterSigning.valid_signature?(payload, params[:tab_signature], purpose: :tab_selection)
+        raise ::ActionController::BadRequest, 'Invalid tab selection signature'
+      end
+
+      params.delete(:tab_signature)
     end
 
     def assign_tabbed_by(record, parent_column, tabbed_by, value, value_type)
       if (association = tabbed_by_association(parent_column, tabbed_by))
-        klass = value_type&.constantize || association.klass
+        klass =
+          if association.polymorphic?
+            raise ::ActionController::BadRequest if value_type.blank?
+
+            value_type.constantize
+          else
+            association.klass
+          end
       end
-      record.send :"#{tabbed_by}=", klass&.find(value) || value
+      value =
+        if klass
+          klass.find(value)
+        else
+          field = ActiveScaffold::OrmChecks.columns_hash(record.class)[tabbed_by.to_s]
+          ActiveScaffold::Core.column_type_cast(value, field, record.class)
+        end
+      assign_tabbed_value(record, association, tabbed_by, value)
+    end
+
+    def assign_tabbed_value(record, association, tabbed_by, value)
+      return if record.public_send(tabbed_by) == value
+
+      if record.persisted?
+        unless record.authorized_for?(crud_type: :update, column: tabbed_by.to_sym)
+          raise ActiveScaffold::RecordNotAllowed, 'Not authorized to change the tab grouping'
+        end
+
+        if association && association.macro != :belongs_to
+          # Association setters could save records immediately. Only stage
+          # their form values until the parent form is submitted.
+          record.association(association.name).target = association.collection? ? Array(value) : value
+          return
+        end
+      end
+
+      record.public_send :"#{tabbed_by}=", value
     end
 
     def find_associated_record
-      @column.association.klass.find(params[:associated_id]).tap do |record|
+      scope = associated_record_scope(@column.association.klass, column: @column)
+      find_if_allowed(params[:associated_id], :read, scope).tap do |record|
         save_record_to_association(record, @column.association.reverse_association, @parent_record, @column.association)
       end
     end

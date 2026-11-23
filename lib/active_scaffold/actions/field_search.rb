@@ -44,10 +44,17 @@ module ActiveScaffold::Actions
       end
 
       def grouped_search?
-        field_search_params.present? && field_search_params['active_scaffold_group'].present?
+        group = field_search_params['active_scaffold_group']
+        return false if group.blank?
+
+        Array(active_scaffold_config.field_search.group_options).any? do |text, value|
+          (value || text).to_s == group.to_s
+        end
       end
 
       def setup_search_group
+        return unless grouped_search?
+
         @_search_group_name, @_search_group_function = field_search_params['active_scaffold_group'].to_s.split('#')
       end
 
