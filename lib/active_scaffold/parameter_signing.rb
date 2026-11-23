@@ -1,16 +1,17 @@
 # frozen_string_literal: true
 
+require 'base64'
 require 'openssl'
 
 module ActiveScaffold
   module ParameterSigning
     def self.signature(data, purpose:)
       key = Rails.application.key_generator.generate_key("active_scaffold/#{purpose}/v1", 32)
-      OpenSSL::HMAC.hexdigest('SHA256', key, data)
+      Base64.urlsafe_encode64(OpenSSL::HMAC.digest('SHA256', key, data), padding: false)
     end
 
     def self.valid_signature?(data, signature, purpose:)
-      return false unless signature.is_a?(String) && signature.bytesize == 64
+      return false unless signature.is_a?(String) && signature.bytesize == 43
 
       ActiveSupport::SecurityUtils.secure_compare(self.signature(data, purpose: purpose), signature)
     end

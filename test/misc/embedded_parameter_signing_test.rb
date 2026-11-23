@@ -87,7 +87,8 @@ class EmbeddedParameterSigningTest < ActionDispatch::IntegrationTest
     options = controller.signed_embedded_options(controller: '/people', embedded: original)
     round_trip = Rack::Utils.parse_nested_query(options.to_query).with_indifferent_access
 
-    assert_match(/\A[0-9a-f]{64}\z/, options[:eid])
+    assert_match(/\A[A-Za-z0-9_-]{43}\z/, options[:eid])
+    assert_equal 32, Base64.urlsafe_decode64(options[:eid]).bytesize
     assert_equal options[:eid], controller.signed_embedded_options(controller: '/people', embedded: reordered)[:eid]
     assert_equal options[:eid], controller.signed_embedded_options(round_trip)[:eid]
     assert_not_equal options[:eid], controller.signed_embedded_options(controller: '/people', embedded: {label: 'Other'})[:eid]
