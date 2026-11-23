@@ -26,6 +26,9 @@ module ActiveScaffold
 
       # Sign only embedded options supplied by application code, before URL generation.
       def signed_embedded_options(options)
+        if options.key?('embedded') || (options[:embedded] && options.key?('controller'))
+          options = options.symbolize_keys
+        end
         return options unless options[:embedded]
 
         target = options[:controller] ? controller_requested(options[:controller]) : controller_path
@@ -36,22 +39,25 @@ module ActiveScaffold
       def signed_url_options(options)
         return options unless options.is_a?(Hash)
 
-        signed_return_to_options(signed_embedded_options(options.symbolize_keys))
+        signed_return_to_options(signed_embedded_options(options))
       end
 
       # Call after overridable URL-option builders, immediately before generating a URL.
       def signed_return_to_options(options)
         return options unless options.is_a?(Hash)
 
-        options = options.symbolize_keys.except(:return_to_signature)
+        options = options.symbolize_keys if options.key?('return_to') || options.key?('return_to_signature')
         if options[:return_to]
           unless options[:return_to].is_a?(String)
             raise ArgumentError, 'return_to must be a URL string'
           end
 
-          options[:return_to_signature] = ActiveScaffold::ParameterSigning.signature(options[:return_to], purpose: :return_to)
+          options.merge(return_to_signature: ActiveScaffold::ParameterSigning.signature(options[:return_to], purpose: :return_to))
+        elsif options.key?(:return_to_signature)
+          options.except(:return_to_signature)
+        else
+          options
         end
-        options
       end
 
       def verify_return_to_parameter

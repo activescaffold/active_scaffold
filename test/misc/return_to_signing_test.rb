@@ -104,6 +104,36 @@ class ReturnToSigningTest < ActionDispatch::IntegrationTest
     assert options.key?(:return_to_signature)
   end
 
+  test 'ordinary URL options pass through without copying or normalizing the hash' do
+    controller = PeopleController.new
+    options = {controller: '/people', action: 'index', page: 2}.freeze
+
+    assert_same options, controller.signed_return_to_options(options)
+    assert_same options, controller.signed_url_options(options)
+
+    removed = {return_to: nil}.freeze
+    assert_same removed, controller.signed_return_to_options(removed)
+  end
+
+  test 'symbol-keyed destinations do not need key normalization' do
+    options = {return_to: '/dashboard'}
+    options.expects(:symbolize_keys).never
+
+    generated = PeopleController.new.signed_url_options(options)
+
+    assert ActiveScaffold::ParameterSigning.valid_signature?(generated[:return_to], generated[:return_to_signature], purpose: :return_to)
+    assert_not options.key?(:return_to_signature)
+  end
+
+  test 'string-keyed destinations remain supported without mutating the input' do
+    options = {'return_to' => '/dashboard', 'controller' => '/people'}.freeze
+    generated = PeopleController.new.signed_url_options(options)
+
+    assert_equal '/dashboard', generated[:return_to]
+    assert ActiveScaffold::ParameterSigning.valid_signature?(generated[:return_to], generated[:return_to_signature], purpose: :return_to)
+    assert_not options.key?('return_to_signature')
+  end
+
   private
 
   def signed_options(destination)

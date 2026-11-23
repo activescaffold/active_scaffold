@@ -103,6 +103,19 @@ class EmbeddedParameterSigningTest < ActionDispatch::IntegrationTest
     assert ActiveScaffold::ParameterSigning.valid_signature?(payload, options[:eid], purpose: :embedded)
   end
 
+  test 'string and mixed embedded URL option keys remain supported' do
+    controller = PeopleController.new
+    embedded = {label: 'Cars'}
+    [{embedded: embedded, 'controller' => '/cars'}, {'embedded' => embedded, 'controller' => '/cars'}].each do |options|
+      options.freeze
+      generated = controller.signed_url_options(options)
+      payload = ActiveScaffold::ParameterSigning.embedded_payload(embedded, controller: 'cars')
+
+      assert ActiveScaffold::ParameterSigning.valid_signature?(payload, generated[:eid], purpose: :embedded)
+      assert_not options.key?(:eid)
+    end
+  end
+
   test 'verified embedded options are signed for a changed target controller at URL generation' do
     controller = PeopleController.new
     original = controller.signed_embedded_options(controller: '/people', embedded: {label: 'People'})
