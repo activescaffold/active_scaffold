@@ -458,6 +458,8 @@ module ActiveScaffold::Actions
     # Array parameters use the `column[]=value` syntax, for example `company_id[]=5&company_id[]=10`.
     # Negation may also be combined with ranges or arrays, using `not_between` or `not_in`.
     def conditions_from_params
+      return [{}] if active_scaffold_config.conditions_from_params_columns&.empty? # rubocop:disable Lint/SafeNavigationWithEmpty -- nil allows all columns
+
       @conditions_from_params ||= begin
         conditions = [{}]
         allowed_columns = active_scaffold_config.conditions_from_params_columns&.map(&:to_s)

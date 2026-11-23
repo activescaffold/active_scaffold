@@ -15,6 +15,8 @@ class ParameterFilterTest < ActiveSupport::TestCase
 
   test 'empty allowlist disables parameter filtering' do
     @config.conditions_from_params_columns = []
+    @controller.expects(:params).never
+    @config.expects(:conditions_from_params_excluded_columns).never
 
     assert_equal [{}], conditions(first_name: 'Visible', last_name: 'Secret', 'created_at!' => '..2026-01-01')
   end
