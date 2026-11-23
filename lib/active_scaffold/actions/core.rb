@@ -430,8 +430,7 @@ module ActiveScaffold::Actions
       options = main_path_to_return
       # use url_for in case main_path_to_return returns Hash with status param,
       # which would be interpreted as status option to redirect_to instead of url param
-      redirect_options = params[:return_to] ? {allow_other_host: true} : {}
-      redirect_to options.is_a?(Hash) ? url_for(signed_url_options(options)) : options, **redirect_options
+      redirect_to options.is_a?(Hash) ? url_for(signed_url_options(options)) : options
     end
 
     def filtered_query

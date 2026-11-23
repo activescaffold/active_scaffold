@@ -77,11 +77,13 @@ class ReturnToSigningTest < ActionDispatch::IntegrationTest
     assert_equal 'Changed', address.reload.street
   end
 
-  test 'successful updates can redirect to signed external destinations' do
+  test 'return redirects preserve the application host policy' do
     destination = 'https://example.org/dashboard'
-    patch "/people/#{@person.id}", params: signed_options(destination).merge(record: {first_name: 'Changed'})
+    controller = PeopleController.new
+    controller.params = ActionController::Parameters.new(signed_options(destination))
+    controller.expects(:redirect_to).with(destination)
 
-    assert_redirected_to destination
+    controller.send(:return_to_main)
   end
 
   test 'embedded signatures cannot be reused for return destinations' do
