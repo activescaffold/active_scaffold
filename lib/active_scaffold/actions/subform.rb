@@ -36,7 +36,14 @@ module ActiveScaffold::Actions
 
     def assign_tabbed_by(record, parent_column, tabbed_by, value, value_type)
       if (association = tabbed_by_association(parent_column, tabbed_by))
-        klass = value_type&.constantize || association.klass
+        klass =
+          if association.polymorphic?
+            raise ::ActionController::BadRequest if value_type.blank?
+
+            value_type.constantize
+          else
+            association.klass
+          end
       end
       record.send :"#{tabbed_by}=", klass&.find(value) || value
     end
