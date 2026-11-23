@@ -27,12 +27,12 @@ module ActiveScaffold::Actions
       @column = active_scaffold_config.columns[params[:child_association]]
 
       @record = (find_associated_record if params[:associated_id]) ||
-                build_associated(@column.association, @parent_record) do |blank_record|
-                  if params[:tabbed_by] && params[:value]
-                    @tab_id = params.delete(:value)
-                    assign_tabbed_by(blank_record, @column, params.delete(:tabbed_by), @tab_id, params.delete(:value_type))
-                  end
-                end
+                build_associated(@column.association, @parent_record)
+      if params[:tabbed_by] && params[:value]
+        @tab_id = params.delete(:value)
+        assign_tabbed_by(@record, @column, params.delete(:tabbed_by), @tab_id, params.delete(:value_type))
+      end
+      @record
     end
 
     def verify_tab_selection_parameters
@@ -58,7 +58,33 @@ module ActiveScaffold::Actions
             association.klass
           end
       end
-      record.send :"#{tabbed_by}=", klass&.find(value) || value
+      value =
+        if klass
+          klass.find(value)
+        else
+          field = ActiveScaffold::OrmChecks.columns_hash(record.class)[tabbed_by.to_s]
+          ActiveScaffold::Core.column_type_cast(value, field, record.class)
+        end
+      assign_tabbed_value(record, association, tabbed_by, value)
+    end
+
+    def assign_tabbed_value(record, association, tabbed_by, value)
+      return if record.public_send(tabbed_by) == value
+
+      if record.persisted?
+        unless record.authorized_for?(crud_type: :update, column: tabbed_by.to_sym)
+          raise ActiveScaffold::RecordNotAllowed, 'Not authorized to change the tab grouping'
+        end
+
+        if association && association.macro != :belongs_to
+          # Association setters could save records immediately. Only stage
+          # their form values until the parent form is submitted.
+          record.association(association.name).target = association.collection? ? Array(value) : value
+          return
+        end
+      end
+
+      record.public_send :"#{tabbed_by}=", value
     end
 
     def find_associated_record

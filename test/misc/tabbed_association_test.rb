@@ -63,4 +63,38 @@ class TabbedAssociationTest < ActiveSupport::TestCase
 
     assert_equal 'high', task.priority
   end
+
+  test 'existing association values are staged without saving the record' do
+    previous_category = Category.create!(name: 'Previous')
+    category = Category.create!(name: 'New')
+    task = Task.create!(name: 'Task', category: previous_category)
+
+    @controller.send(:assign_tabbed_by, task, @tasks, 'category', category.id, nil)
+
+    assert_equal category, task.category
+    assert_equal previous_category.id, Task.find(task.id).category_id
+  end
+
+  test 'unchanged numeric grouping values do not require update permission' do
+    project = Project.create!(name: 'Project')
+    task = Task.create!(name: 'Task', project: project)
+    task.expects(:authorized_for?).never
+
+    @controller.send(:assign_tabbed_by, task, @tasks, 'project_id', project.id.to_s, nil)
+
+    assert_equal project.id, task.project_id
+  end
+
+  test 'existing has-one grouping values are staged without saving either side' do
+    person = Person.create!(first_name: 'Person')
+    previous_car = Car.create!(model: 'Previous', person: person)
+    car = Car.create!(model: 'New')
+    people = RolesController.active_scaffold_config.columns[:people]
+
+    @controller.send(:assign_tabbed_by, person, people, 'car', car.id, nil)
+
+    assert_equal car, person.car
+    assert_equal previous_car.id, Person.find(person.id).car.id
+    assert_nil car.reload.person_id
+  end
 end

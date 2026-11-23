@@ -17,17 +17,16 @@ url_options = {controller: controller_path, action: 'edit_associated', child_ass
 # Tab selection parameters are one-use context. Only the values constructed
 # below from the rendered tab may be signed, never inherited request values.
 tab_parameters = ActiveScaffold::ParameterSigning::TAB_SELECTION_PARAMETERS
-edit_associated_url = params_for(url_options.merge(associated_id: '--ID--')).except(*tab_parameters) if show_add_existing
-if show_add_new
-  if local_assigns[:tabbed_by]
-    url_options.merge! tabbed_by: tabbed_by, value: tab_value
-    if (tabbed_association = tabbed_by_association(column, tabbed_by))
-      url_options[:value] = tab_value.id
-      url_options[:value_type] = tab_value.class.base_class.sti_name if tabbed_association.polymorphic?
-    end
+if local_assigns[:tabbed_by]
+  url_options.merge! tabbed_by: tabbed_by, value: tab_value
+  if (tabbed_association = tabbed_by_association(column, tabbed_by))
+    url_options[:value] = tab_value.id
+    url_options[:value_type] = tab_value.class.base_class.sti_name if tabbed_association.polymorphic?
   end
-  add_new_url = params_for(url_options).except(*tab_parameters).merge(url_options.slice(:tabbed_by, :value, :value_type))
 end
+tab_options = url_options.slice(:tabbed_by, :value, :value_type)
+edit_associated_url = params_for(url_options.merge(associated_id: '--ID--')).except(*tab_parameters).merge(tab_options) if show_add_existing
+add_new_url = params_for(url_options).except(*tab_parameters).merge(tab_options) if show_add_new
 
 -%>
 <div class="footer-wrapper">
@@ -59,7 +58,7 @@ end
           add_existing_attrs = {id: "#{subform_div_id}-add-existing", remote: true, class: "as-js-button as_#{add_existing_label}", style: 'display: none;'}
         %>
         <%= select_tag 'associated_id', content_tag(:option, as_(:_select_), value: '') + select_options %>
-        <%= link_to as_(add_existing_label), signed_url_options(edit_associated_url), as_element_attributes(:subform_add_existing, **add_existing_attrs) %>
+        <%= link_to as_(add_existing_label), signed_tab_selection_options(signed_url_options(edit_associated_url)), as_element_attributes(:subform_add_existing, **add_existing_attrs) %>
       <% end -%>
     <% end -%>
   <% end %>
