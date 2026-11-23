@@ -23,7 +23,7 @@ module ActiveScaffold::Actions
 
     # for inline (inlist) editing
     def update_column
-      @column = inplace_edit_column(params.delete(:column))
+      @column = inplace_edit_column(params[:column])
       do_update_column
       @column_span_id = params.delete(:editor_id) || params.delete(:editorId)
     end
@@ -154,6 +154,7 @@ module ActiveScaffold::Actions
     def do_update_column
       # delete from params so update :table won't break urls, also they shouldn't be used in sort links too
       value = params.delete(:value)
+      params.delete(:column)
       params.delete(:original_html)
       params.delete(:original_value)
 

@@ -45,6 +45,23 @@ class InplaceEditAuthorizationTest < ActionDispatch::IntegrationTest
     assert_equal 'Changed model', @car.reload.model
   end
 
+  test 'do_update_column overrides can read the column parameter before calling super' do
+    requested_column = nil
+    CarsController.define_method(:do_update_column) do
+      requested_column = params[:column]
+      super()
+    end
+    CarsController.send(:protected, :do_update_column)
+
+    post "/cars/#{@car.id}/update_column.js", params: {column: 'model', value: 'Changed model'}
+
+    assert_response :success
+    assert_equal 'model', requested_column
+    assert_equal 'Changed model', @car.reload.model
+  ensure
+    CarsController.remove_method(:do_update_column)
+  end
+
   test 'inline fields still render enabled columns' do
     get "/cars/#{@car.id}/render_field.js", params: {update_column: 'model'}, xhr: true
 
