@@ -12,7 +12,8 @@ module ActiveScaffold
                         :render_parent_action, :nested_singular_association?,
                         :main_form_controller, :build_associated,
                         :generate_temporary_id, :generated_id,
-                        :active_scaffold_config_for, :tabbed_by_association
+                        :active_scaffold_config_for, :tabbed_by_association,
+                        :signed_embedded_options
         end
       end
 
@@ -21,6 +22,15 @@ module ActiveScaffold
       def active_scaffold_config_for(klass)
         config = self.class.active_scaffold_config_for(klass)
         config.user || config.new_user_settings({}, {})
+      end
+
+      # Sign only embedded options supplied by application code, before URL generation.
+      def signed_embedded_options(options)
+        return options unless options[:embedded]
+
+        target = controller_requested(options[:controller] || controller_path)
+        payload = ActiveScaffold::ParameterSigning.embedded_payload(options[:embedded], controller: target)
+        options.merge(eid: ActiveScaffold::ParameterSigning.signature(payload, purpose: :embedded))
       end
 
       def generate_temporary_id(record = nil, generated_id = nil)

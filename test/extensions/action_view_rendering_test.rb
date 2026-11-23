@@ -19,6 +19,34 @@ class ActionViewRenderingTest < ActionController::TestCase
     assert_select '#controller_form', 1
     assert_select '#app_form', 1
   end
+
+  test 'embedded rendering generates signed URLs and stable element identifiers' do
+    get :index
+    options = {active_scaffold: '/people', conditions: {adult: true}, label: 'Adults'}
+    html = @controller.view_context.render(options.deep_dup)
+    second_html = @controller.view_context.render(options.deep_dup)
+    element = Nokogiri::HTML.fragment(html).at_css('.active-scaffold-component')
+    query = Rack::Utils.parse_nested_query(URI.parse(element['data-refresh']).query)
+
+    assert_equal "as_#{query['eid']}-embedded", element['id']
+    assert_includes second_html, element['id']
+    payload = ActiveScaffold::ParameterSigning.embedded_payload(query.fetch('embedded'), controller: 'people')
+    assert ActiveScaffold::ParameterSigning.valid_signature?(payload, query['eid'], purpose: :embedded)
+  end
+
+  test 'association popup signs generated constraints at URL generation' do
+    person = Person.create!(first_name: 'Parent')
+    get :index
+    view = @controller.view_context
+    column = @controller.send(:active_scaffold_config).columns[:car]
+    html = view.active_scaffold_new_record_popup(column, person, {id: 'car_id'})
+    link = Nokogiri::HTML.fragment(html).at_css('a')
+    query = Rack::Utils.parse_nested_query(URI.parse(link['href']).query)
+    payload = ActiveScaffold::ParameterSigning.embedded_payload(query.fetch('embedded'), controller: 'cars')
+
+    assert ActiveScaffold::ParameterSigning.valid_signature?(payload, query['eid'], purpose: :embedded)
+    assert_equal [person.id.to_s], query['embedded']['constraints']['person']
+  end
 end
 
 class RenderInTest < ActionView::TestCase

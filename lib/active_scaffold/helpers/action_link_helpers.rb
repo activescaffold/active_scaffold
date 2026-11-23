@@ -274,7 +274,7 @@ module ActiveScaffold
       def cached_action_link_url(link, record)
         @action_links_urls ||= {}
         @action_links_urls[link.name_to_cache.to_s] || begin
-          url_options = cached_action_link_url_options(link, record)
+          url_options = signed_embedded_options(cached_action_link_url_options(link, record))
           if cache_action_link_url?(link, record)
             @action_links_urls[link.name_to_cache.to_s] = url_for(url_options)
           else

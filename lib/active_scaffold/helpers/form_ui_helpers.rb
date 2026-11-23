@@ -106,6 +106,7 @@ module ActiveScaffold
         url_options[:parent_model] ||= record.class.name
         url_options[:parent_column] ||= column.name
         url_options.reverse_merge! options[:url_options] if options[:url_options]
+        url_options = signed_embedded_options(url_options)
         link_to(link_text, url_options, as_element_attributes(:field_add_new_popup, remote: true, data: {position: :popup}, class: 'as_action'))
       end
 

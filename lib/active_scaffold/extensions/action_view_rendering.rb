@@ -135,24 +135,19 @@ module ActiveScaffold # :nodoc:
     end
 
     def render_embedded(options)
-      require 'digest/md5'
-
       remote_controller = options[:active_scaffold]
-      # It is important that the EID hash remains short as to not contribute
-      # to a large session size and thus a possible cookie overflow exception
-      # when using rails CookieStore or EncryptedCookieStore. For example,
-      # when rendering many embedded scaffolds with constraints or conditions
-      # on a single page.
-      eid = Digest::MD5.hexdigest(params[:controller] + options.to_s)
       eid_info = {loading: true}
       eid_info[:constraints] = options[:constraints] if options[:constraints]
       eid_info[:conditions] = options[:conditions] if options[:conditions]
       eid_info[:label] = options[:label] if options[:label]
       options[:params] ||= {}
+      url_options = {controller: remote_controller.to_s, action: 'index', id: nil}.merge(options[:params])
+      url_options[:embedded] = eid_info
+      url_options = signed_embedded_options(url_options)
+      eid = url_options[:eid]
       options[:params].merge! eid: eid, embedded: eid_info
 
       id = "as_#{eid}-embedded"
-      url_options = {controller: remote_controller.to_s, action: 'index', id: nil}.merge(options[:params])
 
       if controller.respond_to?(:render_component_into_view, true) && !options[:xhr]
         controller.send(:render_component_into_view, url_options)
