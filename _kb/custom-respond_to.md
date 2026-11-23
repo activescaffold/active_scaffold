@@ -3,7 +3,9 @@ title: "Custom respond_to"
 category: "Advanced"
 ---
 
-By default active scaffold responds to the html, json, js, xml, and yaml mime types. If you want to override one of these responses you can override the `<action>_respond_to_<format>` method in the controller:
+By default ActiveScaffold responds to the HTML, JavaScript, JSON, and XML MIME types. Use [`default_formats`](/doc/api-core/#default_formats) to change these defaults globally or per controller. The `config.formats` and action-specific `formats` settings add formats to the configured defaults.
+
+If you want to override one of these responses, override the `<action>_respond_to_<format>` method in the controller:
 
 {% highlight ruby -%}
   def show_respond_to_html

@@ -214,14 +214,41 @@ end
 {%- endhighlight %}
     
 
-## formats 
+## default_formats <small><em>global local</em></small> {#default_formats}
 
-Active scaffold supports html, js, json and xml formats by default.  If you need to add another mime type for your controller you can do it here.  The format is then added to the default formats.
+Sets the default response formats used by ActiveScaffold actions. The default is `[:html, :js, :json, :xml]`.
+
+To disable JSON and XML responses by default throughout the application, configure this setting in an initializer before controllers are loaded:
+
+{% highlight ruby -%}
+# config/initializers/active_scaffold.rb
+ActiveScaffold.defaults do |config|
+  config.default_formats = %i[html js]
+end
+{%- endhighlight %}
+
+The same global setting is available as `ActiveScaffold::Config::Core.default_formats`. Each controller configuration receives its own copy of the global defaults.
+
+Override the defaults for an individual controller in its `active_scaffold` block:
+
+{% highlight ruby -%}
+active_scaffold do |config|
+  config.default_formats = %i[html js]
+end
+{%- endhighlight %}
+
+The existing `config.formats` and action-specific settings, such as `config.list.formats`, add formats to these defaults. Setting `config.formats = []` does not disable the default formats, and removing a format from `default_formats` does not disable it if it is explicitly added through either of these settings.
+
+Actions with a fixed set of formats, such as JavaScript subform rendering, keep their own formats. Existing controller overrides of the `default_formats` method continue to take precedence over this setting.
+
+## formats <small><em>local</em></small>
+
+Adds response formats for the controller to the formats enabled by [`default_formats`](#default_formats). Use `default_formats` to replace the defaults; this setting only adds formats.
 
 Examples:
 
 {% highlight ruby -%}
-# Add a column (virtual, probably)
+# Add a response format
 config.formats << :pdf
 or
 config.formats = [:pdf]
