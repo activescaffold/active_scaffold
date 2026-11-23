@@ -43,6 +43,10 @@ module ActiveScaffold::Config
     cattr_accessor :store_user_settings, instance_accessor: false
     @@store_user_settings = true
 
+    # response formats enabled by default, before additional core and action formats
+    cattr_accessor :default_formats, instance_accessor: false
+    @@default_formats = %i[html js json xml]
+
     # action links are used by actions to tie together. you can use them, too! this is a collection of ActiveScaffold::DataStructures::ActionLink objects.
     cattr_reader :action_links, instance_reader: false
     @@action_links = ActiveScaffold::DataStructures::ActionLinks.new
@@ -138,6 +142,9 @@ module ActiveScaffold::Config
     # enable saving user settings in session (per_page, limit, page, sort, search params)
     attr_accessor :store_user_settings
 
+    # override the default response formats for a specific controller
+    attr_accessor :default_formats
+
     # lets you specify whether add a create link for each sti child for a specific controller
     attr_accessor :sti_create_links
 
@@ -197,6 +204,7 @@ module ActiveScaffold::Config
       @cache_association_options = self.class.cache_association_options
       @conditional_get_support = self.class.conditional_get_support
       @store_user_settings = self.class.store_user_settings
+      @default_formats = self.class.default_formats.dup
       @sti_create_links = self.class.sti_create_links
 
       # inherit from the global set of action links

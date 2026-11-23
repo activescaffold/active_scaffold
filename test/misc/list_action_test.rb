@@ -3,6 +3,20 @@
 require 'test_helper'
 
 class ListActionTest < ActiveSupport::TestCase
+  def test_configured_default_formats_preserve_additive_core_and_action_formats
+    action = core_action.new
+    action.stubs(:active_scaffold_config).returns(stub(default_formats: %i[html js], formats: [:csv], list: stub(formats: [:json])))
+
+    assert_equal %i[html js csv json], ActiveScaffold::Actions::List.instance_method(:list_formats).bind_call(action)
+  end
+
+  def test_empty_default_formats_allow_only_explicitly_added_list_formats
+    action = core_action.new
+    action.stubs(:active_scaffold_config).returns(stub(default_formats: [], formats: [], list: stub(formats: [:json])))
+
+    assert_equal [:json], ActiveScaffold::Actions::List.instance_method(:list_formats).bind_call(action)
+  end
+
   def test_core_get_row_delegates_to_get_record
     action = core_action.new
     action.expects(:get_record).with({crud_type: :update}).returns(:record)
