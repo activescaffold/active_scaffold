@@ -214,7 +214,9 @@ Call the helper after all destination changes and before calling the route helpe
 
 The `edit_associated` links generated inside tabbed subforms carry a detached `tab_signature`. It authenticates `tabbed_by`, `value`, and `value_type`, bound to the controller, parent ID or generated ID, child association, subform scope, parent controller, and embedded identifier. Verification happens before building the associated record or resolving a polymorphic type. Missing or altered signatures are rejected with HTTP 400.
 
-ActiveScaffold signs the final create-another link options automatically. Inherited tab parameters are discarded before generating these links, so unchecked incoming values cannot obtain signatures through a rendered form. Ordinary associated forms without tab-selection parameters do not require a tab signature.
+ActiveScaffold signs the final create-another and add-existing link options automatically, including record-select callbacks. Inherited tab parameters are discarded before generating these links, so unchecked incoming values cannot obtain signatures through a rendered form. Ordinary associated forms without tab-selection parameters do not require a tab signature.
+
+Adding an existing record inserts its form row into the clicked tab. If its grouping value differs, the change requires update authorization for that record and grouping column. The new value is staged in the returned form; the database is not changed until the parent form is submitted through the normal save flow. An already matching grouping value is left unchanged.
 
 For custom application-generated tab links, sign the trusted final options explicitly:
 
