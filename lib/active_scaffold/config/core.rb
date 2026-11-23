@@ -47,6 +47,14 @@ module ActiveScaffold::Config
     cattr_accessor :default_formats, instance_accessor: false
     @@default_formats = %i[html js json xml]
 
+    # nil allows filtering on all database columns; an empty array disables it
+    cattr_accessor :conditions_from_params_columns, instance_accessor: false
+    @@conditions_from_params_columns = nil
+
+    # columns excluded from parameter filtering, even when explicitly allowed
+    cattr_accessor :conditions_from_params_excluded_columns, instance_accessor: false
+    @@conditions_from_params_excluded_columns = []
+
     # action links are used by actions to tie together. you can use them, too! this is a collection of ActiveScaffold::DataStructures::ActionLink objects.
     cattr_reader :action_links, instance_reader: false
     @@action_links = ActiveScaffold::DataStructures::ActionLinks.new
@@ -145,6 +153,8 @@ module ActiveScaffold::Config
     # override the default response formats for a specific controller
     attr_accessor :default_formats
 
+    attr_accessor :conditions_from_params_columns, :conditions_from_params_excluded_columns
+
     # lets you specify whether add a create link for each sti child for a specific controller
     attr_accessor :sti_create_links
 
@@ -205,6 +215,8 @@ module ActiveScaffold::Config
       @conditional_get_support = self.class.conditional_get_support
       @store_user_settings = self.class.store_user_settings
       @default_formats = self.class.default_formats.dup
+      @conditions_from_params_columns = self.class.conditions_from_params_columns&.dup
+      @conditions_from_params_excluded_columns = self.class.conditions_from_params_excluded_columns.dup
       @sti_create_links = self.class.sti_create_links
 
       # inherit from the global set of action links

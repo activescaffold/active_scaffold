@@ -41,6 +41,27 @@ module Config
       assert_equal %i[html js json xml], ActiveScaffold::Config::Core.default_formats
     end
 
+    def test_parameter_filter_defaults_preserve_existing_behavior
+      assert_nil @config.conditions_from_params_columns
+      assert_empty @config.conditions_from_params_excluded_columns
+    end
+
+    def test_parameter_filter_lists_inherit_without_sharing_arrays
+      allowed = [:a]
+      excluded = [:b]
+      ActiveScaffold::Config::Core.stubs(:conditions_from_params_columns).returns(allowed)
+      ActiveScaffold::Config::Core.stubs(:conditions_from_params_excluded_columns).returns(excluded)
+      config = ActiveScaffold::Config::Core.new(:model_stub)
+
+      config.conditions_from_params_columns << :id
+      config.conditions_from_params_excluded_columns << :a
+
+      assert_equal [:a], allowed
+      assert_equal [:b], excluded
+      assert_equal %i[a id], config.new_user_settings({}, {}).conditions_from_params_columns
+      assert_equal %i[b a], config.user.conditions_from_params_excluded_columns
+    end
+
     def test_add_sti_children
       @config.sti_create_links = true
       assert_not @config.add_sti_create_links?
