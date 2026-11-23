@@ -89,6 +89,12 @@ module UsersHelper
 end
 {%- endhighlight %}
 
+## Lookup of Selected Existing Records {#selected-record-lookup}
+
+`options_for_association_conditions` and `association_klass_scoped` control the choices displayed in association inputs. Their restrictions are not automatically applied when an existing record ID is submitted to `edit_associated` or `add_existing`.
+
+Use the controller's [`associated_record_scope(klass, column: nil)`](/doc/api-core/#associated_record_scope) override to restrict these lookups. ActiveScaffold also checks read authorization on the selected record before rendering it as a subform or attaching it to the parent. Keep option helper restrictions and lookup restrictions consistent when both are needed.
+
 ## Helpers Prefixed with Model Name
 
 The following methods, `options_for_association_conditions`, `association_klass_scoped` and `sorted_association_options_find`, can be defined with model name prefix, so they are called only with associations for that model. In that case, the method should call the original AS helper instead of super in the else clause.

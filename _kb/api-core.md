@@ -346,3 +346,34 @@ class Admin::Scaffold::ScaffoldTableController < Admin::Scaffold::BaseController
   end
 end
 {%- endhighlight %}
+
+## associated_record_scope <small><em>override method</em></small> {#associated_record_scope}
+
+Override this protected controller method to restrict the lookup of an existing record selected for an association. Its signature is `associated_record_scope(klass, column: nil)`, and the default implementation returns `klass`.
+
+- `klass` is the model class of the record being selected. It may differ from the current controller's scaffold model.
+- `column` is the parent scaffold's association column, passed as a keyword argument. Use it to distinguish associations when different lookup restrictions are needed.
+- Return a model class or a relation that supports `find(id)`.
+
+The hook is called by both `edit_associated`, before rendering an existing record as a subform, and `add_existing`, before attaching an existing record to the parent. Override it on the controller handling the request: the parent form's controller for `edit_associated`, and the selected record's controller for `add_existing`.
+
+For example, restrict selection of documents to the current account:
+
+{% highlight ruby -%}
+class ProjectsController < ApplicationController
+  active_scaffold
+
+  protected
+
+  def associated_record_scope(klass, column: nil)
+    scope = super
+    klass == Document ? scope.where(account_id: current_account.id) : scope
+  end
+end
+{%- endhighlight %}
+
+This example scopes document selection through `ProjectsController#edit_associated`. Apply the same restriction in `DocumentsController` if documents can also be attached through its `add_existing` action.
+
+After finding the record through this scope, ActiveScaffold still checks `record.authorized_for?(crud_type: :read)` before rendering or attaching it. The scope supplements record authorization; it does not replace it.
+
+The default lookup does not use `beginning_of_chain`, `filtered_query`, or the current nested collection. This allows selection of records that have not yet been associated with the parent. Conditions defined by the association option helpers are not automatically applied here; see [Custom Association Options](/doc/custom-association-options/#selected-record-lookup).
