@@ -20,6 +20,26 @@ render :active_scaffold => "users", :label => "Active Users"
 render :active_scaffold => "users", :params => {:sort => "name", :sort_direction => "ASC"}
 {%- endhighlight %}
 
+### Signed Embedded Parameters {#signed-embedded-parameters}
+
+Embedded constraints, conditions, and labels travel in the URL and are authenticated by a detached HMAC-SHA256 signature in `eid`. The signature is bound to the target controller and remains stable for the same embedded parameters, preserving the scaffold's element identifiers and stored user settings. Signing authenticates the parameters; it does not encrypt them.
+
+`render active_scaffold: ...`, association popup links, and ActiveScaffold action links sign their embedded options automatically when generating the URL. Existing rendering calls do not need to change. Unsigned or altered embedded parameters are rejected with HTTP 400; re-render embedded scaffolds after upgrading to generate signed URLs.
+
+For a manually constructed embedded URL, sign the final options before generating the URL:
+
+{% highlight ruby -%}
+url_for(signed_url_options(
+  controller: '/users',
+  action: 'index',
+  embedded: {constraints: {status: 'active'}}
+))
+{%- endhighlight %}
+
+Use the signing helpers only with trusted application-defined values. Do not sign raw incoming request parameters. `signed_url_options` signs both embedded options and `return_to` when present; `signed_embedded_options` signs only embedded options.
+
+Embedded filters do not replace record authorization. Users can still request the ordinary scaffold without an embedded context, so enforce access restrictions through authorization methods and the appropriate server-side scopes.
+
 ### Constraints
 
 Constraints are simple field/value pairs used as search conditions for the scaffold’s list. Because constrained columns become rather boring to look at, they are automatically removed from column sets so they don’t appear in List, Create, Update, etc. Furthermore, records created through a constrained embedded scaffold will automatically receive the values it is constrained to (a user can not create a record with a value outside of the constraint). Constraints may be the name of a database field (e.g. user_id) or the name of a attribute or association column. If the constraint is the name of an association, then the constraint value will be assumed an ID.
@@ -32,8 +52,7 @@ render :active_scaffold => 'entries', :constraints => { :user_id => @user.id }
 render :active_scaffold => 'users', :constraints => { :status => "active" }
 {%- endhighlight %}
 
-<b>Important:</b> Constraints are stored in the session. You should therefore only use simple
-values, e.g. `record.id instead of `record.
+**Important:** Constraints are transmitted as signed URL parameters. Use simple values such as `record.id` rather than passing model objects.
 
 {% highlight ruby -%}
 render :active_scaffold => 'users', :constraints => {:active => 1, :user_group => 15},
@@ -49,7 +68,7 @@ render :active_scaffold => 'users', :constraints => {:editors => @record.id},
 
 ### Advanced: Accessing constraint data in your controller
 
-To access constraint data inside of your controller, use `active_scaffold_session_storage[:constraints][:constraint_key]`.
+To access constraint data inside of your controller, use `active_scaffold_constraints['constraint_key']`, which reads the verified embedded constraints.
 
 {% highlight ruby -%}
 class Admin::RentalCompsController < ApplicationController
@@ -61,7 +80,7 @@ class Admin::RentalCompsController < ApplicationController
 
   def load_listing  
     begin
-      @listing = Listing.find(active_scaffold_session_storage[:constraints][:listing_id])
+      @listing = Listing.find(active_scaffold_constraints['listing_id'])
     rescue
       @listing = Listing.new
     end
@@ -73,7 +92,7 @@ class Admin::RentalCompsController < ApplicationController
 end
 {%- endhighlight %}
 
-At the time of writing, active_scaffold_session is only accessible by the controller, and not by the view.
+`active_scaffold_constraints` is also available to views as a helper method.
 
 ### Conditions v1.1
 
