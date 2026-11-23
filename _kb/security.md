@@ -210,6 +210,28 @@ link_to 'View client', polymorphic_path(record.entity, options), class: 'colorbo
 
 Call the helper after all destination changes and before calling the route helper. Use it only for destinations chosen by trusted application code; do not use it to sign an unverified `params[:return_to]`. If the URL also includes embedded options, use `signed_url_options` to sign both kinds of parameters.
 
+## Signed Tab Selections {#signed-tab-selections}
+
+The `edit_associated` links generated inside tabbed subforms carry a detached `tab_signature`. It authenticates `tabbed_by`, `value`, and `value_type`, bound to the controller, parent ID or generated ID, child association, subform scope, parent controller, and embedded identifier. Verification happens before building the associated record or resolving a polymorphic type. Missing or altered signatures are rejected with HTTP 400.
+
+ActiveScaffold signs the final create-another link options automatically. Inherited tab parameters are discarded before generating these links, so unchecked incoming values cannot obtain signatures through a rendered form. Ordinary associated forms without tab-selection parameters do not require a tab signature.
+
+For custom application-generated tab links, sign the trusted final options explicitly:
+
+{% highlight ruby -%}
+options = {
+  controller: '/projects', action: 'edit_associated', id: @project.to_param,
+  child_association: 'tasks', tabbed_by: 'category', value: @category.id
+}
+url_for(signed_tab_selection_options(signed_url_options(options)))
+{%- endhighlight %}
+
+`signed_url_options` does not sign tab selections itself. Use `signed_tab_selection_options` only for selections constructed by trusted application code, never for raw request parameters. Pass the actual subform scope, parent controller, and generated ID too when the link needs them.
+
+The separate `render_field` add-tab flow accepts a value selected by the browser without a signature. It checks that the requested group and grouping field match the configured tabbed group, and renders a tab only when the selected value appears in the server-generated tab options. Unknown values render no tab and generate no signed create-another links.
+
+Tab signatures do not apply to editable attributes submitted through `create` or `update`. Those attributes follow the normal configured-column and authorization checks and model validations. Restrictions on which values may be saved should be enforced by model validations or application authorization; filtering an input's choices alone does not validate later submissions.
+
 ## What Does NOT Happen
 
 We have tried to design these security methods in a way that lets us spin them off into a new plugin at some future date. The reason they are not a separate plugin yet is because they function passively. That is, they only function when ActiveScaffold is polite enough to care! So please be aware: you can still mess up your data with these security methods in place if you bypass ActiveScaffold (with script/console, for example).
