@@ -143,7 +143,7 @@ module ActiveScaffold # :nodoc:
       options[:params] ||= {}
       url_options = {controller: remote_controller.to_s, action: 'index', id: nil}.merge(options[:params])
       url_options[:embedded] = eid_info
-      url_options = signed_embedded_options(url_options)
+      url_options = signed_url_options(url_options)
       eid = url_options[:eid]
       options[:params].merge! eid: eid, embedded: eid_info
 

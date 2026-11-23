@@ -128,6 +128,7 @@ module ActiveScaffold
       end
 
       def record_select_params_for_add_existing(association, edit_associated_url_options, record)
+        edit_associated_url_options = signed_url_options(edit_associated_url_options)
         if ActiveScaffold::Bridges::RecordSelect.callback_registry?
           {
             onselect: 'active_scaffold.add_existing',

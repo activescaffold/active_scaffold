@@ -93,6 +93,28 @@ class EmbeddedParameterSigningTest < ActionDispatch::IntegrationTest
     assert_not_equal options[:eid], controller.signed_embedded_options(controller: '/people', embedded: {label: 'Other'})[:eid]
   end
 
+  test 'implicit targets retain their controller namespace' do
+    controller = PeopleController.new
+    controller.stubs(:controller_path).returns('admin/people')
+    options = controller.signed_embedded_options(embedded: {label: 'People'})
+    payload = ActiveScaffold::ParameterSigning.embedded_payload(options[:embedded], controller: 'admin/people')
+
+    assert ActiveScaffold::ParameterSigning.valid_signature?(payload, options[:eid], purpose: :embedded)
+  end
+
+  test 'verified embedded options are signed for a changed target controller at URL generation' do
+    controller = PeopleController.new
+    original = controller.signed_embedded_options(controller: '/people', embedded: {label: 'People'})
+    controller.params = ActionController::Parameters.new(original.merge(controller: 'people'))
+    controller.stubs(:active_scaffold_config).returns(PeopleController.active_scaffold_config)
+    options = controller.signed_url_options(controller.params_for(controller: '/cars', action: 'index'))
+
+    get '/cars.json', params: options.except(:controller, :action)
+
+    assert_response :success
+    assert_not_equal original[:eid], options[:eid]
+  end
+
   private
 
   def signed_options(embedded)

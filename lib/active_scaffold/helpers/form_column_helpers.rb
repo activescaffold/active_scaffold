@@ -185,7 +185,7 @@ module ActiveScaffold
         if force || (form_columns && update_columns&.intersect?(form_columns))
           url_params = url_options_for_render_field(column, record, scope, subform_controller, url_params)
           options[:class] = "#{options[:class]} update_form".strip
-          options['data-update_url'] = url_for(url_params)
+          options['data-update_url'] = url_for(signed_url_options(url_params))
           options['data-update_send_form'] = column.update_columns&.any?(Hash) || column.send_form_on_update_column
           options['data-update_send_form_selector'] = column.options[:send_form_selector] if column.options[:send_form_selector]
           options['data-skip-disable-form'] = !column.disable_on_update_column

@@ -13,7 +13,7 @@ module ActiveScaffold
                         :main_form_controller, :build_associated,
                         :generate_temporary_id, :generated_id,
                         :active_scaffold_config_for, :tabbed_by_association,
-                        :signed_embedded_options
+                        :signed_embedded_options, :signed_return_to_options, :signed_url_options
         end
       end
 
@@ -28,9 +28,39 @@ module ActiveScaffold
       def signed_embedded_options(options)
         return options unless options[:embedded]
 
-        target = controller_requested(options[:controller] || controller_path)
+        target = options[:controller] ? controller_requested(options[:controller]) : controller_path
         payload = ActiveScaffold::ParameterSigning.embedded_payload(options[:embedded], controller: target)
         options.merge(eid: ActiveScaffold::ParameterSigning.signature(payload, purpose: :embedded))
+      end
+
+      def signed_url_options(options)
+        return options unless options.is_a?(Hash)
+
+        signed_return_to_options(signed_embedded_options(options.symbolize_keys))
+      end
+
+      # Call after overridable URL-option builders, immediately before generating a URL.
+      def signed_return_to_options(options)
+        return options unless options.is_a?(Hash)
+
+        options = options.symbolize_keys.except(:return_to_signature)
+        if options[:return_to]
+          unless options[:return_to].is_a?(String)
+            raise ArgumentError, 'return_to must be a URL string'
+          end
+
+          options[:return_to_signature] = ActiveScaffold::ParameterSigning.signature(options[:return_to], purpose: :return_to)
+        end
+        options
+      end
+
+      def verify_return_to_parameter
+        return if params[:return_to].nil?
+
+        unless params[:return_to].is_a?(String) &&
+               ActiveScaffold::ParameterSigning.valid_signature?(params[:return_to], params[:return_to_signature], purpose: :return_to)
+          raise ::ActionController::BadRequest, 'Invalid return_to signature'
+        end
       end
 
       def generate_temporary_id(record = nil, generated_id = nil)
@@ -71,6 +101,8 @@ module ActiveScaffold
                             iframe associated_id authenticity_token _added _removed _popstate _].freeze
 
       def params_for(options = {})
+        verify_return_to_parameter
+        active_scaffold_embedded_params if params[:embedded]
         unless @params_for
           @params_for = {}
           params.except(*BLACKLIST_PARAMS).each do |key, value|
@@ -90,6 +122,7 @@ module ActiveScaffold
             url_options[:sort_direction] ||= direction
           end
         end
+        url_options.delete(:return_to_signature) unless url_options[:return_to]
         url_options
       end
 
@@ -113,6 +146,7 @@ module ActiveScaffold
 
       # Parameters to generate url to the main page (override if the ActiveScaffold is used as a component on another controllers page)
       def main_path_to_return
+        verify_return_to_parameter
         if params[:return_to]
           params[:return_to]
         else

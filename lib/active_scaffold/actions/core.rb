@@ -74,6 +74,7 @@ module ActiveScaffold::Actions
 
     def self.included(base)
       base.class_eval do
+        before_action :verify_return_to_parameter
         before_action :set_vary_accept_header
         before_action :check_input_device
         before_action :register_constraints_with_action_columns, unless: :nested?
@@ -429,7 +430,8 @@ module ActiveScaffold::Actions
       options = main_path_to_return
       # use url_for in case main_path_to_return returns Hash with status param,
       # which would be interpreted as status option to redirect_to instead of url param
-      redirect_to options.is_a?(Hash) ? url_for(options) : options
+      redirect_options = params[:return_to] ? {allow_other_host: true} : {}
+      redirect_to options.is_a?(Hash) ? url_for(signed_url_options(options)) : options, **redirect_options
     end
 
     def filtered_query

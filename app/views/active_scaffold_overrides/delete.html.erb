@@ -1,11 +1,11 @@
 <div class="active-scaffold">
   <div class="delete-view view">
-    <%= form_tag params_for(action: :destroy, id: params[:id]), {method: :delete} %>
+    <%= form_tag signed_url_options(params_for(action: :destroy, id: params[:id])), {method: :delete} %>
       <h4><%= as_(:are_you_sure_to_delete, label: h(@record&.to_label)) -%></h4>
 
       <p class="form-footer">
         <%= submit_tag as_(:delete), class: 'submit' %>
-        <%= link_to as_(:cancel), main_path_to_return, class: 'cancel' %>
+        <%= link_to as_(:cancel), signed_url_options(main_path_to_return), class: 'cancel' %>
       </p>
 
     </form>

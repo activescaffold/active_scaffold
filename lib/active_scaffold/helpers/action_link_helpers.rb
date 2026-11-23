@@ -274,12 +274,12 @@ module ActiveScaffold
       def cached_action_link_url(link, record)
         @action_links_urls ||= {}
         @action_links_urls[link.name_to_cache.to_s] || begin
-          url_options = signed_embedded_options(cached_action_link_url_options(link, record))
+          url_options = cached_action_link_url_options(link, record)
           if cache_action_link_url?(link, record)
-            @action_links_urls[link.name_to_cache.to_s] = url_for(url_options)
+            @action_links_urls[link.name_to_cache.to_s] = url_for(signed_url_options(url_options))
           else
             url_options.merge! eid: nil, embedded: nil if link.nested_link?
-            url_for(params_for(url_options))
+            url_for(signed_url_options(params_for(url_options)))
           end
         end
       end
@@ -302,11 +302,17 @@ module ActiveScaffold
 
       def add_query_string_to_cached_url(link, url)
         query_string, non_nested_query_string = query_string_for_action_links(link)
-        nested_params = !link.nested_link? && non_nested_query_string
-        if query_string || nested_params
+        parts = [query_string]
+        parts << non_nested_query_string&.delete_prefix('&') unless link.nested_link?
+        query = parts.compact.join('&')
+        # Explicit options from an application override take precedence over
+        # return destinations propagated from the current request.
+        if url.match?(/[?&]return_to=/)
+          query = query.split('&').reject { |part| part.start_with?('return_to=', 'return_to_signature=') }.join('&')
+        end
+        if query.present?
           url << (url.include?('?') ? '&' : '?')
-          url << query_string if query_string
-          url << non_nested_query_string if nested_params
+          url << query
         end
         url
       end
@@ -362,8 +368,14 @@ module ActiveScaffold
         if nested_singular_association? && action_name == 'index'
           # pass the current path as return_to, for nested listing on singular association, so forms don't return to parent listing
           @query_string_params << :return_to
+          @query_string_params << :return_to_signature
+          query_string_options.except!(:return_to, :return_to_signature)
           non_nested_query_string_options[:return_to] = request.fullpath
+          non_nested_query_string_options = signed_url_options(non_nested_query_string_options)
         end
+
+        query_string_options.delete(:return_to_signature) unless query_string_options[:return_to]
+        non_nested_query_string_options.delete(:return_to_signature) unless non_nested_query_string_options[:return_to]
 
         query_string = query_string_options.to_query if query_string_options.present?
         if non_nested_query_string_options.present?

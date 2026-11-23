@@ -75,6 +75,7 @@ class JavascriptLoadTest < ActiveSupport::TestCase
     singleton_class = bridge_class.singleton_class
     callback_registry = singleton_class.instance_method(:callback_registry?)
     helper = Object.new.extend(ActiveScaffold::Helpers::AssociationHelpers)
+    helper.extend(ActiveScaffold::Helpers::ControllerHelpers)
     helper.define_singleton_method(:url_for) { |_options| '/projects/--ID--' }
     helper.define_singleton_method(:active_scaffold_id) { 'as_projects' }
 

@@ -9,7 +9,7 @@ module ActiveScaffold
           proc_options: {page_number: page_number, text: text},
           **options.smart_merge(class: 'as_paginate')
         )
-        link_to text ? as_(text) : page_number, url_options.merge(page: page_number), attributes
+        link_to text ? as_(text) : page_number, signed_url_options(url_options.merge(page: page_number)), attributes
       end
 
       def pagination_url_options(url_options = nil)

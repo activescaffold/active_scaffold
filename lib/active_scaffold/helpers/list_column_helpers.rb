@@ -407,7 +407,7 @@ module ActiveScaffold
       INPLACE_EDIT_PLURAL_FORM_UI = %i[select record_select].freeze
       def inplace_edit_data(column)
         data = {}
-        data[:ie_url] = url_for(params_for(action: 'update_column', column: column.name, id: '__id__'))
+        data[:ie_url] = url_for(signed_url_options(params_for(action: 'update_column', column: column.name, id: '__id__')))
         data[:ie_cancel_text] = column.options[:cancel_text] || as_(:cancel)
         data[:ie_loading_text] = column.options[:loading_text] || as_(:loading)
         data[:ie_save_text] = column.options[:save_text] || as_(:update)
@@ -422,7 +422,7 @@ module ActiveScaffold
         elsif inplace_edit_cloning?(column)
           data[:ie_mode] = :clone
         elsif column.inplace_edit == :ajax
-          url = url_for(params_for(controller: params_for[:controller], action: 'render_field', id: '__id__', update_column: column.name))
+          url = url_for(signed_url_options(params_for(controller: params_for[:controller], action: 'render_field', id: '__id__', update_column: column.name)))
           plural = column.association&.collection? && !override_form_field?(column) && INPLACE_EDIT_PLURAL_FORM_UI.include?(column.form_ui)
           data[:ie_render_url] = url
           data[:ie_mode] = :ajax
@@ -478,7 +478,7 @@ module ActiveScaffold
         if column.name == :as_marked
           tag_options[:data] = {
             ie_mode: :inline_checkbox,
-            ie_url: url_for(params_for(action: 'mark', id: '__id__'))
+            ie_url: url_for(signed_url_options(params_for(action: 'mark', id: '__id__')))
           }
         elsif column.inplace_edit
           tag_options[:data] = inplace_edit_data(column)
@@ -501,7 +501,7 @@ module ActiveScaffold
           if !active_scaffold_config.store_user_settings && respond_to?(:search_params) && search_params.present?
             url_options[:search] = search_params
           end
-          link_to column_heading_label(column), url_options, options
+          link_to column_heading_label(column), signed_url_options(url_options), options
         else
           content_tag(:p, column_heading_label(column))
         end
