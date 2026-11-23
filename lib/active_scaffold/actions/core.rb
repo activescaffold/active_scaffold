@@ -131,8 +131,15 @@ module ActiveScaffold::Actions
     end
 
     def render_field_for_inplace_editing
-      @column = active_scaffold_config.columns[params[:update_column]]
+      @column = inplace_edit_column(params[:update_column])
       @record = find_if_allowed(params[:id], crud_type: :update, column: params[:update_column])
+    end
+
+    def inplace_edit_column(name)
+      column = active_scaffold_config.columns[name] if name.present?
+      raise ActiveScaffold::ActionNotAllowed unless column&.inplace_edit
+
+      column
     end
 
     def add_tab
