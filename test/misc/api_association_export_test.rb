@@ -66,14 +66,16 @@ class ApiAssociationExportTest < ActionDispatch::IntegrationTest
     assert_equal [], response.parsed_body['contacts']
   end
 
-  test 'association fields honor column read authorization' do
-    Car.any_instance.stubs(:authorized_for?).returns(true)
-    Car.any_instance.stubs(:authorized_for?).with(crud_type: :read, column: :to_label).returns(false)
+  test 'default association fields do not require column authorization checks' do
+    Car.any_instance.stubs(:authorized_for?).with(crud_type: :read).returns(true)
+    Car.any_instance.expects(:authorized_for?).with do |options|
+      options.key?(:column)
+    end.never
 
     get "/people/#{@person.id}.json"
 
     assert_response :success
-    assert_equal({'id' => @car.id}, response.parsed_body['car'])
+    assert_equal({'id' => @car.id, 'to_label' => @car.to_label}, response.parsed_body['car'])
   end
 
   test 'denied parent association columns are not exported' do
@@ -86,7 +88,7 @@ class ApiAssociationExportTest < ActionDispatch::IntegrationTest
     assert_not response.parsed_body.key?('car')
   end
 
-  test 'the controller hook selects additional association fields with authorization' do
+  test 'a fixed controller column list is exported without automatic column checks' do
     ActiveScaffold::DataStructures::ActionColumns.any_instance.stubs(:visible_columns_names).returns([:car])
     PeopleController.any_instance.expects(:api_association_columns).with do |column, record|
       column.name == :car && record.id == @car.id
@@ -97,7 +99,27 @@ class ApiAssociationExportTest < ActionDispatch::IntegrationTest
     get "/people/#{@person.id}.json"
 
     assert_response :success
+    assert_equal({'id' => @car.id, 'brand' => 'Visible brand', 'model' => 'Private model', 'to_label' => @car.to_label}, response.parsed_body['car'])
+  end
+
+  test 'a custom controller hook can authorize additional fields per associated record' do
+    PeopleController.define_method(:api_association_columns) do |column, record|
+      columns = super(column, record)
+      if column.name == :car
+        columns += %i[brand model].select { |name| record.authorized_for?(crud_type: :read, column: name) }
+      end
+      columns
+    end
+    Car.any_instance.stubs(:authorized_for?).returns(true)
+    Car.any_instance.stubs(:authorized_for?).with(crud_type: :read, column: :model).returns(false)
+
+    get "/people/#{@person.id}.json"
+
+    assert_response :success
     assert_equal({'id' => @car.id, 'brand' => 'Visible brand', 'to_label' => @car.to_label}, response.parsed_body['car'])
+    assert_equal [{'id' => @contact.id, 'to_label' => @contact.to_label}], response.parsed_body['contacts']
+  ensure
+    PeopleController.remove_method(:api_association_columns)
   end
 
   test 'safe JSON preserves a configured model root' do

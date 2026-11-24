@@ -303,7 +303,7 @@ Happy translating!
 
 JSON and XML responses export each readable associated record as a hash containing its
 primary key and `to_label`. Unreadable singular records become `null`; unreadable records
-in collections are omitted. Each exported field also requires column read authorization.
+in collections are omitted. The primary key and label do not require column authorization checks.
 By default, associations are not expanded recursively, and no associated scaffold
 configuration is loaded.
 
@@ -321,7 +321,27 @@ def api_association_columns(column, record)
 end
 ```
 
-Only explicitly selected fields are exported, subject to associated record and column read
-authorization. Choose label and virtual methods that expose data appropriate for your API.
+The serializer checks associated record read authorization, but exports the columns returned
+by `api_association_columns` without column authorization checks. A fixed list is sufficient
+when those fields do not need individual checks. If additional fields need column read
+authorization, filter them explicitly in the override:
+
+```ruby
+protected
+
+def api_association_columns(column, record)
+  columns = super
+  if column.name == :company
+    columns += %i[name email].select do |name|
+      record.authorized_for?(crud_type: :read, column: name)
+    end
+  end
+  columns
+end
+```
+
+This preserves the default primary key and label and checks permissions only for the extra
+fields. Choose label and virtual methods that expose data appropriate for your API.
+
 The legacy full-attribute association output and its `unsafe_api_associations` compatibility
 setting from 4.4 are removed in 4.5. Remove that setting when upgrading.
