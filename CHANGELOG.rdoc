@@ -1,5 +1,5 @@
 = Unreleased
-- Export API associations as authorized hashes containing the primary key and +to_label+, with an overridable +api_association_options+ controller method for additional fields. Remove legacy full-attribute association serialization and its 4.4 +unsafe_api_associations+ compatibility setting. Associated record read authorization is checked automatically; applications can return Rails serialization options, including explicit nested +include:+ options, and must authorize the additional fields and nested records they request.
+- Remove legacy full-attribute association serialization and its 4.4 +unsafe_api_associations+ compatibility setting.
 - Fix DatePicker date-only formats containing a numeric month so +mm+ is not incorrectly treated as the beginning of a time format.
 - Remove the Semantic Attributes bridge. The archived +semantic_attributes+ gem cannot load on the supported Ruby and Rails versions.
 - Remove the obsolete FileColumn bridge. FileColumn is not compatible with the supported Rails and Ruby versions.
