@@ -262,41 +262,60 @@ and `to_label`. Unreadable singular records become `null`; unreadable records in
 are omitted. The primary key and label do not require column authorization checks. By default,
 associations are not expanded recursively, and no associated scaffold configuration is loaded.
 
-Override this controller method to choose additional attributes or scalar virtual columns:
+Override `api_association_options(column, record)` to return the options passed directly to
+Rails' `serializable_hash`, including `only:`, `except:`, `methods:`, and `include:`. For example:
 
 ```ruby
 protected
 
-def api_association_columns(column, record)
+def api_association_options(column, record)
   if column.name == :company
-    [record.class.primary_key, :to_label, :name]
+    {only: [record.class.primary_key, :name], methods: [:to_label]}
   else
     super
   end
 end
 ```
 
-The serializer checks associated record read authorization, but exports the columns returned
-by `api_association_columns` without column authorization checks. A fixed list is sufficient
-when those fields do not need individual checks. If additional fields need column read
-authorization, filter them explicitly in the override:
+The serializer checks associated record read authorization but does not authorize the fields
+selected by these options. If additional fields need column read authorization, filter them
+explicitly in the override:
 
 ```ruby
 protected
 
-def api_association_columns(column, record)
-  columns = super
+def api_association_options(column, record)
+  options = super
   if column.name == :company
-    columns += %i[name email].select do |name|
+    columns = %i[name email].select do |name|
       record.authorized_for?(crud_type: :read, column: name)
     end
+    options = options.merge(only: Array(options[:only]) + columns)
   end
-  columns
+  options
 end
 ```
 
 This preserves the default primary key and label and checks permissions only for the extra
 fields. Choose label and virtual methods that expose data appropriate for your API.
+
+Applications can explicitly request nested data using `include:` (singular):
+
+```ruby
+def api_association_options(column, record)
+  options = super
+  if column.name == :company
+    options = options.merge(include: {address: {only: [:city, :country]}})
+  end
+  options
+end
+```
+
+Nested includes use Rails' normal serialization. Applications are responsible for authorizing
+all nested records and fields they request. `serializable_hash` does not check those permissions;
+using an unrestricted `include:` can export every database attribute of nested records.
+For JSON, the parent uses `as_json` to preserve its model root, while associated records use
+`serializable_hash`, matching Rails' nested `include:` behavior and avoiding extra model roots.
 
 Setting `unsafe_api_associations = true` explicitly retains the legacy unsafe output without
 warnings in 4.4. Leaving it `nil` retains the output with a warning. Both the unsafe behavior

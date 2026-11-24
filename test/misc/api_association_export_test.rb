@@ -89,11 +89,11 @@ class ApiAssociationExportTest < ActionDispatch::IntegrationTest
     assert_not response.parsed_body.key?('car')
   end
 
-  test 'a fixed controller column list is exported without automatic column checks' do
+  test 'controller serialization options are used without automatic column checks' do
     ActiveScaffold::DataStructures::ActionColumns.any_instance.stubs(:visible_columns_names).returns([:car])
-    PeopleController.any_instance.expects(:api_association_columns).with do |column, record|
+    PeopleController.any_instance.expects(:api_association_options).with do |column, record|
       column.name == :car && record.id == @car.id
-    end.returns(%i[id brand model to_label])
+    end.returns(only: %i[id brand model], methods: [:to_label])
     Car.any_instance.stubs(:authorized_for?).returns(true)
     Car.any_instance.stubs(:authorized_for?).with(crud_type: :read, column: :model).returns(false)
 
@@ -104,12 +104,13 @@ class ApiAssociationExportTest < ActionDispatch::IntegrationTest
   end
 
   test 'a custom controller hook can authorize additional fields per associated record' do
-    PeopleController.define_method(:api_association_columns) do |column, record|
-      columns = super(column, record)
+    PeopleController.define_method(:api_association_options) do |column, record|
+      options = super(column, record)
       if column.name == :car
-        columns += %i[brand model].select { |name| record.authorized_for?(crud_type: :read, column: name) }
+        columns = %i[brand model].select { |name| record.authorized_for?(crud_type: :read, column: name) }
+        options = options.merge(only: Array(options[:only]) + columns)
       end
-      columns
+      options
     end
     Car.any_instance.stubs(:authorized_for?).returns(true)
     Car.any_instance.stubs(:authorized_for?).with(crud_type: :read, column: :model).returns(false)
@@ -120,7 +121,47 @@ class ApiAssociationExportTest < ActionDispatch::IntegrationTest
     assert_equal({'id' => @car.id, 'brand' => 'Visible brand', 'to_label' => @car.to_label}, response.parsed_body['car'])
     assert_equal [{'id' => @contact.id, 'to_label' => @contact.to_label}], response.parsed_body['contacts']
   ensure
-    PeopleController.remove_method(:api_association_columns)
+    PeopleController.remove_method(:api_association_options)
+  end
+
+  test 'controller options can explicitly include nested associations' do
+    PeopleController.define_method(:api_association_options) do |column, record|
+      options = super(column, record)
+      column.name == :car ? options.merge(include: {person: {only: [:first_name]}}) : options
+    end
+
+    get "/people/#{@person.id}.json"
+
+    assert_response :success
+    car = response.parsed_body['car']
+    assert_equal({'first_name' => 'Parent'}, car['person'])
+    assert_equal %w[id person to_label], car.keys.sort
+    assert_not car['person'].key?('car')
+  ensure
+    PeopleController.remove_method(:api_association_options)
+  end
+
+  test 'nested JSON uses serializable_hash without association model roots' do
+    Car.stubs(:include_root_in_json).returns(true)
+    Car.any_instance.expects(:as_json).never
+
+    get "/people/#{@person.id}.json"
+
+    assert_response :success
+    assert_equal({'id' => @car.id, 'to_label' => @car.to_label}, response.parsed_body['car'])
+  end
+
+  test 'XML root options are preserved for records and collections without modifying the options' do
+    config = PeopleController.active_scaffold_config
+    [@person, [@person], []].each do |records|
+      response = ActiveScaffold::Actions::Core::AuthorizedApiResponse.new(records, [:car], config)
+      options = {root: 'custom-people'}.freeze
+      xml = Nokogiri::XML(response.to_xml(options))
+
+      assert_equal 'custom-people', xml.root.name
+      assert_equal({root: 'custom-people'}, options)
+      assert_equal 'Car label', xml.at_xpath('//car/to-label').text unless records == []
+    end
   end
 
   test 'safe JSON preserves a configured model root' do
