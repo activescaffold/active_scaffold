@@ -197,7 +197,7 @@ end
 
 List the underlying column names, without the `!` suffix used for negated filters. The same rules cover equality, arrays, ranges, and negation. This setting does not configure the separate search and field-search forms.
 
-Columns in [`conditions_from_params_excluded_columns`](#conditions_from_params_excluded_columns) are rejected even when explicitly allowed here.
+Columns in [`conditions_from_params_excluded_columns`](#conditions_from_params_excluded_columns) are rejected even when explicitly allowed here. Override [`parameter_filter_columns`](#parameter_filter_columns) to narrow the permitted columns according to the current user's permissions.
 
 ## conditions_from_params_excluded_columns <small><em>global local</em></small> {#conditions_from_params_excluded_columns}
 
@@ -409,6 +409,42 @@ class Admin::Scaffold::ScaffoldTableController < Admin::Scaffold::BaseController
   end
 end
 {%- endhighlight %}
+
+## parameter_filter_columns <small><em>override method</em></small> {#parameter_filter_columns}
+
+Override this protected controller method to choose parameter-filter columns for the current request, for example according to the current user's permissions. It returns a hash mapping string database column names to their database column objects, not an array of names. The default implementation applies `conditions_from_params_allowed_columns` and `conditions_from_params_excluded_columns`.
+
+Call `super` to preserve the configured lists, then remove columns that the current user must not filter:
+
+{% highlight ruby -%}
+class EmployeesController < ApplicationController
+  active_scaffold do |config|
+    config.conditions_from_params_allowed_columns = %i[name salary]
+  end
+
+  protected
+
+  def parameter_filter_columns
+    columns = super
+    current_user&.can_view_salaries? ? columns : columns.except('salary')
+  end
+end
+{%- endhighlight %}
+
+The static allowlist must include any columns that the permission-based override may allow. `super` cannot restore columns removed by the configured lists. An empty allowlist disables filtering before this hook is called; override that setting for a controller that needs permission-based filtering.
+
+For applications with class-level column read permissions, the hook can apply those permissions too:
+
+{% highlight ruby -%}
+def parameter_filter_columns
+  model = active_scaffold_config.model
+  super.select do |name, _column|
+    model.authorized_for?(crud_type: :read, column: name.to_sym)
+  end
+end
+{%- endhighlight %}
+
+Class-level checks do not evaluate permissions that depend on individual existing records. Allow filtering on a column only when the user may learn its values across the queried records; otherwise matching rows or counts can reveal hidden values. Hiding a column from a form or list is not itself an authorization check.
 
 ## associated_record_scope <small><em>override method</em></small> {#associated_record_scope}
 
