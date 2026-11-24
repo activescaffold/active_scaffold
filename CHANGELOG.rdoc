@@ -5,7 +5,7 @@
 - Authorize existing records selected through add-existing and subform actions. Add +associated_record_scope+ so applications can restrict selectable records using the candidate class and parent association column.
 - Require inline editing to be enabled for the requested column before rendering its editor or invoking update overrides, preventing inline endpoints from updating columns outside the configured inline-edit interface.
 - Restrict grouped field searches to configured +group_options+ values, preventing requests from choosing arbitrary grouping columns or functions.
-- Restrict date trend search units to supported date and time durations before invoking duration methods.
+- Restrict date trend search units to supported date and time durations before invoking duration methods. Add the overridable +valid_datetime_trend_unit?+ finder method so applications can allow additional duration units when extending +active_scaffold_search_datetime_trend_units+.
 - Add +conditions_from_params_allowed_columns+ and +conditions_from_params_excluded_columns+ to control filtering through URL parameters. Excluded columns take precedence; a nil allowed list preserves existing behavior, while an empty allowed list disables parameter filtering.
 - Make +default_formats+ configurable globally and per controller so applications can restrict the response formats exposed by scaffold actions. Defaults remain HTML, JavaScript, JSON, and XML.
 - Apply the selected tab grouping to existing subform records as well as newly built records. Require update authorization when changing an existing record's grouping and stage association changes until the parent form is saved.

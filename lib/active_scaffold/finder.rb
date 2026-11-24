@@ -442,9 +442,14 @@ module ActiveScaffold
         Time.zone.now
       end
 
+      # Override to allow additional normalized duration units offered by the trend dropdown.
+      def valid_datetime_trend_unit?(unit)
+        DATE_UNITS.include?(unit.upcase) || TIME_UNITS.include?(unit.upcase)
+      end
+
       def datetime_from_to_for_trend(column, value)
         unit = value['unit'].to_s.downcase.pluralize
-        return [nil, nil] unless DATE_UNITS.include?(unit.upcase) || TIME_UNITS.include?(unit.upcase)
+        return [nil, nil] unless valid_datetime_trend_unit?(unit)
 
         case value['opt']
         when 'PAST'
