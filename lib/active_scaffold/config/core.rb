@@ -47,8 +47,8 @@ module ActiveScaffold::Config
     # nil allows filtering on all database columns; an empty array disables it.
     cattr_accessor :conditions_from_params_allowed_columns, instance_accessor: false, default: nil
 
-    # Columns excluded from parameter filtering, even when explicitly allowed.
-    cattr_accessor :conditions_from_params_excluded_columns, instance_accessor: false, default: []
+    # nil leaves exclusions unspecified; [] explicitly accepts unrestricted filtering when the allowed list is nil.
+    cattr_accessor :conditions_from_params_excluded_columns, instance_accessor: false, default: nil
 
     # action links are used by actions to tie together. you can use them, too! this is a collection of
     # ActiveScaffold::DataStructures::ActionLink objects.
@@ -161,8 +161,8 @@ module ActiveScaffold::Config
     # nil allows filtering on all database columns; an empty array disables it.
     cattr_accessor :conditions_from_params_allowed_columns, instance_accessor: false, default: nil
 
-    # Columns excluded from parameter filtering, even when explicitly allowed.
-    cattr_accessor :conditions_from_params_excluded_columns, instance_accessor: false, default: []
+    # nil leaves exclusions unspecified; [] explicitly accepts unrestricted filtering when the allowed list is nil.
+    cattr_accessor :conditions_from_params_excluded_columns, instance_accessor: false, default: nil
 
     # action links are used by actions to tie together. they appear as links for each record, or general links for the
     # ActiveScaffold.
@@ -227,7 +227,7 @@ module ActiveScaffold::Config
       @store_user_settings = self.class.store_user_settings
       @default_formats = self.class.default_formats.dup
       @conditions_from_params_allowed_columns = self.class.conditions_from_params_allowed_columns&.dup
-      @conditions_from_params_excluded_columns = self.class.conditions_from_params_excluded_columns.dup
+      @conditions_from_params_excluded_columns = self.class.conditions_from_params_excluded_columns&.dup
       @sti_create_links = self.class.sti_create_links
       @action_links = self.class.action_links.clone # inherit from the global set of action links
       @timestamped_messages = self.class.timestamped_messages

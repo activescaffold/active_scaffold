@@ -21,6 +21,10 @@ module ActiveScaffold
             next if active_scaffold_constraints[key]
             next if nested? && nested.param_name == key
 
+            if active_scaffold_config.conditions_from_params_allowed_columns.nil? && active_scaffold_config.conditions_from_params_excluded_columns.nil?
+              ActiveScaffold::ParameterFilterWarning.warn_once(self.class)
+            end
+
             value = condition_value_from_param(value, column, active_scaffold_config.model)
             if distinct
               conditions << distinct_condition(key, value)
@@ -36,7 +40,8 @@ module ActiveScaffold
         columns = active_scaffold_config._columns_hash
         allowed_columns = active_scaffold_config.conditions_from_params_allowed_columns
         columns = columns.slice(*allowed_columns.map(&:to_s)) if allowed_columns
-        columns.except(*active_scaffold_config.conditions_from_params_excluded_columns.map(&:to_s))
+        excluded_columns = active_scaffold_config.conditions_from_params_excluded_columns
+        excluded_columns ? columns.except(*excluded_columns.map(&:to_s)) : columns
       end
 
       def distinct_condition(key, value)

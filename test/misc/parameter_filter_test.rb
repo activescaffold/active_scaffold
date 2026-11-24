@@ -52,6 +52,66 @@ class ParameterFilterTest < ActiveSupport::TestCase
     assert_equal 'adult', result.last.left.name
   end
 
+  test 'unconfigured implicit filters warn once across controller instances' do
+    controller_class = Class.new(PeopleController)
+    @controller = controller_class.new
+    @controller.stubs(:active_scaffold_config).returns(@config)
+    ActiveScaffold.deprecator.expects(:warn).with do |message|
+      message.include?('hidden or unauthorized') && message.include?('4.5') &&
+        message.include?('conditions_from_params_allowed_columns = nil') &&
+        message.include?('conditions_from_params_excluded_columns = []')
+    end.once
+
+    assert_equal [{first_name: 'First'}], conditions(first_name: 'First')
+    @controller = controller_class.new
+    @controller.stubs(:active_scaffold_config).returns(@config)
+    assert_equal [{first_name: 'Second'}], conditions(first_name: 'Second')
+  end
+
+  test 'different controllers each warn when implicit filters are used' do
+    ActiveScaffold.deprecator.expects(:warn).twice
+
+    2.times do
+      @controller = Class.new(PeopleController).new
+      @controller.stubs(:active_scaffold_config).returns(@config)
+      conditions(first_name: 'First')
+    end
+  end
+
+  test 'ordinary listing parameters and unknown columns do not warn' do
+    ActiveScaffold.deprecator.expects(:warn).never
+
+    assert_equal [{}], conditions(page: '2', sort: 'first_name', unknown: 'ignored')
+  end
+
+  test 'constraints that skip implicit filters do not warn' do
+    @controller.stubs(:active_scaffold_constraints).returns(first_name: 'Constrained')
+    ActiveScaffold.deprecator.expects(:warn).never
+
+    assert_equal [{}], conditions(first_name: 'Ignored')
+  end
+
+  test 'explicit empty exclusions retain legacy filtering without a warning' do
+    @config.conditions_from_params_excluded_columns = []
+    ActiveScaffold.deprecator.expects(:warn).never
+
+    assert_equal [{last_name: 'Secret'}], conditions(last_name: 'Secret')
+  end
+
+  test 'explicit allowlists do not warn' do
+    @config.conditions_from_params_allowed_columns = [:first_name]
+    ActiveScaffold.deprecator.expects(:warn).never
+
+    assert_equal [{first_name: 'Visible'}], conditions(first_name: 'Visible')
+  end
+
+  test 'explicit exclusions do not warn' do
+    @config.conditions_from_params_excluded_columns = [:last_name]
+    ActiveScaffold.deprecator.expects(:warn).never
+
+    assert_equal [{first_name: 'Visible'}], conditions(first_name: 'Visible', last_name: 'Hidden')
+  end
+
   private
 
   def conditions(values)

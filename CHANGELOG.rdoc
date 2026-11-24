@@ -1,4 +1,5 @@
 = Unreleased
+- Warn once per controller when URL parameters implicitly filter database columns and both +conditions_from_params_allowed_columns+ and +conditions_from_params_excluded_columns+ are nil. Unrestricted filtering can reveal hidden or unauthorized values through matching records or counts. Exclusions now default to nil so an explicit empty exclusion list can retain legacy filtering without warnings. In 4.5 the allowed list will default to +[]+, disabling implicit parameter filters unless applications opt in.
 - Remove legacy full-attribute association serialization and its 4.4 +unsafe_api_associations+ compatibility setting.
 - Fix DatePicker date-only formats containing a numeric month so +mm+ is not incorrectly treated as the beginning of a time format.
 - Remove the Semantic Attributes bridge. The archived +semantic_attributes+ gem cannot load on the supported Ruby and Rails versions.
