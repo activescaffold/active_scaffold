@@ -81,7 +81,8 @@ ActiveRecord::Schema.define do
     t.integer 'buildings_count', :null => false, :default => 0
     t.integer 'floors_count', :null => false, :default => 0
     t.integer 'contacts_count', :null => false, :default => 0
-    t.boolean 'adult', :null => false, :default => false
+    # The JDBC SQLite adapter recognizes numeric defaults, but not DEFAULT FALSE.
+    t.boolean 'adult', :null => false, :default => -> { '0' }
     t.datetime 'created_at'
     t.datetime 'updated_at'
   end

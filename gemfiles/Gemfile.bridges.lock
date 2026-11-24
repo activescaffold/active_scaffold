@@ -1,6 +1,7 @@
 GIT
   remote: https://github.com/jruby/activerecord-jdbc-adapter.git
   revision: 7a18d651dfd3fb6a8488e0c30533b025169665eb
+  branch: master
   specs:
 
 PATH
