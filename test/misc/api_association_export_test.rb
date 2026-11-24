@@ -108,5 +108,4 @@ class ApiAssociationExportTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal({'id' => @car.id, 'to_label' => @car.to_label}, response.parsed_body.fetch('person')['car'])
   end
-
 end

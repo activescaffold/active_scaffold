@@ -19,7 +19,7 @@ module ActiveScaffold::Actions
 
         def to_xml(options = {})
           unless collection?
-              xml_options = options.reverse_merge(root: @response_object.class.model_name.singular)
+            xml_options = options.reverse_merge(root: @response_object.class.model_name.singular)
             return serialized_response(:serializable_hash).to_xml(xml_options)
           end
 

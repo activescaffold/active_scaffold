@@ -25,8 +25,8 @@ module ActiveScaffold
       record.serializable_hash(only: attributes, methods: methods, include: [])
     end
 
-    def readable?(record, **options)
-      !record.respond_to?(:authorized_for?) || record.authorized_for?(crud_type: :read, **options)
+    def readable?(record, **)
+      !record.respond_to?(:authorized_for?) || record.authorized_for?(crud_type: :read, **)
     end
   end
 end
