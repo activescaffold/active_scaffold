@@ -15,6 +15,7 @@ module ActiveScaffold
   autoload :MarkedModel, 'active_scaffold/marked_model'
   autoload :OrmChecks, 'active_scaffold/orm_checks'
   autoload :ParameterSigning, 'active_scaffold/parameter_signing'
+  autoload :ParameterFilterWarning, 'active_scaffold/parameter_filter_warning'
   autoload :Registry, 'active_scaffold/registry'
   autoload :RespondsToParent, 'active_scaffold/responds_to_parent'
   autoload :Routing, 'active_scaffold/extensions/routing_mapper'

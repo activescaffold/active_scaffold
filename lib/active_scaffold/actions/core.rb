@@ -526,12 +526,12 @@ module ActiveScaffold::Actions
       @conditions_from_params ||= begin
         conditions = [{}]
         allowed_columns = active_scaffold_config.conditions_from_params_allowed_columns&.map(&:to_s)
-        excluded_columns = active_scaffold_config.conditions_from_params_excluded_columns.map(&:to_s)
+        excluded_columns = active_scaffold_config.conditions_from_params_excluded_columns&.map(&:to_s)
         params.except(:controller, :action, :page, :sort, :sort_direction, :format, :id).each do |key, value|
           distinct = key.match?(/!$/)
           column_name = key.to_s[0..(distinct ? -2 : -1)]
           next if allowed_columns&.exclude?(column_name)
-          next if excluded_columns.include?(column_name)
+          next if excluded_columns&.include?(column_name)
 
           column = active_scaffold_config._columns_hash[column_name]
           next unless column
@@ -540,6 +540,7 @@ module ActiveScaffold::Actions
           next if active_scaffold_constraints[key]
           next if nested? && nested.param_name == key
 
+          ActiveScaffold::ParameterFilterWarning.warn_once(self.class) if allowed_columns.nil? && excluded_columns.nil?
           value = condition_value_from_param(value, column, active_scaffold_config.model)
           if distinct
             conditions << distinct_condition(key, value)

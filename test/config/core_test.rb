@@ -62,7 +62,7 @@ module Config
 
     def test_parameter_filter_defaults_preserve_existing_behavior
       assert_nil @config.conditions_from_params_allowed_columns
-      assert_empty @config.conditions_from_params_excluded_columns
+      assert_nil @config.conditions_from_params_excluded_columns
     end
 
     def test_parameter_filter_lists_inherit_without_sharing_arrays

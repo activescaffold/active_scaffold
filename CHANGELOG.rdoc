@@ -1,3 +1,6 @@
+= Unreleased
+- Warn once per controller when URL parameters implicitly filter database columns and both +conditions_from_params_allowed_columns+ and +conditions_from_params_excluded_columns+ are nil. Unrestricted filtering can reveal hidden or unauthorized values through matching records or counts. Exclusions now default to nil so an explicit empty exclusion list can retain legacy filtering without warnings. In 4.5 the allowed list will default to +[]+, disabling implicit parameter filters unless applications opt in.
+
 = 4.4.8
 - Add authorized API association exports containing the primary key and +to_label+, with an overridable +api_association_options+ controller method. Associated record read authorization is checked automatically; applications can return Rails serialization options, including explicit nested +include:+ options, and must authorize the additional fields and nested records they request. In 4.4, +unsafe_api_associations = nil+ preserves legacy full-attribute exports with a deprecation warning, +true+ preserves them without warning, and +false+ enables safe exports. The unsafe behavior and compatibility setting will be removed in 4.5.
 - Authenticate embedded scaffold parameters with a signature in +eid+, bound to the target controller. Reject unsigned or modified conditions and constraints before using them to query or assign records.
