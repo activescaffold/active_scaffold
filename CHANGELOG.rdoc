@@ -1,15 +1,5 @@
 = Unreleased
 - Export API associations as authorized hashes containing the primary key and +to_label+, with an overridable +api_association_options+ controller method for additional fields. Remove legacy full-attribute association serialization and its 4.4 +unsafe_api_associations+ compatibility setting. Associated record read authorization is checked automatically; applications can return Rails serialization options, including explicit nested +include:+ options, and must authorize the additional fields and nested records they request.
-- Authenticate embedded scaffold parameters with a signature in +eid+, bound to the target controller. Reject unsigned or modified conditions and constraints before using them to query or assign records.
-- Authenticate +return_to+ destinations before rendering links or redirecting, preventing request parameters from supplying unverified return URLs. Preserve the application's policy for redirects to external hosts.
-- Authenticate tab selections before assigning associated records, binding the signature to the controller, parent form, association, and grouping value. Validate tab groups against their configured grouping field and resolve association classes according to polymorphism.
-- Authorize existing records selected through add-existing and subform actions. Add +associated_record_scope+ so applications can restrict selectable records using the candidate class and parent association column.
-- Require inline editing to be enabled for the requested column before rendering its editor or invoking update overrides, preventing inline endpoints from updating columns outside the configured inline-edit interface.
-- Restrict grouped field searches to configured +group_options+ values, preventing requests from choosing arbitrary grouping columns or functions.
-- Restrict date trend search units to supported date and time durations before invoking duration methods. Add the overridable +valid_datetime_trend_unit?+ finder method so applications can allow additional duration units when extending +active_scaffold_search_datetime_trend_units+.
-- Add +conditions_from_params_allowed_columns+ and +conditions_from_params_excluded_columns+ to control filtering through URL parameters. Excluded columns take precedence; a nil allowed list preserves existing behavior, while an empty allowed list disables parameter filtering.
-- Make +default_formats+ configurable globally and per controller so applications can restrict the response formats exposed by scaffold actions. Defaults remain HTML, JavaScript, JSON, and XML.
-- Apply the selected tab grouping to existing subform records as well as newly built records. Require update authorization when changing an existing record's grouping and stage association changes until the parent form is saved.
 - Fix DatePicker date-only formats containing a numeric month so +mm+ is not incorrectly treated as the beginning of a time format.
 - Remove the Semantic Attributes bridge. The archived +semantic_attributes+ gem cannot load on the supported Ruby and Rails versions.
 - Remove the obsolete FileColumn bridge. FileColumn is not compatible with the supported Rails and Ruby versions.
@@ -43,6 +33,19 @@
 - Improve list column links by using the configured empty-field text for blank labels
 - Removing the obsolete IE6 non-breaking-space workaround in the list
 - Applying association authorization only to automatically generated association links, custom links use normal action link authorization
+
+= 4.4.8
+- Add authorized API association exports containing the primary key and +to_label+, with an overridable +api_association_options+ controller method. Associated record read authorization is checked automatically; applications can return Rails serialization options, including explicit nested +include:+ options, and must authorize the additional fields and nested records they request. In 4.4, +unsafe_api_associations = nil+ preserves legacy full-attribute exports with a deprecation warning, +true+ preserves them without warning, and +false+ enables safe exports. The unsafe behavior and compatibility setting will be removed in 4.5.
+- Authenticate embedded scaffold parameters with a signature in +eid+, bound to the target controller. Reject unsigned or modified conditions and constraints before using them to query or assign records.
+- Authenticate +return_to+ destinations before rendering links or redirecting, preventing request parameters from supplying unverified return URLs. Preserve the application's policy for redirects to external hosts.
+- Authenticate tab selections before assigning associated records, binding the signature to the controller, parent form, association, and grouping value. Validate tab groups against their configured grouping field and resolve association classes according to polymorphism.
+- Authorize existing records selected through add-existing and subform actions. Add +associated_record_scope+ so applications can restrict selectable records using the candidate class and parent association column.
+- Require inline editing to be enabled for the requested column before rendering its editor or invoking update overrides, preventing inline endpoints from updating columns outside the configured inline-edit interface.
+- Restrict grouped field searches to configured +group_options+ values, preventing requests from choosing arbitrary grouping columns or functions.
+- Restrict date trend search units to supported date and time durations before invoking duration methods. Add the overridable +valid_datetime_trend_unit?+ finder method so applications can allow additional duration units when extending +active_scaffold_search_datetime_trend_units+.
+- Add +conditions_from_params_allowed_columns+ and +conditions_from_params_excluded_columns+ to control filtering through URL parameters. Excluded columns take precedence; a nil allowed list preserves existing behavior, while an empty allowed list disables parameter filtering.
+- Make +default_formats+ configurable globally and per controller so applications can restrict the response formats exposed by scaffold actions. Defaults remain HTML, JavaScript, JSON, and XML.
+- Apply the selected tab grouping to existing subform records as well as newly built records. Require update authorization when changing an existing record's grouping and stage association changes until the parent form is saved.
 
 = 4.4.7
 - Apply per-record column read authorization to JSON and XML responses, preventing fields hidden by instance-level authorization from being disclosed through API formats.
