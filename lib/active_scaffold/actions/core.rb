@@ -462,6 +462,7 @@ module ActiveScaffold::Actions
     end
 
     # Override to export additional attributes or scalar virtual columns for an associated record.
+    # The returned columns are exported as-is; filter their authorization here if needed.
     def api_association_columns(column, record)
       [record.class.primary_key, :to_label]
     end
