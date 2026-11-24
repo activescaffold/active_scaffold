@@ -21,10 +21,6 @@ module ActiveScaffold
             next if active_scaffold_constraints[key]
             next if nested? && nested.param_name == key
 
-            if active_scaffold_config.conditions_from_params_allowed_columns.nil? && active_scaffold_config.conditions_from_params_excluded_columns.nil?
-              ActiveScaffold::ParameterFilterWarning.warn_once(self.class)
-            end
-
             value = condition_value_from_param(value, column, active_scaffold_config.model)
             if distinct
               conditions << distinct_condition(key, value)

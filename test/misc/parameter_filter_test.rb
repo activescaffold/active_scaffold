@@ -5,6 +5,7 @@ require 'test_helper'
 class ParameterFilterTest < ActiveSupport::TestCase
   setup do
     @config = ActiveScaffold::Config::Core.new(:person)
+    @config.conditions_from_params_allowed_columns = nil
     @controller = PeopleController.new
     @controller.stubs(:active_scaffold_config).returns(@config)
   end
@@ -27,7 +28,7 @@ class ParameterFilterTest < ActiveSupport::TestCase
     assert_equal [{first_name: 'Visible', adult: true}], conditions(first_name: 'Visible', adult: 'true', last_name: 'Secret')
   end
 
-  test 'reject list applies with the default unrestricted allowlist' do
+  test 'reject list applies with an unrestricted allowlist' do
     @config.conditions_from_params_excluded_columns = ['last_name']
 
     assert_equal [{first_name: 'Visible'}], conditions(first_name: 'Visible', last_name: 'Secret')
@@ -52,64 +53,11 @@ class ParameterFilterTest < ActiveSupport::TestCase
     assert_equal 'adult', result.last.left.name
   end
 
-  test 'unconfigured implicit filters warn once across controller instances' do
-    controller_class = Class.new(PeopleController)
-    @controller = controller_class.new
-    @controller.stubs(:active_scaffold_config).returns(@config)
-    ActiveScaffold.deprecator.expects(:warn).with do |message|
-      message.include?('hidden or unauthorized') && message.include?('4.5') &&
-        message.include?('conditions_from_params_allowed_columns = nil') &&
-        message.include?('conditions_from_params_excluded_columns = []')
-    end.once
+  test 'parameter filtering is disabled by default' do
+    @controller.stubs(:active_scaffold_config).returns(ActiveScaffold::Config::Core.new(:person))
+    @controller.expects(:params).never
 
-    assert_equal [{first_name: 'First'}], conditions(first_name: 'First')
-    @controller = controller_class.new
-    @controller.stubs(:active_scaffold_config).returns(@config)
-    assert_equal [{first_name: 'Second'}], conditions(first_name: 'Second')
-  end
-
-  test 'different controllers each warn when implicit filters are used' do
-    ActiveScaffold.deprecator.expects(:warn).twice
-
-    2.times do
-      @controller = Class.new(PeopleController).new
-      @controller.stubs(:active_scaffold_config).returns(@config)
-      conditions(first_name: 'First')
-    end
-  end
-
-  test 'ordinary listing parameters and unknown columns do not warn' do
-    ActiveScaffold.deprecator.expects(:warn).never
-
-    assert_equal [{}], conditions(page: '2', sort: 'first_name', unknown: 'ignored')
-  end
-
-  test 'constraints that skip implicit filters do not warn' do
-    @controller.stubs(:active_scaffold_constraints).returns(first_name: 'Constrained')
-    ActiveScaffold.deprecator.expects(:warn).never
-
-    assert_equal [{}], conditions(first_name: 'Ignored')
-  end
-
-  test 'explicit empty exclusions retain legacy filtering without a warning' do
-    @config.conditions_from_params_excluded_columns = []
-    ActiveScaffold.deprecator.expects(:warn).never
-
-    assert_equal [{last_name: 'Secret'}], conditions(last_name: 'Secret')
-  end
-
-  test 'explicit allowlists do not warn' do
-    @config.conditions_from_params_allowed_columns = [:first_name]
-    ActiveScaffold.deprecator.expects(:warn).never
-
-    assert_equal [{first_name: 'Visible'}], conditions(first_name: 'Visible')
-  end
-
-  test 'explicit exclusions do not warn' do
-    @config.conditions_from_params_excluded_columns = [:last_name]
-    ActiveScaffold.deprecator.expects(:warn).never
-
-    assert_equal [{first_name: 'Visible'}], conditions(first_name: 'Visible', last_name: 'Hidden')
+    assert_equal [{}], conditions(last_name: 'Secret')
   end
 
   private

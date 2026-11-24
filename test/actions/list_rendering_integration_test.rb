@@ -236,7 +236,22 @@ class ListRenderingIntegrationTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, 'Bob'
   end
 
+  test 'column parameters do not filter the list by default' do
+    Person.create!(first_name: 'Alice', last_name: 'Example')
+    Person.create!(first_name: 'Bob', last_name: 'Example')
+
+    get '/people', params: {first_name: 'Alice'}
+
+    assert_response :success
+    assert_select 'tbody.records .first_name-column', text: 'Alice', count: 1
+    assert_select 'tbody.records .first_name-column', text: 'Bob', count: 1
+  end
+
   test 'column parameters filter the list through finder parameter conditions' do
+    config = PeopleController.active_scaffold_config.dup
+    config.conditions_from_params_allowed_columns = %i[first_name buildings_count]
+    PeopleController.stubs(:active_scaffold_config).returns(config)
+
     Person.create!(first_name: 'Alice', last_name: 'Example', buildings_count: 1)
     Person.create!(first_name: 'Bob', last_name: 'Example', buildings_count: 3)
 
@@ -254,6 +269,10 @@ class ListRenderingIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test 'column parameters ending in an exclamation mark exclude matching records' do
+    config = PeopleController.active_scaffold_config.dup
+    config.conditions_from_params_allowed_columns = [:first_name]
+    PeopleController.stubs(:active_scaffold_config).returns(config)
+
     Person.create!(first_name: 'Alice', last_name: 'Example')
     Person.create!(first_name: 'Bob', last_name: 'Example')
 

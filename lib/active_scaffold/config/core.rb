@@ -44,8 +44,8 @@ module ActiveScaffold::Config
     # Response formats enabled by default, before additional core and action formats.
     cattr_accessor :default_formats, instance_accessor: false, default: %i[html js json xml]
 
-    # nil allows filtering on all database columns; an empty array disables it.
-    cattr_accessor :conditions_from_params_allowed_columns, instance_accessor: false, default: nil
+    # An empty array disables parameter filtering; nil permits all database columns.
+    cattr_accessor :conditions_from_params_allowed_columns, instance_accessor: false, default: []
 
     # nil leaves exclusions unspecified; [] explicitly accepts unrestricted filtering when the allowed list is nil.
     cattr_accessor :conditions_from_params_excluded_columns, instance_accessor: false, default: nil
@@ -158,8 +158,8 @@ module ActiveScaffold::Config
     # Response formats enabled by default, before additional core and action formats.
     cattr_accessor :default_formats, instance_accessor: false, default: %i[html js json xml]
 
-    # nil allows filtering on all database columns; an empty array disables it.
-    cattr_accessor :conditions_from_params_allowed_columns, instance_accessor: false, default: nil
+    # An empty array disables parameter filtering; nil permits all database columns.
+    cattr_accessor :conditions_from_params_allowed_columns, instance_accessor: false, default: []
 
     # nil leaves exclusions unspecified; [] explicitly accepts unrestricted filtering when the allowed list is nil.
     cattr_accessor :conditions_from_params_excluded_columns, instance_accessor: false, default: nil

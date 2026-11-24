@@ -41,8 +41,8 @@ module Config
       assert_equal %i[html js json xml], ActiveScaffold::Config::Core.default_formats
     end
 
-    def test_parameter_filter_defaults_preserve_existing_behavior
-      assert_nil @config.conditions_from_params_allowed_columns
+    def test_parameter_filter_defaults_disable_implicit_filters
+      assert_equal [], @config.conditions_from_params_allowed_columns
       assert_nil @config.conditions_from_params_excluded_columns
     end
 

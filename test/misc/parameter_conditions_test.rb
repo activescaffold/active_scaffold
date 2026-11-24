@@ -4,8 +4,10 @@ require 'test_helper'
 
 class ParameterConditionsTest < ActiveSupport::TestCase
   setup do
+    @config = ActiveScaffold::Config::Core.new(:person)
+    @config.conditions_from_params_allowed_columns = %i[first_name buildings_count]
     @controller = PeopleController.new
-    @controller.stubs(active_scaffold_config: PeopleController.active_scaffold_config,
+    @controller.stubs(active_scaffold_config: @config,
                       active_scaffold_constraints: {}, nested?: false)
   end
 
@@ -51,7 +53,7 @@ class ParameterConditionsTest < ActiveSupport::TestCase
     assert_equal [{}], conditions_from(first_name: 'Alice')
 
     @controller = PeopleController.new
-    @controller.stubs(active_scaffold_config: PeopleController.active_scaffold_config,
+    @controller.stubs(active_scaffold_config: @config,
                       active_scaffold_constraints: {}, nested?: true, nested: stub(param_name: :first_name))
     assert_equal [{}], conditions_from(first_name: 'Alice')
   end
