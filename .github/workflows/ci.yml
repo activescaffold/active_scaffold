@@ -78,7 +78,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [ "4.0", "3.4", "3.3" ]
+        ruby: [ "4.0", "3.4", "3.3", "jruby-10.1" ]
         rails: [ "8.1" ]
         include:
           - ruby: '4.0'

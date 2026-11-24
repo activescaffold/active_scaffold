@@ -33,8 +33,8 @@ group :test do
 
   platforms :jruby do
     # This module allows Ruby programs to interface with the SQLite3 database engine
-    gem 'activerecord-jdbcsqlite3-adapter', github: 'jruby/activerecord-jdbc-adapter' #'~> 80.0'
-    gem "activerecord-jdbc-adapter", github: "jruby/activerecord-jdbc-adapter" #'~> 80.0'
+    gem 'activerecord-jdbcsqlite3-adapter', github: 'jruby/activerecord-jdbc-adapter', branch: 'master'
+    gem 'activerecord-jdbc-adapter', github: 'jruby/activerecord-jdbc-adapter', branch: 'master'
     # This module allows Ruby programs to interface with the SQLite3 database engine
     gem 'jdbc-sqlite3'
   end
