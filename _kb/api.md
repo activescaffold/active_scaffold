@@ -29,6 +29,7 @@ The customization can also happen on global and local levels. ActiveScaffold glo
 - [API: Action Columns](/doc/api-action-columns/)
 - [Describing Records: to_label](/doc/describing-records-to_label/)
 - [RESTful Scaffolding](/doc/restful-scaffolding/)
+- [API: Association Exports](/doc/api-association-exports/)
 - [JS Config](/doc/js-config/)
 
 ### Deprecated

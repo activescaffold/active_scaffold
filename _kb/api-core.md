@@ -369,6 +369,30 @@ config.theme = :default
 config.theme = :blue # AjaxScaffold look with a blue header
 {%- endhighlight %}
 
+## unsafe_api_associations <small><em>global local 4.4.x only</em></small> {#unsafe_api_associations}
+
+Controls association serialization in the upcoming 4.4.x security update. The default, `nil`, preserves legacy full-attribute exports with a deprecation warning when associations are exported. Set `false` to export readable associated records as primary key and `to_label` hashes. Set `true` only to explicitly retain the unsafe legacy output without warnings.
+
+{% highlight ruby -%}
+# Configure before scaffold controllers are loaded.
+ActiveScaffold::Config::Core.unsafe_api_associations = false
+
+# Or enable the safer output for an individual scaffold.
+active_scaffold do |config|
+  config.unsafe_api_associations = false
+end
+{%- endhighlight %}
+
+Legacy exports do not check associated record or column read authorization. Suppressing the warning with `true` does not fix that behavior. The safer output checks associated record read authorization; custom fields and explicit nested includes must be authorized by application code when needed.
+
+In 4.5, the safer output is always used and this setting is **removed**, not ignored. Remove all assignments to it when upgrading. See [API: Association Exports](/doc/api-association-exports/) for the migration table and examples.
+
+## api_association_options <small><em>override method</em></small> {#api_association_options}
+
+Override `api_association_options(column, record)` on the controller producing the API response to select association serialization options. The default is `{only: [record.class.primary_key], methods: [:to_label]}`. The hash is passed directly to `serializable_hash`; it can contain `only:`, `except:`, `methods:`, and explicit nested `include:` options.
+
+This hook applies when the safer output is enabled in 4.4.x and always in 4.5. Applications must authorize custom fields and nested includes when needed. See [API: Association Exports](/doc/api-association-exports/#api_association_options) for fixed-field, column-authorization, and nested-association examples.
+
 ## active_scaffold_controller_for <small><em>override method</em></small>
 
 This _class_ method accepts an ActiveRecord::Base klass and returns an ActionController::base klass (a constant, not a string). We use the method to link controllers together (like for [API: Nested](/doc/api-nested/)), and to find configuration of associated models (like for [API: Subform](/doc/api-subform/)). The default behavior is to try and search for a singular or plural version of #{model}Controller within the namespace of the current controller. If this doesn't work for you, maybe because you have your own convention or because you have one controller that doesn't match up, you can override active_scaffold_controller_for to define your own search pattern.
