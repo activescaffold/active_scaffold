@@ -4,6 +4,7 @@ require 'test_helper'
 
 class TabSelectionSigningTest < ActionDispatch::IntegrationTest
   setup do
+    RequestStore.clear!
     @category = Category.create!(name: 'Category')
     @project = Project.create!(name: 'Project')
     Task.create!(project: @project, category: @category, name: 'Existing')
@@ -244,6 +245,7 @@ end
 
 class AddTabValidationTest < ActionDispatch::IntegrationTest
   setup do
+    RequestStore.clear!
     @category = Category.create!(name: 'Allowed category')
   end
 
