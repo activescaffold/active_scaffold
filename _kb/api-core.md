@@ -179,19 +179,19 @@ class UserController < ApplicationController
 end
 {%- endhighlight %}
 
-## conditions_from_params_columns <small><em>global local</em></small> {#conditions_from_params_columns}
+## conditions_from_params_allowed_columns <small><em>global local</em></small> {#conditions_from_params_allowed_columns}
 
 Restricts the database columns accepted by `conditions_from_params`, which builds filters from top-level URL parameters such as `?company_id=5`. The default is `nil`, preserving filtering on all database columns. An empty array disables this filtering. An array of string or symbol column names permits only those columns.
 
 {% highlight ruby -%}
 # Allow only these URL filters in this controller.
 active_scaffold do |config|
-  config.conditions_from_params_columns = %i[name company_id]
+  config.conditions_from_params_allowed_columns = %i[name company_id]
 end
 
 # Disable top-level parameter filtering throughout the application.
 ActiveScaffold.defaults do |config|
-  config.conditions_from_params_columns = []
+  config.conditions_from_params_allowed_columns = []
 end
 {%- endhighlight %}
 
@@ -201,7 +201,7 @@ Columns in [`conditions_from_params_excluded_columns`](#conditions_from_params_e
 
 ## conditions_from_params_excluded_columns <small><em>global local</em></small> {#conditions_from_params_excluded_columns}
 
-Excludes database columns from top-level URL filtering. The default is an empty array. Entries may be strings or symbols, and exclusions take precedence over `conditions_from_params_columns`.
+Excludes database columns from top-level URL filtering. The default is an empty array. Entries may be strings or symbols, and exclusions take precedence over `conditions_from_params_allowed_columns`.
 
 Use this setting to prevent filtering on hidden sensitive values without listing every permitted column:
 
