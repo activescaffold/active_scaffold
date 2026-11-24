@@ -2,8 +2,8 @@
 
 module ActiveScaffold
   class ApiAssociationSerializer
-    def initialize(columns = nil)
-      @columns = columns
+    def initialize(options = nil)
+      @options = options
     end
 
     def serialize(value, column)
@@ -17,16 +17,11 @@ module ActiveScaffold
     private
 
     def serialize_record(record, column)
-      return unless record && readable?(record)
+      return unless record
+      return if record.respond_to?(:authorized_for?) && !record.authorized_for?(crud_type: :read)
 
-      columns = @columns ? @columns.call(column, record) : [record.class.primary_key, :to_label]
-      columns = Array(columns).compact.map(&:to_s)
-      attributes, methods = columns.partition { |name| record.has_attribute?(name) }
-      record.serializable_hash(only: attributes, methods: methods, include: [])
-    end
-
-    def readable?(record)
-      !record.respond_to?(:authorized_for?) || record.authorized_for?(crud_type: :read)
+      options = @options ? @options.call(column, record) : {only: [record.class.primary_key], methods: [:to_label]}
+      record.serializable_hash(options)
     end
   end
 end

@@ -6,11 +6,11 @@ module ActiveScaffold::Actions
   module Core
     module Responding
       class AuthorizedApiResponse
-        def initialize(response_object, columns_names, config, association_columns: nil)
+        def initialize(response_object, columns_names, config, association_options: nil)
           @response_object = response_object
           @columns_names = columns_names
           @config = config
-          @association_serializer = ActiveScaffold::ApiAssociationSerializer.new(association_columns)
+          @association_serializer = ActiveScaffold::ApiAssociationSerializer.new(association_options)
         end
 
         def to_json(options = {})
@@ -18,16 +18,15 @@ module ActiveScaffold::Actions
         end
 
         def to_xml(options = {})
-          unless collection?
-            xml_options = options.reverse_merge(root: @response_object.class.model_name.singular)
-            return serialized_response(:serializable_hash).to_xml(xml_options)
-          end
-
           xml_options = options.dup
-          records = response_records
-          if records.present? && records.all?(records.first.class)
-            record_name = ActiveSupport::Inflector.underscore(records.first.class.name).tr('/', '_')
-            xml_options[:root] ||= ActiveSupport::Inflector.pluralize(record_name)
+          if collection?
+            records = response_records
+            if records.present? && records.all?(records.first.class)
+              record_name = ActiveSupport::Inflector.underscore(records.first.class.name).tr('/', '_')
+              xml_options[:root] ||= ActiveSupport::Inflector.pluralize(record_name)
+            end
+          else
+            xml_options.reverse_merge!(root: @response_object.class.model_name.singular)
           end
           serialized_response(:serializable_hash).to_xml(xml_options)
         end
@@ -137,10 +136,10 @@ module ActiveScaffold::Actions
         @response_object ||= successful? ? (@record || @records) : @record.errors
       end
 
-      # Override to export additional attributes or scalar virtual columns for an associated record.
-      # The returned columns are exported as-is; filter their authorization here if needed.
-      def api_association_columns(column, record)
-        [record.class.primary_key, :to_label]
+      # Override the options passed to serializable_hash for an associated record.
+      # Applications must authorize any additional fields or nested includes they select.
+      def api_association_options(column, record)
+        {only: [record.class.primary_key], methods: [:to_label]}
       end
 
       def response_to_api(format, columns_names, options = {})
@@ -149,7 +148,7 @@ module ActiveScaffold::Actions
           if successful?
             AuthorizedApiResponse.new(
               response_object, columns_names, active_scaffold_config,
-              association_columns: method(:api_association_columns)
+              association_options: method(:api_association_options)
             )
           else
             response_object
