@@ -34,6 +34,25 @@ module Config
       assert_equal %i[html js json xml], @config.default_formats
     end
 
+    def test_unsafe_api_associations_defaults_to_unspecified
+      assert_nil @config.unsafe_api_associations
+    end
+
+    def test_unsafe_api_associations_inherits_the_global_setting
+      ActiveScaffold::Config::Core.stubs(:unsafe_api_associations).returns(false)
+      config = ActiveScaffold::Config::Core.new(:model_stub)
+
+      assert_equal false, config.unsafe_api_associations
+      assert_equal false, config.new_user_settings({}, {}).unsafe_api_associations
+    end
+
+    def test_unsafe_api_associations_can_be_overridden_per_controller
+      @config.unsafe_api_associations = true
+
+      assert_equal true, @config.new_user_settings({}, {}).unsafe_api_associations
+      assert_nil ActiveScaffold::Config::Core.unsafe_api_associations
+    end
+
     def test_default_formats_can_be_overridden_per_controller
       @config.default_formats = [:html]
 

@@ -43,6 +43,10 @@ module ActiveScaffold::Config
     cattr_accessor :store_user_settings, instance_accessor: false
     @@store_user_settings = true
 
+    # nil preserves legacy association exports with a warning; false enables safe exports.
+    cattr_accessor :unsafe_api_associations, instance_accessor: false
+    @@unsafe_api_associations = nil
+
     # response formats enabled by default, before additional core and action formats
     cattr_accessor :default_formats, instance_accessor: false
     @@default_formats = %i[html js json xml]
@@ -153,6 +157,8 @@ module ActiveScaffold::Config
     # override the default response formats for a specific controller
     attr_accessor :default_formats
 
+    attr_accessor :unsafe_api_associations
+
     attr_accessor :conditions_from_params_allowed_columns, :conditions_from_params_excluded_columns
 
     # lets you specify whether add a create link for each sti child for a specific controller
@@ -215,6 +221,7 @@ module ActiveScaffold::Config
       @conditional_get_support = self.class.conditional_get_support
       @store_user_settings = self.class.store_user_settings
       @default_formats = self.class.default_formats.dup
+      @unsafe_api_associations = self.class.unsafe_api_associations
       @conditions_from_params_allowed_columns = self.class.conditions_from_params_allowed_columns&.dup
       @conditions_from_params_excluded_columns = self.class.conditions_from_params_excluded_columns.dup
       @sti_create_links = self.class.sti_create_links

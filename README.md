@@ -235,3 +235,50 @@ Happy translating!
 
 ### Powered by
 [![RubyMine logo](https://resources.jetbrains.com/storage/products/company/brand/logos/RubyMine.png)](https://jb.gg/OpenSource)
+
+### API association exports
+
+In 4.4, associations in JSON and XML responses retain their legacy serialization by default.
+This exports all database attributes on associated records without checking their record or
+column read authorization, even when the associated scaffold hides those attributes.
+A deprecation warning is emitted when associations are exported.
+
+Enable the safe output globally:
+
+```ruby
+ActiveScaffold::Config::Core.unsafe_api_associations = false
+```
+
+Or configure an individual scaffold:
+
+```ruby
+active_scaffold do |config|
+  config.unsafe_api_associations = false
+end
+```
+
+Safe output exports each readable associated record as a hash containing its primary key
+and `to_label`. Unreadable singular records become `null`; unreadable records in collections
+are omitted. Each exported field also requires column read authorization. Associations are
+not expanded recursively, and no associated scaffold configuration is loaded.
+
+Override this controller method to choose additional attributes or scalar virtual columns:
+
+```ruby
+protected
+
+def api_association_columns(column, record)
+  if column.name == :company
+    [record.class.primary_key, :to_label, :name]
+  else
+    super
+  end
+end
+```
+
+Only explicitly selected fields are exported, subject to associated record and column read
+authorization. Choose label and virtual methods that expose data appropriate for your API.
+
+Setting `unsafe_api_associations = true` explicitly retains the legacy unsafe output without
+warnings in 4.4. Leaving it `nil` retains the output with a warning. Both the unsafe behavior
+and this compatibility setting will be removed in 4.5; configure `false` now to migrate.

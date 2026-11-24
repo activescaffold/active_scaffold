@@ -1,4 +1,5 @@
 = Unreleased
+- Add authorized API association exports containing the primary key and +to_label+, with an overridable +api_association_columns+ controller method. In 4.4, +unsafe_api_associations = nil+ preserves legacy full-attribute exports with a deprecation warning, +true+ preserves them without warning, and +false+ enables safe exports. The unsafe behavior and compatibility setting will be removed in 4.5.
 - Authenticate embedded scaffold parameters with a signature in +eid+, bound to the target controller. Reject unsigned or modified conditions and constraints before using them to query or assign records.
 - Authenticate +return_to+ destinations before rendering links or redirecting, preventing request parameters from supplying unverified return URLs. Preserve the application's policy for redirects to external hosts.
 - Authenticate tab selections before assigning associated records, binding the signature to the controller, parent form, association, and grouping value. Validate tab groups against their configured grouping field and resolve association classes according to polymorphism.
