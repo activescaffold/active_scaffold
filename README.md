@@ -298,3 +298,30 @@ Happy translating!
 
 ### Powered by
 [![RubyMine logo](https://resources.jetbrains.com/storage/products/company/brand/logos/RubyMine.png)](https://jb.gg/OpenSource)
+
+### API association exports
+
+JSON and XML responses export each readable associated record as a hash containing its
+primary key and `to_label`. Unreadable singular records become `null`; unreadable records
+in collections are omitted. Each exported field also requires column read authorization.
+By default, associations are not expanded recursively, and no associated scaffold
+configuration is loaded.
+
+Override this controller method to choose additional attributes or scalar virtual columns:
+
+```ruby
+protected
+
+def api_association_columns(column, record)
+  if column.name == :company
+    [record.class.primary_key, :to_label, :name]
+  else
+    super
+  end
+end
+```
+
+Only explicitly selected fields are exported, subject to associated record and column read
+authorization. Choose label and virtual methods that expose data appropriate for your API.
+The legacy full-attribute association output and its `unsafe_api_associations` compatibility
+setting from 4.4 are removed in 4.5. Remove that setting when upgrading.

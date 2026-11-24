@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
+require 'active_scaffold/api_association_serializer'
+
 module ActiveScaffold::Actions
   module Core
     module Responding
       class AuthorizedApiResponse
-        def initialize(response_object, columns_names, config)
+        def initialize(response_object, columns_names, config, association_columns: nil)
           @response_object = response_object
           @columns_names = columns_names
           @config = config
+          @association_serializer = ActiveScaffold::ApiAssociationSerializer.new(association_columns)
         end
 
         def to_json(options = {})
@@ -15,7 +18,10 @@ module ActiveScaffold::Actions
         end
 
         def to_xml(options = {})
-          return serialized_response(:to_xml, options) unless collection?
+          unless collection?
+              xml_options = options.reverse_merge(root: @response_object.class.model_name.singular)
+            return serialized_response(:serializable_hash).to_xml(xml_options)
+          end
 
           xml_options = options.dup
           records = response_records
@@ -31,11 +37,32 @@ module ActiveScaffold::Actions
         def serialized_response(method, options = {})
           if collection?
             response_records.map do |record|
-              record.public_send(method, options.merge(serialization_options(record)))
+              serialized_record(record, method, options)
             end
           else
-            @response_object.public_send(method, options.merge(serialization_options(@response_object)))
+            serialized_record(@response_object, method, options)
           end
+        end
+
+        def serialized_record(record, method, options)
+          options = options.merge(serialization_options(record))
+          associations = options[:include]
+          options[:include] = []
+          result = record.public_send(method, options)
+          attributes = serialized_attributes(result, record, method, options)
+          associations.each do |name|
+            column = @config.columns[name]
+            attributes[name.to_s] = @association_serializer.serialize(record.public_send(name), column)
+          end
+          result
+        end
+
+        def serialized_attributes(result, record, method, options)
+          return result unless method == :as_json
+
+          root = options.key?(:root) ? options[:root] : record.include_root_in_json
+          root = record.model_name.element if root == true
+          root ? result.fetch(root) : result
         end
 
         def collection?
@@ -110,11 +137,19 @@ module ActiveScaffold::Actions
         @response_object ||= successful? ? (@record || @records) : @record.errors
       end
 
+      # Override to export additional attributes or scalar virtual columns for an associated record.
+      def api_association_columns(column, record)
+        [record.class.primary_key, :to_label]
+      end
+
       def response_to_api(format, columns_names, options = {})
         set_api_pagination_headers
         response =
           if successful?
-            AuthorizedApiResponse.new(response_object, columns_names, active_scaffold_config)
+            AuthorizedApiResponse.new(
+              response_object, columns_names, active_scaffold_config,
+              association_columns: method(:api_association_columns)
+            )
           else
             response_object
           end
