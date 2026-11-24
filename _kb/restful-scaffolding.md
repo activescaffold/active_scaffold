@@ -19,7 +19,7 @@ resources :users, concerns: :active_scaffold
 
 ## JSON and XML association exports
 
-See [API: Association Exports](/doc/api-association-exports/) for the upcoming 4.4.x compatibility setting, the safer primary-key-and-label output, the `api_association_options` customization hook, and the removal of unsafe association serialization in 4.5.
+See [API: Association Exports](/doc/api-association-exports/) for the compatibility setting available since 4.4.8, the safer primary-key-and-label output, the `api_association_options` customization hook, and the removal of unsafe association serialization in 4.5.
 
 ## Examples
 We suppose a common "thing" resource.

@@ -5,7 +5,7 @@ category: "API Reference"
 
 ## Scope and release status
 
-This page describes association serialization in ActiveScaffold's JSON and XML responses. These changes are currently unreleased on `4-4-stable` and `master`, targeting the next 4.4.x update and 4.5 respectively.
+This page describes association serialization in ActiveScaffold's JSON and XML responses. The 4.4.x migration setting and safer export option are available starting with 4.4.8. The removal of the legacy mode and compatibility setting is planned for 4.5.
 
 Parent scaffold columns still require column read authorization. Association exports have a separate policy: the legacy output can expose all database attributes of related records, even when the related scaffold hides those attributes.
 

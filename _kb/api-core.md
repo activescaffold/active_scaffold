@@ -371,7 +371,7 @@ config.theme = :blue # AjaxScaffold look with a blue header
 
 ## unsafe_api_associations <small><em>global local 4.4.x only</em></small> {#unsafe_api_associations}
 
-Controls association serialization in the upcoming 4.4.x security update. The default, `nil`, preserves legacy full-attribute exports with a deprecation warning when associations are exported. Set `false` to export readable associated records as primary key and `to_label` hashes. Set `true` only to explicitly retain the unsafe legacy output without warnings.
+Controls association serialization starting with the 4.4.8 security update. The default, `nil`, preserves legacy full-attribute exports with a deprecation warning when associations are exported. Set `false` to export readable associated records as primary key and `to_label` hashes. Set `true` only to explicitly retain the unsafe legacy output without warnings.
 
 {% highlight ruby -%}
 # Configure before scaffold controllers are loaded.
