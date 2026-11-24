@@ -181,7 +181,9 @@ end
 
 ## conditions_from_params_allowed_columns <small><em>global local</em></small> {#conditions_from_params_allowed_columns}
 
-Restricts the database columns accepted by `conditions_from_params`, which builds filters from top-level URL parameters such as `?company_id=5`. The default is `nil`, preserving filtering on all database columns. An empty array disables this filtering. An array of string or symbol column names permits only those columns.
+Restricts the database columns accepted by `conditions_from_params`, which builds filters from top-level URL parameters such as `?company_id=5`. In 4.5, the default is `[]`, disabling this filtering. An array of string or symbol column names permits only those columns. Set it to `nil` to permit filtering on all database columns; this can reveal hidden or unauthorized values through matching records or counts.
+
+In 4.4, the default remains `nil`. When both filter settings are `nil`, applying a parameter filter emits a warning once per controller about the security risk and the upcoming default. Configure either list explicitly to silence the warning. To retain unrestricted legacy filtering without warnings, set `conditions_from_params_allowed_columns = nil` and `conditions_from_params_excluded_columns = []`; this does not protect hidden values.
 
 {% highlight ruby -%}
 # Allow only these URL filters in this controller.
@@ -201,12 +203,13 @@ Columns in [`conditions_from_params_excluded_columns`](#conditions_from_params_e
 
 ## conditions_from_params_excluded_columns <small><em>global local</em></small> {#conditions_from_params_excluded_columns}
 
-Excludes database columns from top-level URL filtering. The default is an empty array. Entries may be strings or symbols, and exclusions take precedence over `conditions_from_params_allowed_columns`.
+Excludes database columns from top-level URL filtering. The default is `nil`. Entries may be strings or symbols, and exclusions take precedence over `conditions_from_params_allowed_columns`. An empty exclusion list rejects no columns. In 4.5, using exclusions alone requires setting the allowed list to `nil`, because its default empty list disables filtering.
 
 Use this setting to prevent filtering on hidden sensitive values without listing every permitted column:
 
 {% highlight ruby -%}
 ActiveScaffold.defaults do |config|
+  config.conditions_from_params_allowed_columns = nil
   config.conditions_from_params_excluded_columns = %i[salary reset_password_token]
 end
 
@@ -410,7 +413,7 @@ class Admin::Scaffold::ScaffoldTableController < Admin::Scaffold::BaseController
 end
 {%- endhighlight %}
 
-## parameter_filter_columns <small><em>override method</em></small> {#parameter_filter_columns}
+## parameter_filter_columns <small><em>override method v4.5+</em></small> {#parameter_filter_columns}
 
 Override this protected controller method to choose parameter-filter columns for the current request, for example according to the current user's permissions. It returns a hash mapping string database column names to their database column objects, not an array of names. The default implementation applies `conditions_from_params_allowed_columns` and `conditions_from_params_excluded_columns`.
 
