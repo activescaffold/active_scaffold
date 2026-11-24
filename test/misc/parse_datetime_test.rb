@@ -86,6 +86,27 @@ class ParseDatetimeTest < ActiveSupport::TestCase
                  self.class.datetime_from_to_for_trend(column, value.merge('unit' => 'day'))
   end
 
+  def test_trend_unit_validation_can_be_extended
+    finder = Class.new do
+      include ActiveScaffoldConfigMock
+      include ActiveScaffold::Finder
+
+      def self.valid_datetime_trend_unit?(unit)
+        super || unit == 'fortnights'
+      end
+    end
+    now = Time.zone.local(2026, 11, 23, 12)
+    finder.stubs(:datetime_now).returns(now)
+    column = @config.columns[:run_at]
+    value = {'number' => '2', 'unit' => 'FORTNIGHT'}
+
+    assert_equal [nil, nil], self.class.datetime_from_to_for_trend(column, value.merge('opt' => 'PAST'))
+    assert_equal [now.ago(2.fortnights), now], finder.datetime_from_to_for_trend(column, value.merge('opt' => 'PAST'))
+    assert_equal [now, now.in(2.fortnights)], finder.datetime_from_to_for_trend(column, value.merge('opt' => 'FUTURE'))
+    assert finder.valid_datetime_trend_unit?('days')
+    assert_not finder.valid_datetime_trend_unit?('exit!')
+  end
+
   def test_translate_to_english
     I18n.with_locale :es do
       assert_equal 'Mon, 03 Apr 2017 16:30:26', translate_datetime('Lun, 03 Abr 2017 16:30:26')
