@@ -157,9 +157,7 @@ module ActiveScaffold::Config
     # override the default response formats for a specific controller
     attr_accessor :default_formats
 
-    attr_accessor :unsafe_api_associations
-
-    attr_accessor :conditions_from_params_allowed_columns, :conditions_from_params_excluded_columns
+    attr_accessor :unsafe_api_associations, :conditions_from_params_allowed_columns, :conditions_from_params_excluded_columns
 
     # lets you specify whether add a create link for each sti child for a specific controller
     attr_accessor :sti_create_links
