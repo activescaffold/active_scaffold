@@ -1,4 +1,5 @@
 = Unreleased
+- Keep parent list filters out of nested links while preserving explicitly configured child filters. Merge action-link parameters before caching URLs to avoid duplicate query parameters, and reset cache keys when copying links so changed parameters use separate cached URLs.
 - Disable implicit URL parameter filtering by default: +conditions_from_params_allowed_columns+ now defaults to +[]+. Set an explicit list of permitted columns to enable filtering, or set it to +nil+ to retain legacy filtering on all database columns. +conditions_from_params_excluded_columns+ defaults to +nil+; exclusions still take precedence over allowances. Unrestricted filtering can reveal hidden or unauthorized values through matching records or counts.
 - Remove legacy full-attribute association serialization and its 4.4 +unsafe_api_associations+ compatibility setting.
 - Fix DatePicker date-only formats containing a numeric month so +mm+ is not incorrectly treated as the beginning of a time format.

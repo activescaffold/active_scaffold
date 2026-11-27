@@ -12,6 +12,7 @@ module ActiveScaffold::DataStructures
     end
 
     def initialize_copy(action_link)
+      remove_instance_variable(:@name_to_cache) if instance_variable_defined?(:@name_to_cache)
       self.parameters = parameters.clone if action_link.instance_variable_get(:@parameters)
       self.html_options = html_options.clone if action_link.instance_variable_get(:@html_options)
     end
@@ -19,6 +20,8 @@ module ActiveScaffold::DataStructures
     def deep_dup
       link = dup
       instance_variables.each do |var|
+        next if var == :@name_to_cache
+
         link.instance_variable_set(var, link.instance_variable_get(var).deep_dup)
       end
       link

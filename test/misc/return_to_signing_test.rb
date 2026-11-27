@@ -174,16 +174,13 @@ class ReturnToLinkGenerationTest < ActionController::TestCase
   end
 
   test 'nested singular listings sign the generated return path' do
-    car = Car.create!(model: 'Car', person: @person)
     get :index
     view = @controller.view_context
     view.stubs(:nested_singular_association?).returns(true)
     view.stubs(:action_name).returns('index')
-    view.stubs(:params_for).returns(controller: '/cars', action: 'index', id: car.id)
     link = @controller.send(:active_scaffold_config).update.link
 
-    _, query = view.query_string_for_action_links(link)
-    parameters = Rack::Utils.parse_nested_query(query.delete_prefix('&'))
+    parameters = query_for(view.action_link_url(link, @person))
 
     assert_equal @controller.request.fullpath, parameters['return_to']
     assert_valid_signature(parameters)

@@ -2,6 +2,13 @@ Rails.application.routes.draw do
   concern :active_scaffold, ActiveScaffold::Routing::Basic.new(association: true)
   concern :active_scaffold_association, ActiveScaffold::Routing::Association.new
 
+  namespace :nested_routes do
+    resources :people, concerns: :active_scaffold do
+      as_nested_resources :buildings, concerns: :active_scaffold
+      as_nested_resources :car, controller: :cars, concerns: :active_scaffold
+    end
+  end
+
   get 'people/forbidden', to: 'people#forbidden'
   resources :addresses, concerns: :active_scaffold
   resources :buildings, except: :index do

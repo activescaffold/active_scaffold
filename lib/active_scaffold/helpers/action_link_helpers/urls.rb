@@ -23,16 +23,30 @@ module ActiveScaffold
 
         def cached_action_link_url(link, record)
           @action_links_urls ||= {}
-          @action_links_urls[link.name_to_cache.to_s] || begin
+          cache = cache_action_link_url?(link, record)
+          (cache && @action_links_urls[link.name_to_cache.to_s]) || begin
             url_options = cached_action_link_url_options(link, record)
-            if cache_action_link_url?(link, record)
-              @action_links_urls[link.name_to_cache.to_s] = url_for(signed_url_options(url_options))
-            else
-              url_options.merge! eid: nil, embedded: nil if link.nested_link?
-              url_for(signed_url_options(params_for(url_options)))
-            end
+            url = url_for(signed_url_options(action_link_params(link, url_options)))
+            @action_links_urls[link.name_to_cache.to_s] = url if cache
+            url
           end
         end
+
+        def action_link_params(link, url_options)
+          # Merge before generating the URL so explicit and derived link options
+          # override request parameters without duplicating query keys.
+          options = url_options.dup
+          if link.nested_link?
+            params_for.each_key do |key|
+              options[key] = nil if ignore_param_for_nested?(key) && !options.key?(key)
+            end
+          elsif nested_singular_association? && action_name == 'index'
+            # Return to this listing instead of the parent listing.
+            options[:return_to] = request.fullpath unless options.key?(:return_to)
+          end
+          params_for(options)
+        end
+        private :action_link_params
 
         def replace_id_params_in_action_link_url(link, record, url)
           url = record ? url.sub('--ID--', record.to_param.to_s) : url.dup
@@ -50,27 +64,8 @@ module ActiveScaffold
           url
         end
 
-        def add_query_string_to_cached_url(link, url)
-          query_string, non_nested_query_string = query_string_for_action_links(link)
-          parts = [query_string]
-          parts << non_nested_query_string&.delete_prefix('&') unless link.nested_link?
-          query = parts.compact.join('&')
-          # Explicit options from an application override take precedence over
-          # return destinations propagated from the current request.
-          if url.match?(/[?&]return_to=/)
-            query = query.split('&').reject { |part| part.start_with?('return_to=', 'return_to_signature=') }.join('&')
-          end
-          if query.present?
-            url << (url.include?('?') ? '&' : '?')
-            url << query
-          end
-          url
-        end
-
         def action_link_url(link, record)
-          url = replace_id_params_in_action_link_url(link, record, cached_action_link_url(link, record))
-          url = add_query_string_to_cached_url(link, url) if @action_links_urls[link.name_to_cache.to_s]
-          url
+          replace_id_params_in_action_link_url(link, record, cached_action_link_url(link, record))
         end
 
         def column_in_params_conditions?(key)
@@ -90,66 +85,9 @@ module ActiveScaffold
         end
 
         def ignore_param_for_nested?(key)
-          NESTED_PARAMS.include?(key) || column_in_params_conditions?(key) || (nested? && nested.param_name == key)
+          NESTED_PARAMS.include?(key) || active_scaffold_config.list.filters[key] ||
+            column_in_params_conditions?(key) || (nested? && nested.param_name == key)
         end
-
-        def query_string_for_action_links(link)
-          if defined?(@query_string) && link.parameters.none? { |k, _| @query_string_params.include? k }
-            return [@query_string, @non_nested_query_string]
-          end
-
-          keep, query_string_options, non_nested_query_string_options = _as_action_link_query_options(link)
-          non_nested_query_string_options = signed_action_link_query_options(
-            query_string_options, non_nested_query_string_options
-          )
-
-          query_string = query_string_options.to_query if query_string_options.present?
-          if non_nested_query_string_options.present?
-            non_nested_query_string = "#{'&' if query_string}#{non_nested_query_string_options.to_query}"
-          end
-          if keep
-            @query_string = query_string
-            @non_nested_query_string = non_nested_query_string
-          end
-          [query_string, non_nested_query_string]
-        end
-
-        def signed_action_link_query_options(query_string_options, non_nested_query_string_options)
-          if nested_singular_association? && action_name == 'index'
-            # Return to the nested listing on singular associations instead of the parent listing.
-            @query_string_params << :return_to
-            @query_string_params << :return_to_signature
-            query_string_options.except!(:return_to, :return_to_signature)
-            non_nested_query_string_options[:return_to] = request.fullpath
-            non_nested_query_string_options = signed_url_options(non_nested_query_string_options)
-          end
-
-          query_string_options.delete(:return_to_signature) unless query_string_options[:return_to]
-          unless non_nested_query_string_options[:return_to]
-            non_nested_query_string_options.delete(:return_to_signature)
-          end
-          non_nested_query_string_options
-        end
-        private :signed_action_link_query_options
-
-        def _as_action_link_query_options(link)
-          keep = true
-          @query_string_params ||= Set.new
-          query_options = {}
-          non_nested_options = {}
-          params_for.except(:controller, :action, :id).each do |key, value|
-            @query_string_params << key
-            if link.parameters.include? key
-              keep = false
-            elsif ignore_param_for_nested?(key)
-              non_nested_options[key] = value
-            else
-              query_options[key] = value
-            end
-          end
-          [keep, query_options, non_nested_options]
-        end
-        private :_as_action_link_query_options
 
         def cache_action_link_url_options?(link, record)
           active_scaffold_config.user.cache_action_link_urls &&

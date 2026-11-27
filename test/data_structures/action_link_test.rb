@@ -100,4 +100,19 @@ class ActionLinkTest < ActiveSupport::TestCase
     link = ActiveScaffold::DataStructures::ActionLink.new(:index, position: false, parameters: {scope: 'all'}, toggle: false)
     assert_not link.toggle
   end
+
+  %i[dup deep_dup].each do |copy_method|
+    test "#{copy_method} gives changed link parameters their own cache key" do
+      @link.parameters = {status: 'open'}
+      @link.freeze
+      original_key = @link.name_to_cache
+
+      copied_link = @link.public_send(copy_method)
+      copied_link.parameters[:status] = 'closed'
+
+      assert_not_equal original_key, copied_link.name_to_cache
+      assert_equal 'open', @link.parameters[:status]
+      assert_equal original_key, @link.name_to_cache
+    end
+  end
 end
